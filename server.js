@@ -31,9 +31,9 @@ async function handleDownload(req, res) {
       code: 400,
       message: 'Parameter URL (TikTok / Instagram) wajib diisi',
       usage: {
-        get: '/dl?url=https://www.instagram.com/reel/DWMHED1jVvj/',
+        get: '/api/dl?url=https://www.instagram.com/reel/DWMHED1jVvj/',
         post: {
-          endpoint: '/dl',
+          endpoint: '/api/dl',
           headers: { 'Content-Type': 'application/json' },
           body: { url: 'https://www.tiktok.com/@username/video/1234567890' }
         }
@@ -66,7 +66,17 @@ async function handleDownload(req, res) {
   }
 }
 
-app.get('/dl', handleDownload);
+app.get('/dl', (req, res) => {
+  const isJson = (req.headers.accept && req.headers.accept.includes('application/json')) || req.query.json === 'true';
+  const hasUrl = !!req.query.url;
+
+  if (hasUrl || isJson) {
+    return handleDownload(req, res);
+  }
+
+  return res.sendFile(path.join(__dirname, 'public', 'dl.html'));
+});
+
 app.post('/dl', handleDownload);
 app.get('/api/dl', handleDownload);
 app.post('/api/dl', handleDownload);

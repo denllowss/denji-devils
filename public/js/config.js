@@ -27,6 +27,7 @@ const PENGATURAN = {
 };
 
 const LINK = [
+  { judul: "Media Downloader (TikTok & IG)", url: "/dl", gambar: "" },
   { judul: "Channel Wa (koleksi sticker)", url: "https://whatsapp.com/channel/0029VbBDyGpEFeXu4KTwvo08", gambar: "" },
   { judul: "Nomor wa", url: "https://wa.me/18674678687", gambar: "" },
 ];

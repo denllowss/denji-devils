@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>Denji Downloader | TikTok & Instagram Downloader</title>
+<meta name="description" content="Unduh video, audio MP3, foto, reel, story, dan carousel dari TikTok dan Instagram secara gratis, cepat, tanpa watermark dalam kualitas HD.">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#c8d97c">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Denji Downloader">
+<meta property="og:title" content="Denji Downloader | TikTok & Instagram">
+<meta property="og:description" content="Download Video, Audio MP3, Story, & Foto TikTok & Instagram Gratis Tanpa Watermark HD.">
+<meta property="og:image" content="https://i.imgur.com/THE7Eb7.jpeg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Denji Downloader | TikTok & Instagram">
+<meta name="twitter:description" content="Download Video, Audio MP3, Story, & Foto TikTok & Instagram Gratis Tanpa Watermark HD.">
+<meta name="twitter:image" content="https://i.imgur.com/THE7Eb7.jpeg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+<style>
+.dl-wrap{
+  width: 100%;
+  max-width: 580px;
+  margin: 0 auto;
+  padding: 0 var(--pad-x);
+}
+
+.dl-card{
+  background: var(--button-style-background);
+  border: 2px solid var(--button-style-border-color);
+  border-radius: var(--link-radius);
+  box-shadow: var(--button-style-shadow);
+  padding: 16px;
+  margin-bottom: 20px;
+  transition: transform var(--t-fast) var(--ease), box-shadow var(--t-fast) var(--ease);
+}
+
+.dl-card:focus-within{
+  transform: translateY(-2px);
+  box-shadow: 4px 6px 0 var(--button-style-shadow-color);
+}
+
+.dl-form{
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.dl-input-group{
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: #ffffff;
+  border: 2px solid var(--button-style-border-color);
+  border-radius: 20px;
+  padding: 4px 6px 4px 14px;
+  transition: border-color var(--t-fast) var(--ease), box-shadow var(--t-fast) var(--ease);
+}
+
+.dl-input-group:focus-within{
+  border-color: #1e2330;
+  box-shadow: 0 0 0 3px rgba(50, 60, 31, 0.15);
+}
+
+.dl-input-icon{
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  color: #718096;
+  margin-right: 10px;
+}
+
+.dl-input{
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  color: #1e2330;
+  outline: none;
+  padding: 8px 0;
+}
+
+.dl-input::placeholder{
+  color: #a0aec0;
+  font-weight: 400;
+}
+
+.dl-paste-btn{
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #f7fafc;
+  border: 1.5px solid #cbd5e0;
+  border-radius: 14px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #4a5568;
+  cursor: pointer;
+  transition: all var(--t-fast) var(--ease);
+}
+
+.dl-paste-btn:hover{
+  background: #edf2f7;
+  color: #1a202c;
+  border-color: #a0aec0;
+}
+
+.dl-paste-btn:active{
+  transform: scale(0.96);
+}
+
+.dl-submit-btn{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  background: var(--button-style-border-color);
+  color: #f1fcbd;
+  border: 2px solid var(--button-style-border-color);
+  border-radius: 22px;
+  padding: 14px 20px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 2px 3px 0 rgba(0, 0, 0, 0.15);
+  transition: all var(--t-fast) var(--ease);
+}
+
+.dl-submit-btn:hover:not(:disabled){
+  transform: translateY(-2px);
+  box-shadow: 3px 5px 0 rgba(0, 0, 0, 0.2);
+  background: #232a15;
+}
+
+.dl-submit-btn:active:not(:disabled){
+  transform: translate(2px, 2px);
+  box-shadow: 0 0 0 transparent;
+}
+
+.dl-submit-btn:disabled{
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.dl-badges{
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.dl-badge{
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.65);
+  border: 1px solid rgba(50, 60, 31, 0.2);
+  border-radius: 12px;
+  padding: 4px 9px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--bodyText);
+}
+
+.dl-loader{
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  gap: 12px;
+  text-align: center;
+}
+
+.dl-loader.active{
+  display: flex;
+}
+
+.dl-spinner{
+  width: 38px;
+  height: 38px;
+  border: 3.5px solid rgba(50, 60, 31, 0.2);
+  border-top-color: var(--button-style-border-color);
+  border-radius: 50%;
+  animation: dlSpin 0.75s linear infinite;
+}
+
+@keyframes dlSpin{
+  to { transform: rotate(360deg); }
+}
+
+.dl-result{
+  display: none;
+  background: #ffffff;
+  border: 2px solid var(--button-style-border-color);
+  border-radius: var(--link-radius);
+  box-shadow: var(--button-style-shadow);
+  padding: 18px;
+  margin-bottom: 24px;
+  animation: popIn 0.35s var(--ease-pop) both;
+}
+
+.dl-result.active{
+  display: block;
+}
+
+.res-header{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 14px;
+  border-bottom: 1.5px solid #edf2f7;
+  margin-bottom: 14px;
+}
+
+.res-avatar{
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1.5px solid var(--button-style-border-color);
+  background: #f7fafc;
+  flex-shrink: 0;
+}
+
+.res-author-info{
+  flex: 1;
+  min-width: 0;
+}
+
+.res-author-name{
+  font-size: 14px;
+  font-weight: 700;
+  color: #1a202c;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.res-author-user{
+  font-size: 12px;
+  color: #718096;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.res-platform-tag{
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.res-platform-tag.tiktok{
+  background: #000000;
+  color: #ffffff;
+}
+
+.res-platform-tag.instagram{
+  background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+  color: #ffffff;
+}
+
+.res-title{
+  font-size: 13px;
+  line-height: 1.5;
+  color: #2d3748;
+  margin-bottom: 14px;
+  word-break: break-word;
+  max-height: 80px;
+  overflow-y: auto;
+}
+
+.res-media-box{
+  border-radius: 16px;
+  overflow: hidden;
+  background: #000000;
+  margin-bottom: 16px;
+  border: 1.5px solid #e2e8f0;
+}
+
+.res-video{
+  width: 100%;
+  max-height: 420px;
+  display: block;
+  outline: none;
+  background: #000000;
+}
+
+.res-gallery{
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 8px;
+  padding: 8px;
+  max-height: 380px;
+  overflow-y: auto;
+  background: #f7fafc;
+}
+
+.res-gallery-item{
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  aspect-ratio: 1;
+  background: #edf2f7;
+  border: 1px solid #e2e8f0;
+}
+
+.res-gallery-img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: auto!important;
+  cursor: pointer;
+}
+
+.res-actions{
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.res-btn{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 18px;
+  font-size: 13.5px;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  border: 2px solid var(--button-style-border-color);
+  transition: all var(--t-fast) var(--ease);
+}
+
+.res-btn-primary{
+  background: var(--button-style-border-color);
+  color: #f1fcbd;
+  box-shadow: 2px 3px 0 rgba(0, 0, 0, 0.15);
+}
+
+.res-btn-primary:hover{
+  background: #232a15;
+  transform: translateY(-2px);
+  box-shadow: 3px 4px 0 rgba(0, 0, 0, 0.2);
+}
+
+.res-btn-secondary{
+  background: #f1fcbd;
+  color: #1e2330;
+  box-shadow: 2px 3px 0 var(--button-style-border-color);
+}
+
+.res-btn-secondary:hover{
+  background: #e0eab0;
+  transform: translateY(-2px);
+}
+
+.res-btn-outline{
+  background: #ffffff;
+  color: #2d3748;
+  border-color: #cbd5e0;
+}
+
+.res-btn-outline:hover{
+  background: #f7fafc;
+  border-color: #a0aec0;
+}
+
+.res-btn:active{
+  transform: scale(0.98);
+}
+
+.dl-error-box{
+  display: none;
+  background: #fff5f5;
+  border: 2px solid #feb2b2;
+  border-radius: 18px;
+  padding: 14px 16px;
+  color: #c53030;
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 16px;
+  text-align: center;
+  line-height: 1.4;
+}
+
+.dl-error-box.active{
+  display: block;
+}
+
+.nav-home-btn{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin: 12px auto 24px;
+  padding: 8px 18px;
+  background: rgba(255, 255, 255, 0.65);
+  border: 1.5px solid var(--button-style-border-color);
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--bodyText);
+  box-shadow: 2px 2px 0 var(--button-style-border-color);
+  transition: all var(--t-fast) var(--ease);
+}
+
+.nav-home-btn:hover{
+  background: #ffffff;
+  transform: translateY(-1px);
+}
+</style>
+</head>
+
+<body>
+<div id="app">
+  <div class="frame">
+    <div class="profile">
+      <div class="topbar">
+        <a href="/" class="icon-btn" aria-label="Kembali ke Beranda">
+          <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true">
+            <path d="M224,128a8,8,0,0,1-8,8H59.31l58.35,58.34a8,8,0,0,1-11.32,11.32l-72-72a8,8,0,0,1,0-11.32l72-72a8,8,0,0,1,11.32,11.32L59.31,120H216A8,8,0,0,1,224,128Z"/>
+          </svg>
+        </a>
+      </div>
+
+      <div class="hero-wrap">
+        <div class="hero">
+          <img src="https://i.imgur.com/THE7Eb7.jpeg" alt="Hero background" fetchpriority="high" decoding="async" referrerpolicy="no-referrer" draggable="false">
+        </div>
+      </div>
+
+      <div class="content" id="content">
+        <div class="logo-wrap">
+          <img class="logo" src="https://i.8upload.com/image/d4836d32cf164939/proyek-baru-29-2948c6c.png" alt="Denji" decoding="async" referrerpolicy="no-referrer" draggable="false">
+        </div>
+
+        <div class="verified">
+          <svg class="vbadge" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="m11.1709 1.20488c.4636-.44224 1.1936-.442242 1.6572 0l.416.39746c.4922.46936 1.2072.62118 1.8477.39258l.542-.19336c.5657-.20194 1.1866.04554 1.4629.56543l.0508.1084.2187.53125v.00098c.2589.62876.8502 1.05776 1.5283 1.10937l.5733.04395c.6389.04862 1.1269.59102 1.1084 1.23144l-.0166.5752c-.0195.67976.3459 1.31273.9443 1.63574l.5068.27344c.5638.30433.789.99767.5118 1.57519l-.2491.51856c-.2942.61319-.2181 1.34029.1973 1.87889l.3516.4551c.3913.5072.3152 1.2325-.1729 1.6475l-.4385.373c-.5182.4403-.7443 1.1349-.5839 1.7959l.1357.5596c.1512.6225-.2133 1.254-.8281 1.4345l-.5518.1621c-.6526.1915-1.1423.7344-1.2646 1.4034l-.1036.5664c-.1152.6302-.7048 1.0588-1.3398.9736l-.5703-.0762c-.6742-.0905-1.3417.2062-1.7256.7676l-.3242.4756c-.3615.5289-1.0756.6799-1.6211.3438l-.4893-.3018c-.579-.357-1.3105-.357-1.8896 0l-.4893.3018c-.5453.336-1.2585.1849-1.62009-.3438l-.32519-.4756c-.38385-.5613-1.05152-.8581-1.72559-.7676l-.57031.0762c-.63498.0851-1.2247-.3435-1.33984-.9736l-.10352-.5664c-.12229-.6689-.61123-1.2118-1.26367-1.4034l-.55274-.1621c-.61468-.1806-.97927-.8121-.82812-1.4345l.13574-.5596c.16034-.661-.06569-1.3555-.58398-1.7959l-.43848-.373c-.487957-.415-.564118-1.1403-.17285-1.6475l.35156-.4551c.41548-.5386.4917-1.2657.19727-1.87889l-.24903-.51856c-.27726-.57745-.05185-1.27081.51172-1.57519l.50684-.27344c.59852-.32298.96379-.95592.94433-1.63574l-.0166-.5752c-.01842-.64043.46957-1.18277 1.1084-1.23144l.57422-.04395c.6781-.05175 1.26871-.48136 1.52734-1.11035l.21973-.53125c.24365-.59257.90929-.88923 1.51269-.67383l.542.19336c.6405.22869 1.35547.07673 1.84767-.39258z" fill="#d29016"/>
+            <path d="m7.60547 11.3441 3.18193 3.182 6.3639-6.36399" stroke="#fff" stroke-width="3"/>
+          </svg>
+          <span>Media Downloader</span>
+        </div>
+
+        <div class="bio">Tempel URL video atau foto TikTok & Instagram (Reels, Story, Post, Carousel) untuk mengunduh langsung tanpa watermark.</div>
+
+        <div class="dl-wrap">
+          <div class="dl-card">
+            <form class="dl-form" id="dlForm" onsubmit="return false;">
+              <div class="dl-input-group">
+                <svg class="dl-input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
+                </svg>
+                <input type="url" class="dl-input" id="dlInput" placeholder="Tempel link TikTok atau Instagram..." required autocomplete="off" spellcheck="false">
+                <button type="button" class="dl-paste-btn" id="pasteBtn" aria-label="Tempel dari Clipboard">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                  </svg>
+                  <span>Tempel</span>
+                </button>
+              </div>
+
+              <button type="submit" class="dl-submit-btn" id="submitBtn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                </svg>
+                <span>Download Media</span>
+              </button>
+
+              <div class="dl-badges">
+                <span class="dl-badge">TikTok Video / Slide</span>
+                <span class="dl-badge">IG Reels / Story</span>
+                <span class="dl-badge">IG Post / Carousel</span>
+                <span class="dl-badge">MP3 Audio</span>
+              </div>
+            </form>
+          </div>
+
+          <div class="dl-error-box" id="errorBox"></div>
+
+          <div class="dl-loader" id="loader">
+            <div class="dl-spinner"></div>
+            <div style="font-size: 13.5px; font-weight: 600; color: #2c351e;">Sedang memproses media, harap tunggu...</div>
+          </div>
+
+          <div class="dl-result" id="resultCard">
+            <div class="res-header">
+              <img class="res-avatar" id="resAvatar" src="https://i.imgur.com/THE7Eb7.jpeg" alt="Author">
+              <div class="res-author-info">
+                <div class="res-author-name" id="resName">Author Name</div>
+                <div class="res-author-user" id="resUser">@username</div>
+              </div>
+              <div class="res-platform-tag" id="resPlatformTag">TikTok</div>
+            </div>
+
+            <div class="res-title" id="resTitle"></div>
+
+            <div class="res-media-box" id="resMediaBox"></div>
+
+            <div class="res-actions" id="resActions"></div>
+          </div>
+
+          <div style="text-align: center;">
+            <a href="/" class="nav-home-btn">
+              <svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor">
+                <path d="M218.83,103.77l-80-75.48a1.14,1.14,0,0,1-.11-.11,16,16,0,0,0-21.53,0l-.11.11L37.17,103.77A16,16,0,0,0,32,115.55V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V115.55A16,16,0,0,0,218.83,103.77ZM208,208H48V115.55l80-75.48,80,75.48V208Z"/>
+              </svg>
+              <span>Halaman Utama</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="/js/dl.js"></script>
+</body>
+</html>
