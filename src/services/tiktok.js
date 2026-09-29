@@ -2,7 +2,7 @@ const axios = require('axios');
 const cheerio = require('cheerio');
 
 const DEFAULT_HEADERS = {
-  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
+  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
   'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
   'Accept-Language': 'id,en-US;q=0.9,en;q=0.8'
 };
@@ -10,7 +10,7 @@ const DEFAULT_HEADERS = {
 async function resolveTikTokUrl(rawUrl) {
   const url = String(rawUrl || '').trim();
   if (!url) return '';
-  if (/^https?:\/\/(vt|vm|t)\.tiktok\.com\//i.test(url)) {
+  if (/^https?:\/\/(vt|vm|t|www\.vt|www\.vm)\.tiktok\.com\//i.test(url) || url.includes('/t/')) {
     try {
       const res = await axios.get(url, {
         headers: {
@@ -20,12 +20,17 @@ async function resolveTikTokUrl(rawUrl) {
         timeout: 10000,
         validateStatus: (s) => s >= 200 && s < 400
       });
-      return res.request?.res?.responseUrl || url;
+      return res.request?.res?.responseUrl || res.headers?.location || url;
     } catch (e) {
       return url;
     }
   }
   return url;
+}
+
+function isPhotoUrl(url) {
+  const str = String(url || '').toLowerCase();
+  return str.includes('/photo/') || str.includes('/photomode/');
 }
 
 async function scrapeSSSTik(tiktokUrl) {
@@ -108,7 +113,7 @@ async function scrapeSSSTik(tiktokUrl) {
   }
 
   const photos = [];
-  $('ul.splide__list li, .splide__slide, .result_overlay_buttons a.download_link').each((_, el) => {
+  $('ul.splide__list li, .splide__slide, .result_overlay_buttons a.download_link, .download-items a').each((_, el) => {
     const href = $(el).attr('href') || $(el).find('a').attr('href');
     const imgSrc = $(el).find('img').attr('data-splide-lazy') || $(el).find('img').attr('src');
     const candidate = href || imgSrc;
@@ -119,11 +124,30 @@ async function scrapeSSSTik(tiktokUrl) {
 
   const overlayStyle = $('style').text() || '';
   const bgMatch = overlayStyle.match(/url\(([^)]+)\)/);
-  const cover = bgMatch ? bgMatch[1] : '';
+  const cover = bgMatch ? bgMatch[1] : (photos[0] || null);
 
-  let type = 'video';
-  if (photos.length > 0) {
-    type = 'image';
+  const hasPhotos = photos.length > 0;
+  const isPhoto = isPhotoUrl(tiktokUrl) || hasPhotos || (!sdLink && !hdLink && hasPhotos);
+  const type = isPhoto ? 'image' : 'video';
+
+  const mediaList = [];
+  if (isPhoto) {
+    photos.forEach((pUrl, idx) => {
+      mediaList.push({
+        type: 'image',
+        index: idx + 1,
+        url: pUrl,
+        thumbnail: pUrl,
+        download: pUrl
+      });
+    });
+  } else if (sdLink || hdLink) {
+    mediaList.push({
+      type: 'video',
+      url: hdLink || sdLink,
+      thumbnail: cover,
+      download: hdLink || sdLink
+    });
   }
 
   return {
@@ -136,10 +160,11 @@ async function scrapeSSSTik(tiktokUrl) {
       avatar: authorAvatar
     },
     downloads: {
-      video: sdLink || null,
-      video_hd: hdLink || null,
+      video: isPhoto ? null : (sdLink || hdLink || null),
+      video_hd: isPhoto ? null : (hdLink || sdLink || null),
       audio: audioLink || null,
-      photos: photos.length > 0 ? photos : undefined
+      photos: isPhoto && photos.length > 0 ? photos : undefined,
+      media: mediaList
     }
   };
 }
@@ -173,34 +198,57 @@ async function scrapeLoveTik(tiktokUrl) {
     const t = (l.t || '').toLowerCase();
     const ft = (l.ft || '').toLowerCase();
     const a = l.a || '';
-    if (ft === 'mp3' || t.includes('audio')) {
+    if (ft === 'mp3' || t.includes('audio') || t.includes('music')) {
       audio = a;
-    } else if (t.includes('hd')) {
+    } else if (t.includes('hd') || t.includes('1080')) {
       videoHd = a;
     } else if (ft === 'mp4' || t.includes('watermark') || t.includes('download')) {
       if (!videoSd) videoSd = a;
     }
   });
 
-  const photos = Array.isArray(data.images) ? data.images : undefined;
-  const isImage = photos && photos.length > 0;
+  const rawPhotos = Array.isArray(data.images) ? data.images : [];
+  const hasPhotos = rawPhotos.length > 0;
+  const isPhoto = isPhotoUrl(tiktokUrl) || hasPhotos;
+  const type = isPhoto ? 'image' : 'video';
+
+  const mediaList = [];
+  if (isPhoto) {
+    rawPhotos.forEach((imgUrl, idx) => {
+      mediaList.push({
+        type: 'image',
+        index: idx + 1,
+        url: imgUrl,
+        thumbnail: imgUrl,
+        download: imgUrl
+      });
+    });
+  } else if (videoSd || videoHd) {
+    mediaList.push({
+      type: 'video',
+      url: videoHd || videoSd,
+      thumbnail: data.cover || null,
+      download: videoHd || videoSd
+    });
+  }
 
   return {
     source: 'lovetik.com',
-    type: isImage ? 'image' : 'video',
+    type: type,
     id: data.vid || null,
     title: data.desc || '',
-    cover: data.cover || null,
+    cover: data.cover || (rawPhotos[0] || null),
     author: {
       name: data.author || '',
       username: data.author ? `@${data.author}` : '',
       avatar: data.author_avatar || ''
     },
     downloads: {
-      video: videoSd || videoHd || null,
-      video_hd: videoHd || videoSd || null,
+      video: isPhoto ? null : (videoSd || videoHd || null),
+      video_hd: isPhoto ? null : (videoHd || videoSd || null),
       audio: audio || null,
-      photos: photos
+      photos: isPhoto && rawPhotos.length > 0 ? rawPhotos : undefined,
+      media: mediaList
     }
   };
 }
@@ -215,16 +263,26 @@ async function fallbackTikWM(tiktokUrl) {
   }
 
   const isImages = Array.isArray(data.images) && data.images.length > 0;
-  const type = isImages ? 'image' : (data.is_live_photo ? 'live_photo' : 'video');
+  const isPhoto = isPhotoUrl(tiktokUrl) || isImages || !!data.is_live_photo;
+  const type = isPhoto ? 'image' : 'video';
 
-  const livePhotos = [];
+  const mediaList = [];
   if (isImages && data.images) {
     data.images.forEach((img, idx) => {
-      livePhotos.push({
+      mediaList.push({
+        type: 'image',
         index: idx + 1,
-        image: img,
-        video: data.play || null
+        url: img,
+        thumbnail: img,
+        download: img
       });
+    });
+  } else if (data.play || data.hdplay) {
+    mediaList.push({
+      type: 'video',
+      url: data.hdplay || data.play,
+      thumbnail: data.cover || data.origin_cover || null,
+      download: data.hdplay || data.play
     });
   }
 
@@ -233,7 +291,7 @@ async function fallbackTikWM(tiktokUrl) {
     type: type,
     id: data.id || null,
     title: data.title || '',
-    cover: data.cover || data.origin_cover || null,
+    cover: data.cover || data.origin_cover || (data.images?.[0] || null),
     duration: data.duration || null,
     author: {
       id: data.author?.id || null,
@@ -242,12 +300,12 @@ async function fallbackTikWM(tiktokUrl) {
       avatar: data.author?.avatar || ''
     },
     downloads: {
-      video: data.play || null,
-      video_hd: data.hdplay || data.play || null,
-      video_watermark: data.wmplay || null,
+      video: isPhoto ? null : (data.play || null),
+      video_hd: isPhoto ? null : (data.hdplay || data.play || null),
+      video_watermark: isPhoto ? null : (data.wmplay || null),
       audio: data.music || data.music_info?.play || null,
       photos: isImages ? data.images : undefined,
-      live_photos: isImages ? livePhotos : undefined
+      media: mediaList
     },
     stats: {
       likes: data.digg_count || 0,
@@ -265,61 +323,87 @@ async function downloadTikTok(rawUrl) {
   }
 
   const resolved = await resolveTikTokUrl(rawUrl);
+  const photoDetected = isPhotoUrl(resolved);
 
   try {
     const sssRes = await scrapeSSSTik(resolved);
-    if (sssRes.downloads.video || (sssRes.downloads.photos && sssRes.downloads.photos.length > 0)) {
+    const hasMedia = (sssRes.downloads.video) || (Array.isArray(sssRes.downloads.photos) && sssRes.downloads.photos.length > 0);
+    if (hasMedia) {
+      const isImg = photoDetected || sssRes.type === 'image';
       return {
         status: 'success',
         code: 200,
         platform: 'tiktok',
         source: 'ssstik.io',
-        type: sssRes.type,
+        type: isImg ? 'image' : 'video',
         title: sssRes.title,
         cover: sssRes.cover,
         author: sssRes.author,
-        downloads: sssRes.downloads
+        downloads: {
+          video: isImg ? null : sssRes.downloads.video,
+          video_hd: isImg ? null : sssRes.downloads.video_hd,
+          audio: sssRes.downloads.audio,
+          photos: sssRes.downloads.photos,
+          media: sssRes.downloads.media
+        }
       };
     }
   } catch (e) {}
 
   try {
     const loveRes = await scrapeLoveTik(resolved);
-    if (loveRes.downloads.video || (loveRes.downloads.photos && loveRes.downloads.photos.length > 0)) {
+    const hasMedia = (loveRes.downloads.video) || (Array.isArray(loveRes.downloads.photos) && loveRes.downloads.photos.length > 0);
+    if (hasMedia) {
+      const isImg = photoDetected || loveRes.type === 'image';
       return {
         status: 'success',
         code: 200,
         platform: 'tiktok',
         source: loveRes.source,
-        type: loveRes.type,
+        type: isImg ? 'image' : 'video',
         id: loveRes.id,
         title: loveRes.title,
         cover: loveRes.cover,
         author: loveRes.author,
-        downloads: loveRes.downloads
+        downloads: {
+          video: isImg ? null : loveRes.downloads.video,
+          video_hd: isImg ? null : loveRes.downloads.video_hd,
+          audio: loveRes.downloads.audio,
+          photos: loveRes.downloads.photos,
+          media: loveRes.downloads.media
+        }
       };
     }
   } catch (e) {}
 
   const fbRes = await fallbackTikWM(resolved);
+  const isImg = photoDetected || fbRes.type === 'image';
   return {
     status: 'success',
     code: 200,
     platform: 'tiktok',
     source: fbRes.source,
-    type: fbRes.type,
+    type: isImg ? 'image' : 'video',
     id: fbRes.id,
     title: fbRes.title,
     cover: fbRes.cover,
     duration: fbRes.duration,
     author: fbRes.author,
-    downloads: fbRes.downloads,
+    downloads: {
+      video: isImg ? null : fbRes.downloads.video,
+      video_hd: isImg ? null : fbRes.downloads.video_hd,
+      video_watermark: isImg ? null : fbRes.downloads.video_watermark,
+      audio: fbRes.downloads.audio,
+      photos: fbRes.downloads.photos,
+      media: fbRes.downloads.media
+    },
     stats: fbRes.stats
   };
 }
 
 module.exports = {
   resolveTikTokUrl,
+  isPhotoUrl,
   scrapeSSSTik,
   scrapeLoveTik,
   fallbackTikWM,
