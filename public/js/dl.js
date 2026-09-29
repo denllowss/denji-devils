@@ -23,6 +23,7 @@
 
   var currentSlideIdx = 0;
   var currentSlideList = [];
+  var currentResultData = null;
 
   function showToast(msg, ms){
     if (!toastEl) return;
@@ -95,7 +96,7 @@
   async function processDownload(){
     var url = (input.value || '').trim();
     if (!url){
-      showToast('Masukkan link terlebih dahulu');
+      showToast('Masukkan tautan terlebih dahulu');
       input.focus();
       return;
     }
@@ -122,9 +123,10 @@
       var data = await res.json();
 
       if (!res.ok || data.status === 'error' || data.code >= 400){
-        throw new Error(data.message || 'Gagal memproses tautan. Pastikan akun/postingan bersifat publik.');
+        throw new Error(data.message || 'Gagal memproses tautan. Pastikan akun atau postingan bersifat publik.');
       }
 
+      currentResultData = data;
       renderResult(data, url);
     } catch(err){
       errorBox.textContent = err.message || 'Terjadi kesalahan saat memproses media.';
@@ -144,13 +146,25 @@
 
     var imgEl = document.getElementById('activeSlideImg');
     var badgeEl = document.getElementById('activeSlideBadge');
+    var activeDlBtn = document.getElementById('activeSlideDlBtn');
+
     if (imgEl) imgEl.src = safeUrl(currentSlideList[idx]);
     if (badgeEl) badgeEl.textContent = (idx + 1) + ' / ' + currentSlideList.length;
+    if (activeDlBtn){
+      activeDlBtn.href = safeUrl(currentSlideList[idx]);
+      activeDlBtn.setAttribute('download', 'slide-' + (idx + 1) + '.jpg');
+      var labelSpan = activeDlBtn.querySelector('span');
+      if (labelSpan) labelSpan.textContent = 'Unduh Foto Slide #' + (idx + 1);
+    }
 
     var thumbs = document.querySelectorAll('.res-thumb-item');
     thumbs.forEach(function(t, i){
-      if (i === idx) t.classList.add('active');
-      else t.classList.remove('active');
+      if (i === idx){
+        t.classList.add('active');
+        t.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      } else {
+        t.classList.remove('active');
+      }
     });
   }
 
@@ -177,7 +191,7 @@
     resPlatformTag.textContent = isTikTok ? 'TIKTOK' : 'INSTAGRAM';
 
     if (isTikTok){
-      resTypeTag.textContent = isPhoto ? 'FOTO SLIDE' : 'VIDEO HD';
+      resTypeTag.textContent = isPhoto ? 'SLIDE FOTO' : 'VIDEO HD';
     } else if (isStory){
       resTypeTag.textContent = 'STORY';
     } else if (isPhoto){
@@ -197,44 +211,55 @@
       resAvatar.src = safeUrl(data.cover);
       resAvatar.style.display = 'block';
     } else {
-      resAvatar.src = isTikTok ? 'https://iili.io/Ce4xFaa.webp' : 'https://i.imgur.com/THE7Eb7.jpeg';
+      resAvatar.style.display = 'none';
     }
 
-    if (data.title){
-      resTitle.textContent = data.title;
+    if (data.title && data.title.trim()){
+      resTitle.textContent = data.title.trim();
       resTitle.style.display = 'block';
     } else {
-      resTitle.textContent = '';
       resTitle.style.display = 'none';
     }
 
-    var mainVideo = (!isPhoto && (dl.video_hd || dl.video || mediaItems.find(function(m){ return m.type === 'video'; })?.url)) || null;
-    var mainAudio = dl.audio || mediaItems.find(function(m){ return m.type === 'audio'; })?.url || null;
+    var mainVideo = dl.video_hd || dl.video;
+    var mainAudio = dl.audio;
 
-    resMediaWrap.innerHTML = '';
-    resAudioWrap.innerHTML = '';
-    currentSlideList = [];
+    if (!mainVideo && mediaItems.length > 0){
+      var vItem = mediaItems.find(function(m){ return m.type === 'video'; });
+      if (vItem) mainVideo = vItem.url;
+    }
+
+    if (isPhoto && photos.length === 0 && mediaItems.length > 0){
+      mediaItems.forEach(function(m){
+        if (m.url && !photos.includes(m.url)) photos.push(m.url);
+      });
+    }
 
     if (isPhoto && photos.length > 0){
-      currentSlideList = photos;
       currentSlideIdx = 0;
+      currentSlideList = photos;
 
       var slideHtml =
         '<div class="res-slide-container">' +
-          '<div class="res-slide-stage">' +
-            '<span class="res-slide-badge" id="activeSlideBadge">1 / ' + photos.length + '</span>' +
-            '<img class="res-slide-img" id="activeSlideImg" src="' + esc(safeUrl(photos[0])) + '" alt="Slide 1">' +
-            (photos.length > 1 ?
-              '<button type="button" class="res-slide-nav res-slide-prev" id="prevSlideBtn" aria-label="Slide sebelumnya">' +
-                '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>' +
-              '</button>' +
-              '<button type="button" class="res-slide-nav res-slide-next" id="nextSlideBtn" aria-label="Slide berikutnya">' +
-                '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>' +
-              '</button>' : '') +
-          '</div>';
+          '<div class="res-slide-stage" id="slideStage">' +
+            '<span class="res-slide-badge" id="activeSlideBadge">1 / ' + photos.length + '</span>';
 
       if (photos.length > 1){
-        slideHtml += '<div class="res-thumbnails-strip">';
+        slideHtml +=
+          '<button type="button" class="res-slide-nav prev" id="prevSlideBtn" aria-label="Foto Sebelumnya">' +
+            '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>' +
+          '</button>' +
+          '<button type="button" class="res-slide-nav next" id="nextSlideBtn" aria-label="Foto Selanjutnya">' +
+            '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>' +
+          '</button>';
+      }
+
+      slideHtml +=
+        '<img class="res-slide-img" id="activeSlideImg" src="' + esc(safeUrl(photos[0])) + '" alt="Slide 1">' +
+      '</div>';
+
+      if (photos.length > 1){
+        slideHtml += '<div class="res-thumbs">';
         photos.forEach(function(imgUrl, idx){
           slideHtml +=
             '<div class="res-thumb-item' + (idx === 0 ? ' active' : '') + '" data-idx="' + idx + '">' +
@@ -259,6 +284,23 @@
           setSlide(idx);
         });
       });
+
+      var stageEl = document.getElementById('slideStage');
+      if (stageEl){
+        var touchStartX = 0;
+        var touchEndX = 0;
+        stageEl.addEventListener('touchstart', function(e){
+          touchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
+        stageEl.addEventListener('touchend', function(e){
+          touchEndX = e.changedTouches[0].screenX;
+          if (touchStartX - touchEndX > 45){
+            setSlide(currentSlideIdx + 1);
+          } else if (touchEndX - touchStartX > 45){
+            setSlide(currentSlideIdx - 1);
+          }
+        }, { passive: true });
+      }
     } else if (mainVideo){
       var posterAttr = data.cover ? ' poster="' + esc(safeUrl(data.cover)) + '"' : '';
       resMediaWrap.innerHTML =
@@ -268,7 +310,7 @@
         '</video>';
     } else if (data.cover){
       resMediaWrap.innerHTML =
-        '<img src="' + esc(safeUrl(data.cover)) + '" alt="Cover preview" style="width:100%; max-height:360px; object-fit:contain; background:#111;">';
+        '<img src="' + esc(safeUrl(data.cover)) + '" alt="Cover preview" style="width:100%; max-height:360px; object-fit:contain; background:#0b0f17;">';
     }
 
     if (mainAudio){
@@ -293,13 +335,11 @@
             '<span>Unduh Foto HD</span>' +
           '</a>';
       } else {
-        photos.forEach(function(pUrl, idx){
-          actionsHtml +=
-            '<a href="' + esc(safeUrl(pUrl)) + '" target="_blank" rel="noopener" download="slide-' + (idx + 1) + '.jpg" class="res-btn res-btn-secondary">' +
-              '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>' +
-              '<span>Unduh Slide Foto #' + (idx + 1) + '</span>' +
-            '</a>';
-        });
+        actionsHtml +=
+          '<a href="' + esc(safeUrl(photos[0])) + '" target="_blank" rel="noopener" download="slide-1.jpg" class="res-btn res-btn-primary" id="activeSlideDlBtn">' +
+            '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>' +
+            '<span>Unduh Foto Slide #1</span>' +
+          '</a>';
       }
     } else if (mainVideo){
       var vDl = dl.video_hd || dl.video;
@@ -320,16 +360,16 @@
     }
 
     actionsHtml +=
-      '<button type="button" class="res-btn res-btn-outline" id="copyDirectBtn">' +
-        '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>' +
-        '<span>Salin Tautan Media</span>' +
-      '</button>';
-
-    actionsHtml +=
-      '<button type="button" class="res-btn res-btn-outline" id="resetDlBtn">' +
-        '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>' +
-        '<span>Unduh Tautan Lain</span>' +
-      '</button>';
+      '<div class="res-btn-grid">' +
+        '<button type="button" class="res-btn res-btn-outline" id="copyDirectBtn">' +
+          '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>' +
+          '<span>Salin Tautan</span>' +
+        '</button>' +
+        '<button type="button" class="res-btn res-btn-outline" id="resetDlBtn">' +
+          '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>' +
+          '<span>Tautan Lain</span>' +
+        '</button>' +
+      '</div>';
 
     resActions.innerHTML = actionsHtml;
 

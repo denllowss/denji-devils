@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>Denji Downloader | TikTok & Instagram Downloader</title>
-<meta name="description" content="Unduh video, audio MP3, foto slide, reel, story, dan carousel dari TikTok dan Instagram secara gratis, cepat, tanpa watermark dalam kualitas HD.">
+<title>Denji Downloader | TikTok & Instagram HD</title>
+<meta name="description" content="Unduh video, audio MP3, foto slide, reels, story, dan carousel dari TikTok dan Instagram secara gratis, cepat, tanpa watermark dalam kualitas HD.">
 <meta name="robots" content="index, follow">
 <meta name="theme-color" content="#c8d97c">
 <meta property="og:type" content="website">
@@ -33,9 +33,9 @@
   background: var(--button-style-background);
   border: 2px solid var(--button-style-border-color);
   border-radius: var(--link-radius);
-  box-shadow: var(--button-style-shadow);
-  padding: 16px;
-  margin-bottom: 20px;
+  box-shadow: 3px 4px 0 var(--button-style-shadow-color);
+  padding: 20px 18px 18px;
+  margin-bottom: 22px;
   transition: transform var(--t-fast) var(--ease), box-shadow var(--t-fast) var(--ease);
 }
 
@@ -44,10 +44,55 @@
   box-shadow: 4px 6px 0 var(--button-style-shadow-color);
 }
 
+.dl-card-head{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1.5px dashed rgba(50, 60, 31, 0.18);
+}
+
+.dl-platform-pills{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dl-platform-pill{
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 9px;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1.5px solid var(--button-style-border-color);
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #1e2330;
+  box-shadow: 1px 2px 0 rgba(0, 0, 0, 0.08);
+}
+
+.dl-platform-pill svg{
+  width: 13px;
+  height: 13px;
+}
+
+.dl-quality-tag{
+  font-size: 10.5px;
+  font-weight: 800;
+  color: #2e381b;
+  background: rgba(50, 60, 31, 0.1);
+  padding: 3px 8px;
+  border-radius: 8px;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
 .dl-form{
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
 }
 
 .dl-input-group{
@@ -57,21 +102,22 @@
   background: #ffffff;
   border: 2px solid var(--button-style-border-color);
   border-radius: 20px;
-  padding: 4px 6px 4px 12px;
+  padding: 4px 6px 4px 14px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.04);
   transition: border-color var(--t-fast) var(--ease), box-shadow var(--t-fast) var(--ease);
 }
 
 .dl-input-group:focus-within{
   border-color: #1e2330;
-  box-shadow: 0 0 0 3px rgba(50, 60, 31, 0.15);
+  box-shadow: 0 0 0 3px rgba(50, 60, 31, 0.18);
 }
 
 .dl-input-icon{
   flex-shrink: 0;
-  width: 18px;
-  height: 18px;
-  color: #718096;
-  margin-right: 8px;
+  width: 19px;
+  height: 19px;
+  color: #4a5568;
+  margin-right: 10px;
 }
 
 .dl-input{
@@ -81,34 +127,42 @@
   border: none;
   background: transparent;
   font-family: inherit;
-  font-size: 13.5px;
+  font-size: 14px;
   font-weight: 500;
   color: #1e2330;
   outline: none;
-  padding: 8px 0;
+  padding: 10px 0;
 }
 
 .dl-input::placeholder{
-  color: #a0aec0;
+  color: #94a3b8;
   font-weight: 400;
+  font-size: 13px;
 }
 
 .dl-input-btns{
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
 }
 
 .dl-clear-btn{
   display: none;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
+  width: 26px;
+  height: 26px;
   border-radius: 50%;
-  background: #edf2f7;
-  color: #718096;
+  background: #e2e8f0;
+  color: #475569;
+  border: none;
   cursor: pointer;
+  transition: all var(--t-fast) var(--ease);
+}
+
+.dl-clear-btn:hover{
+  background: #cbd5e1;
+  color: #0f172a;
 }
 
 .dl-clear-btn.active{
@@ -120,32 +174,33 @@
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  background: #f7fafc;
-  border: 1.5px solid #cbd5e0;
+  background: #ffffff;
+  border: 1.5px solid var(--button-style-border-color);
   border-radius: 14px;
-  padding: 6px 11px;
-  font-size: 11.5px;
+  padding: 6px 12px;
+  font-size: 12px;
   font-weight: 700;
-  color: #4a5568;
+  color: #1e2330;
   cursor: pointer;
+  box-shadow: 1px 2px 0 rgba(0, 0, 0, 0.08);
   transition: all var(--t-fast) var(--ease);
 }
 
 .dl-paste-btn:hover{
-  background: #edf2f7;
-  color: #1a202c;
-  border-color: #a0aec0;
+  background: #f1fcbd;
+  transform: translateY(-1px);
 }
 
 .dl-paste-btn:active{
-  transform: scale(0.96);
+  transform: translate(1px, 1px);
+  box-shadow: 0 0 0 transparent;
 }
 
 .dl-submit-btn{
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 9px;
   width: 100%;
   background: var(--button-style-border-color);
   color: #f1fcbd;
@@ -153,15 +208,16 @@
   border-radius: 22px;
   padding: 13px 20px;
   font-size: 14.5px;
-  font-weight: 700;
+  font-weight: 800;
+  letter-spacing: 0.2px;
   cursor: pointer;
-  box-shadow: 2px 3px 0 rgba(0, 0, 0, 0.15);
+  box-shadow: 2px 3px 0 rgba(0, 0, 0, 0.2);
   transition: all var(--t-fast) var(--ease);
 }
 
 .dl-submit-btn:hover:not(:disabled){
   transform: translateY(-2px);
-  box-shadow: 3px 5px 0 rgba(0, 0, 0, 0.2);
+  box-shadow: 3px 5px 0 rgba(0, 0, 0, 0.25);
   background: #232a15;
 }
 
@@ -180,8 +236,8 @@
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  gap: 5px;
-  margin-top: 6px;
+  gap: 6px;
+  margin-top: 4px;
 }
 
 .dl-badge{
@@ -191,8 +247,8 @@
   background: rgba(255, 255, 255, 0.7);
   border: 1px solid rgba(50, 60, 31, 0.2);
   border-radius: 12px;
-  padding: 3px 8px;
-  font-size: 10.5px;
+  padding: 3.5px 9px;
+  font-size: 11px;
   font-weight: 600;
   color: var(--bodyText);
 }
@@ -202,9 +258,14 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 24px;
+  padding: 24px 16px;
   gap: 12px;
   text-align: center;
+  background: rgba(255, 255, 255, 0.65);
+  border: 2px dashed var(--button-style-border-color);
+  border-radius: var(--link-radius);
+  margin-bottom: 20px;
+  animation: popIn 0.3s var(--ease-pop) both;
 }
 
 .dl-loader.active{
@@ -212,8 +273,8 @@
 }
 
 .dl-spinner{
-  width: 36px;
-  height: 36px;
+  width: 38px;
+  height: 38px;
   border: 3.5px solid rgba(50, 60, 31, 0.2);
   border-top-color: var(--button-style-border-color);
   border-radius: 50%;
@@ -224,14 +285,25 @@
   to { transform: rotate(360deg); }
 }
 
+.dl-loader-text{
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #1e2330;
+}
+
+.dl-loader-sub{
+  font-size: 11.5px;
+  color: #556040;
+}
+
 .dl-result{
   display: none;
   background: #ffffff;
   border: 2px solid var(--button-style-border-color);
   border-radius: var(--link-radius);
-  box-shadow: var(--button-style-shadow);
-  padding: 16px;
-  margin-bottom: 20px;
+  box-shadow: 3px 4px 0 var(--button-style-shadow-color);
+  padding: 18px 16px;
+  margin-bottom: 22px;
   animation: popIn 0.35s var(--ease-pop) both;
 }
 
@@ -242,18 +314,18 @@
 .res-header{
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   padding-bottom: 12px;
   border-bottom: 1.5px solid #edf2f7;
   margin-bottom: 12px;
 }
 
 .res-avatar{
-  width: 42px;
-  height: 42px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   object-fit: cover;
-  border: 1.5px solid var(--button-style-border-color);
+  border: 2px solid var(--button-style-border-color);
   background: #f7fafc;
   flex-shrink: 0;
 }
@@ -264,39 +336,42 @@
 }
 
 .res-author-name{
-  font-size: 13.5px;
-  font-weight: 700;
-  color: #1a202c;
+  font-size: 14px;
+  font-weight: 800;
+  color: #0f172a;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  line-height: 1.25;
 }
 
 .res-author-user{
-  font-size: 11.5px;
-  color: #718096;
+  font-size: 12px;
+  font-weight: 500;
+  color: #64748b;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  margin-top: 2px;
 }
 
 .res-badge-wrap{
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 3px;
+  gap: 4px;
   flex-shrink: 0;
 }
 
 .res-platform-tag{
   display: inline-flex;
   align-items: center;
-  gap: 3px;
-  padding: 3px 7px;
+  gap: 4px;
+  padding: 3.5px 8px;
   border-radius: 8px;
   font-size: 10px;
   font-weight: 800;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.4px;
   text-transform: uppercase;
 }
 
@@ -313,9 +388,10 @@
 .res-type-tag{
   font-size: 9.5px;
   font-weight: 700;
-  color: #4a5568;
-  background: #edf2f7;
-  padding: 2px 6px;
+  color: #334155;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  padding: 2px 7px;
   border-radius: 6px;
   text-transform: uppercase;
 }
@@ -323,8 +399,12 @@
 .res-title{
   font-size: 12.5px;
   line-height: 1.45;
-  color: #2d3748;
-  margin-bottom: 12px;
+  color: #334155;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 9px 12px;
+  margin-bottom: 14px;
   word-break: break-word;
   max-height: 68px;
   overflow-y: auto;
@@ -334,9 +414,9 @@
   position: relative;
   border-radius: 16px;
   overflow: hidden;
-  background: #000000;
+  background: #0b0f17;
   margin-bottom: 14px;
-  border: 1.5px solid #e2e8f0;
+  border: 2px solid var(--button-style-border-color);
 }
 
 .res-video{
@@ -350,7 +430,7 @@
 .res-slide-container{
   position: relative;
   width: 100%;
-  background: #111111;
+  background: #0f172a;
   display: flex;
   flex-direction: column;
 }
@@ -358,11 +438,11 @@
 .res-slide-stage{
   position: relative;
   width: 100%;
-  height: 320px;
+  height: 340px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #111111;
+  background: #020617;
   overflow: hidden;
 }
 
@@ -371,54 +451,69 @@
   max-height: 100%;
   object-fit: contain;
   pointer-events: auto!important;
+  user-select: none;
 }
 
 .res-slide-badge{
   position: absolute;
   top: 10px;
   right: 10px;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   color: #ffffff;
-  padding: 3px 9px;
-  border-radius: 12px;
   font-size: 11px;
   font-weight: 700;
-  backdrop-filter: blur(4px);
-  z-index: 2;
+  padding: 4px 10px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  z-index: 5;
 }
 
 .res-slide-nav{
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  width: 32px;
-  height: 32px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.85);
-  color: #1a202c;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  color: #ffffff;
+  border: 1.5px solid rgba(255, 255, 255, 0.25);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  z-index: 3;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  z-index: 6;
   transition: all var(--t-fast) var(--ease);
 }
 
 .res-slide-nav:hover{
-  background: #ffffff;
+  background: rgba(0, 0, 0, 0.85);
   transform: translateY(-50%) scale(1.08);
 }
 
-.res-slide-prev{ left: 8px; }
-.res-slide-next{ right: 8px; }
+.res-slide-nav:active{
+  transform: translateY(-50%) scale(0.94);
+}
 
-.res-thumbnails-strip{
+.res-slide-nav.prev{
+  left: 10px;
+}
+
+.res-slide-nav.next{
+  right: 10px;
+}
+
+.res-thumbs{
   display: flex;
-  gap: 6px;
-  padding: 8px;
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
+  background: #0f172a;
   overflow-x: auto;
-  background: #1a1a1a;
   scrollbar-width: thin;
 }
 
@@ -437,6 +532,7 @@
 .res-thumb-item.active{
   border-color: #f1fcbd;
   opacity: 1;
+  transform: scale(1.05);
 }
 
 .res-thumb-img{
@@ -448,42 +544,43 @@
 .res-audio-bar{
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 14px;
   padding: 8px 12px;
-  background: #f7fafc;
-  border: 1.5px solid #edf2f7;
-  border-radius: 12px;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 
 .res-audio-icon{
-  width: 18px;
-  height: 18px;
-  color: #4a5568;
   flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  color: var(--button-style-border-color);
 }
 
 .res-audio-player{
   flex: 1;
-  height: 32px;
+  height: 34px;
   outline: none;
 }
 
 .res-actions{
   display: flex;
   flex-direction: column;
-  gap: 7px;
+  gap: 10px;
 }
 
 .res-btn{
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
   width: 100%;
-  padding: 11px 16px;
-  border-radius: 16px;
-  font-size: 13px;
+  padding: 12px 18px;
+  border-radius: 18px;
+  font-family: inherit;
+  font-size: 13.5px;
   font-weight: 700;
   text-decoration: none;
   cursor: pointer;
@@ -494,13 +591,13 @@
 .res-btn-primary{
   background: var(--button-style-border-color);
   color: #f1fcbd;
-  box-shadow: 2px 3px 0 rgba(0, 0, 0, 0.15);
+  box-shadow: 2px 3px 0 rgba(0, 0, 0, 0.2);
 }
 
 .res-btn-primary:hover{
   background: #232a15;
   transform: translateY(-2px);
-  box-shadow: 3px 4px 0 rgba(0, 0, 0, 0.2);
+  box-shadow: 3px 4px 0 rgba(0, 0, 0, 0.25);
 }
 
 .res-btn-secondary{
@@ -510,23 +607,32 @@
 }
 
 .res-btn-secondary:hover{
-  background: #e0eab0;
+  background: #e4efa5;
   transform: translateY(-2px);
+}
+
+.res-btn-grid{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
 }
 
 .res-btn-outline{
   background: #ffffff;
-  color: #2d3748;
-  border-color: #cbd5e0;
+  color: #334155;
+  border-color: #cbd5e1;
+  font-size: 12.5px;
+  padding: 10px 14px;
 }
 
 .res-btn-outline:hover{
-  background: #f7fafc;
-  border-color: #a0aec0;
+  background: #f8fafc;
+  border-color: #94a3b8;
+  color: #0f172a;
 }
 
 .res-btn:active{
-  transform: scale(0.98);
+  transform: translate(1px, 1px);
 }
 
 .dl-error-box{
@@ -534,39 +640,48 @@
   background: #fff5f5;
   border: 2px solid #feb2b2;
   border-radius: 16px;
-  padding: 12px 14px;
+  padding: 12px 16px;
   color: #c53030;
-  font-size: 12.5px;
+  font-size: 13px;
   font-weight: 600;
-  margin-bottom: 16px;
+  margin-bottom: 18px;
   text-align: center;
-  line-height: 1.4;
+  line-height: 1.45;
+  box-shadow: 2px 3px 0 rgba(197, 48, 48, 0.15);
 }
 
 .dl-error-box.active{
   display: block;
+  animation: popIn 0.3s var(--ease-pop) both;
 }
 
 .nav-home-btn{
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  margin: 10px auto 20px;
-  padding: 8px 18px;
-  background: rgba(255, 255, 255, 0.7);
-  border: 1.5px solid var(--button-style-border-color);
+  gap: 7px;
+  margin: 10px auto 26px;
+  padding: 10px 20px;
+  background: rgba(255, 255, 255, 0.85);
+  border: 2px solid var(--button-style-border-color);
   border-radius: 20px;
-  font-size: 12.5px;
-  font-weight: 700;
+  font-size: 13px;
+  font-weight: 800;
   color: var(--bodyText);
-  box-shadow: 2px 2px 0 var(--button-style-border-color);
+  text-decoration: none;
+  box-shadow: 2px 3px 0 var(--button-style-border-color);
   transition: all var(--t-fast) var(--ease);
 }
 
 .nav-home-btn:hover{
   background: #ffffff;
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  box-shadow: 3px 4px 0 var(--button-style-border-color);
+}
+
+.nav-home-btn:active{
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0 var(--button-style-border-color);
 }
 </style>
 </head>
@@ -576,7 +691,7 @@
   <div class="frame">
     <div class="profile">
       <div class="topbar">
-        <a href="/" class="icon-btn" aria-label="Kembali ke Beranda">
+        <a href="/" class="icon-btn" aria-label="Kembali ke Beranda" title="Kembali ke Beranda">
           <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true">
             <path d="M224,128a8,8,0,0,1-8,8H59.31l58.35,58.34a8,8,0,0,1-11.32,11.32l-72-72a8,8,0,0,1,0-11.32l72-72a8,8,0,0,1,11.32,11.32L59.31,120H216A8,8,0,0,1,224,128Z"/>
           </svg>
@@ -602,19 +717,31 @@
           <span>Media Downloader</span>
         </div>
 
-        <div class="bio">Unduh video & foto slide TikTok dan Instagram (Reels, Story, Carousel) gratis tanpa watermark dalam resolusi penuh HD.</div>
-
         <div class="dl-wrap">
           <div class="dl-card">
+            <div class="dl-card-head">
+              <div class="dl-platform-pills">
+                <span class="dl-platform-pill">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 3 15.68 6.34 6.34 0 0 0 9.33 22a6.34 6.34 0 0 0 6.34-6.32V8.75a8.16 8.16 0 0 0 4.92 1.63V6.93a4.85 4.85 0 0 1-1-.24z"/></svg>
+                  TikTok
+                </span>
+                <span class="dl-platform-pill">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                  Instagram
+                </span>
+              </div>
+              <span class="dl-quality-tag">HD No-Watermark</span>
+            </div>
+
             <form class="dl-form" id="dlForm" onsubmit="return false;">
               <div class="dl-input-group">
-                <svg class="dl-input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <svg class="dl-input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
                 </svg>
-                <input type="url" class="dl-input" id="dlInput" placeholder="Tempel link TikTok atau Instagram..." required autocomplete="off" spellcheck="false">
+                <input type="url" class="dl-input" id="dlInput" placeholder="Tempel tautan TikTok atau Instagram..." required autocomplete="off" spellcheck="false">
                 <div class="dl-input-btns">
-                  <button type="button" class="dl-clear-btn" id="clearBtn" aria-label="Hapus teks">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <button type="button" class="dl-clear-btn" id="clearBtn" aria-label="Hapus teks" title="Hapus teks">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                       <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
                   </button>
@@ -628,17 +755,17 @@
               </div>
 
               <button type="submit" class="dl-submit-btn" id="submitBtn">
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
                 </svg>
-                <span>Download Media</span>
+                <span>Unduh Media</span>
               </button>
 
               <div class="dl-badges">
-                <span class="dl-badge">TikTok Video (No WM)</span>
-                <span class="dl-badge">TikTok Slide (Foto)</span>
-                <span class="dl-badge">IG Reels / Story</span>
-                <span class="dl-badge">IG Post / Carousel</span>
+                <span class="dl-badge">Video HD</span>
+                <span class="dl-badge">Slide Foto</span>
+                <span class="dl-badge">Reels & Story</span>
+                <span class="dl-badge">Carousel</span>
                 <span class="dl-badge">Audio MP3</span>
               </div>
             </form>
@@ -648,23 +775,24 @@
 
           <div class="dl-loader" id="loader">
             <div class="dl-spinner"></div>
-            <div style="font-size: 13px; font-weight: 700; color: #2c351e;">Sedang memproses media, harap tunggu...</div>
+            <div class="dl-loader-text">Memproses media...</div>
+            <div class="dl-loader-sub">Mengambil kualitas terbaik tanpa watermark</div>
           </div>
 
           <div class="dl-result" id="resultCard">
             <div class="res-header">
-              <img class="res-avatar" id="resAvatar" src="https://i.imgur.com/THE7Eb7.jpeg" alt="Author">
+              <img class="res-avatar" id="resAvatar" src="" alt="Avatar" loading="lazy">
               <div class="res-author-info">
-                <div class="res-author-name" id="resName">Creator Name</div>
+                <div class="res-author-name" id="resName">Creator</div>
                 <div class="res-author-user" id="resUser">@username</div>
               </div>
               <div class="res-badge-wrap">
-                <div class="res-platform-tag" id="resPlatformTag">TikTok</div>
-                <div class="res-type-tag" id="resTypeTag">Video</div>
+                <span class="res-platform-tag" id="resPlatformTag">TIKTOK</span>
+                <span class="res-type-tag" id="resTypeTag">VIDEO HD</span>
               </div>
             </div>
 
-            <div class="res-title" id="resTitle"></div>
+            <div class="res-title" id="resTitle" style="display:none;"></div>
 
             <div class="res-media-wrap" id="resMediaWrap"></div>
 
@@ -675,10 +803,10 @@
 
           <div style="text-align: center;">
             <a href="/" class="nav-home-btn">
-              <svg width="15" height="15" viewBox="0 0 256 256" fill="currentColor">
-                <path d="M218.83,103.77l-80-75.48a1.14,1.14,0,0,1-.11-.11,16,16,0,0,0-21.53,0l-.11.11L37.17,103.77A16,16,0,0,0,32,115.55V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V115.55A16,16,0,0,0,218.83,103.77ZM208,208H48V115.55l80-75.48,80,75.48V208Z"/>
+              <svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor">
+                <path d="M224,128a8,8,0,0,1-8,8H59.31l58.35,58.34a8,8,0,0,1-11.32,11.32l-72-72a8,8,0,0,1,0-11.32l72-72a8,8,0,0,1,11.32,11.32L59.31,120H216A8,8,0,0,1,224,128Z"/>
               </svg>
-              <span>Halaman Utama</span>
+              <span>Kembali ke Beranda</span>
             </a>
           </div>
         </div>
