@@ -163,7 +163,14 @@
     var photos = Array.isArray(dl.photos) ? dl.photos : [];
     var mediaItems = Array.isArray(dl.media) ? dl.media : [];
 
-    var isPhoto = rawType === 'image' || rawType === 'carousel' || photos.length > 0 || (isTikTok && inputUrl.includes('/photo/'));
+    var hasVideo = !!(dl.video_hd || dl.video || mediaItems.find(function(m){ return m.type === 'video'; })?.url);
+    var hasPhotos = photos.length > 0;
+
+    var isPhoto = (rawType === 'image' || rawType === 'carousel' || (isTikTok && inputUrl.includes('/photo/')) || (hasPhotos && !hasVideo));
+    if (hasVideo && !inputUrl.includes('/photo/') && rawType !== 'image') {
+      isPhoto = false;
+    }
+
     var isStory = rawType === 'story' || inputUrl.includes('/stories/');
 
     resPlatformTag.className = 'res-platform-tag ' + (isTikTok ? 'tiktok' : 'instagram');
