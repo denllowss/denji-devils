@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
 const { downloadTikTok } = require('./src/services/tiktok');
+const { downloadInstagram } = require('./src/services/instagram');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -10,6 +11,17 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(express.static(path.join(__dirname, 'public')));
 
+function detectPlatform(url) {
+  const str = String(url || '').toLowerCase();
+  if (str.includes('tiktok.com') || str.includes('douyin.com')) {
+    return 'tiktok';
+  }
+  if (str.includes('instagram.com') || str.includes('instagr.am')) {
+    return 'instagram';
+  }
+  return 'unknown';
+}
+
 async function handleDownload(req, res) {
   const url = req.query.url || req.body?.url;
 
@@ -17,9 +29,9 @@ async function handleDownload(req, res) {
     return res.status(400).json({
       status: 'error',
       code: 400,
-      message: 'Parameter URL TikTok wajib diisi',
+      message: 'Parameter URL (TikTok / Instagram) wajib diisi',
       usage: {
-        get: '/dl?url=https://www.tiktok.com/@username/video/1234567890',
+        get: '/dl?url=https://www.instagram.com/reel/DWMHED1jVvj/',
         post: {
           endpoint: '/dl',
           headers: { 'Content-Type': 'application/json' },
@@ -29,14 +41,27 @@ async function handleDownload(req, res) {
     });
   }
 
+  const platform = detectPlatform(url);
+
   try {
-    const result = await downloadTikTok(url);
+    let result;
+    if (platform === 'instagram') {
+      result = await downloadInstagram(url);
+    } else if (platform === 'tiktok') {
+      result = await downloadTikTok(url);
+    } else {
+      try {
+        result = await downloadInstagram(url);
+      } catch (e) {
+        result = await downloadTikTok(url);
+      }
+    }
     return res.status(200).json(result);
   } catch (err) {
     return res.status(500).json({
       status: 'error',
       code: 500,
-      message: err.message || 'Gagal memproses unduhan TikTok'
+      message: err.message || 'Gagal memproses unduhan media'
     });
   }
 }

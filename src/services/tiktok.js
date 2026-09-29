@@ -144,6 +144,67 @@ async function scrapeSSSTik(tiktokUrl) {
   };
 }
 
+async function scrapeLoveTik(tiktokUrl) {
+  const res = await axios.post(
+    'https://lovetik.com/api/ajax/search',
+    new URLSearchParams({ query: tiktokUrl }).toString(),
+    {
+      headers: {
+        ...DEFAULT_HEADERS,
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Referer': 'https://lovetik.com/',
+        'Origin': 'https://lovetik.com'
+      },
+      timeout: 15000
+    }
+  );
+
+  const data = res.data;
+  if (!data || data.status !== 'ok' || !data.links) {
+    throw new Error(data?.mess || 'Gagal memproses via Lovetik');
+  }
+
+  const links = data.links || [];
+  let videoSd = null;
+  let videoHd = null;
+  let audio = null;
+
+  links.forEach((l) => {
+    const t = (l.t || '').toLowerCase();
+    const ft = (l.ft || '').toLowerCase();
+    const a = l.a || '';
+    if (ft === 'mp3' || t.includes('audio')) {
+      audio = a;
+    } else if (t.includes('hd')) {
+      videoHd = a;
+    } else if (ft === 'mp4' || t.includes('watermark') || t.includes('download')) {
+      if (!videoSd) videoSd = a;
+    }
+  });
+
+  const photos = Array.isArray(data.images) ? data.images : undefined;
+  const isImage = photos && photos.length > 0;
+
+  return {
+    source: 'lovetik.com',
+    type: isImage ? 'image' : 'video',
+    id: data.vid || null,
+    title: data.desc || '',
+    cover: data.cover || null,
+    author: {
+      name: data.author || '',
+      username: data.author ? `@${data.author}` : '',
+      avatar: data.author_avatar || ''
+    },
+    downloads: {
+      video: videoSd || videoHd || null,
+      video_hd: videoHd || videoSd || null,
+      audio: audio || null,
+      photos: photos
+    }
+  };
+}
+
 async function fallbackTikWM(tiktokUrl) {
   const apiUrl = `https://www.tikwm.com/api/?url=${encodeURIComponent(tiktokUrl)}&hd=1`;
   const res = await axios.get(apiUrl, { timeout: 15000, headers: DEFAULT_HEADERS });
@@ -208,44 +269,35 @@ async function downloadTikTok(rawUrl) {
   try {
     const sssRes = await scrapeSSSTik(resolved);
     if (sssRes.downloads.video || (sssRes.downloads.photos && sssRes.downloads.photos.length > 0)) {
-      try {
-        const meta = await fallbackTikWM(resolved);
-        return {
-          status: 'success',
-          code: 200,
-          source: 'ssstik.io',
-          type: sssRes.type || meta.type,
-          id: meta.id,
-          title: sssRes.title || meta.title,
-          cover: sssRes.cover || meta.cover,
-          duration: meta.duration,
-          author: {
-            name: sssRes.author?.name || meta.author?.name,
-            username: meta.author?.username || '',
-            avatar: sssRes.author?.avatar || meta.author?.avatar
-          },
-          downloads: {
-            video: sssRes.downloads.video || meta.downloads.video,
-            video_hd: sssRes.downloads.video_hd || meta.downloads.video_hd || sssRes.downloads.video,
-            video_watermark: meta.downloads.video_watermark,
-            audio: sssRes.downloads.audio || meta.downloads.audio,
-            photos: sssRes.downloads.photos || meta.downloads.photos,
-            live_photos: meta.downloads.live_photos
-          },
-          stats: meta.stats
-        };
-      } catch (e) {
-        return {
-          status: 'success',
-          code: 200,
-          source: 'ssstik.io',
-          type: sssRes.type,
-          title: sssRes.title,
-          cover: sssRes.cover,
-          author: sssRes.author,
-          downloads: sssRes.downloads
-        };
-      }
+      return {
+        status: 'success',
+        code: 200,
+        platform: 'tiktok',
+        source: 'ssstik.io',
+        type: sssRes.type,
+        title: sssRes.title,
+        cover: sssRes.cover,
+        author: sssRes.author,
+        downloads: sssRes.downloads
+      };
+    }
+  } catch (e) {}
+
+  try {
+    const loveRes = await scrapeLoveTik(resolved);
+    if (loveRes.downloads.video || (loveRes.downloads.photos && loveRes.downloads.photos.length > 0)) {
+      return {
+        status: 'success',
+        code: 200,
+        platform: 'tiktok',
+        source: loveRes.source,
+        type: loveRes.type,
+        id: loveRes.id,
+        title: loveRes.title,
+        cover: loveRes.cover,
+        author: loveRes.author,
+        downloads: loveRes.downloads
+      };
     }
   } catch (e) {}
 
@@ -253,6 +305,7 @@ async function downloadTikTok(rawUrl) {
   return {
     status: 'success',
     code: 200,
+    platform: 'tiktok',
     source: fbRes.source,
     type: fbRes.type,
     id: fbRes.id,
@@ -268,5 +321,7 @@ async function downloadTikTok(rawUrl) {
 module.exports = {
   resolveTikTokUrl,
   scrapeSSSTik,
+  scrapeLoveTik,
+  fallbackTikWM,
   downloadTikTok
 };
