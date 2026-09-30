@@ -48,6 +48,23 @@ function extractUsername(url) {
   return null;
 }
 
+async function fetchInstagramOembed(url) {
+  try {
+    const res = await axios.get(`https://www.instagram.com/api/v1/oembed/?url=${encodeURIComponent(url)}`, {
+      headers: DEFAULT_HEADERS,
+      timeout: 8000
+    });
+    if (res.status === 200 && res.data) {
+      return {
+        title: res.data.title || '',
+        authorName: res.data.author_name || '',
+        thumbnail: res.data.thumbnail_url || null
+      };
+    }
+  } catch (e) {}
+  return null;
+}
+
 function decodeBase(d, e, f) {
   const g = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+/';
   const h = g.slice(0, e);
@@ -301,7 +318,15 @@ async function scrapeSaveClip(igUrl) {
     type = isStory ? 'story' : (isCarousel ? 'carousel' : 'image');
   }
 
-  const uname = extractUsername(cleanUrl);
+  let uname = extractUsername(cleanUrl);
+  let title = '';
+  const oembed = await fetchInstagramOembed(cleanUrl);
+  if (oembed) {
+    if (oembed.authorName && !uname) uname = oembed.authorName;
+    if (oembed.title) title = oembed.title;
+    if (oembed.thumbnail && !cover) cover = oembed.thumbnail;
+  }
+
   let authorAvatar = null;
   if (uname) {
     authorAvatar = await fetchInstagramProfile(uname);
@@ -310,10 +335,11 @@ async function scrapeSaveClip(igUrl) {
   return {
     source: 'saveclip.app',
     type: type,
+    title: title,
     cover: cover,
     author: {
-      name: uname || 'Instagram Creator',
-      username: uname ? `@${uname}` : '',
+      name: uname || (oembed?.authorName || 'Instagram Creator'),
+      username: uname ? `@${uname}` : (oembed?.authorName ? `@${oembed.authorName}` : ''),
       avatar: authorAvatar || cover || null
     },
     downloads: {
@@ -451,7 +477,15 @@ async function scrapeSnapInsta(igUrl) {
     type = isStory ? 'story' : (isCarousel ? 'carousel' : 'image');
   }
 
-  const uname = extractUsername(cleanUrl);
+  let uname = extractUsername(cleanUrl);
+  let title = '';
+  const oembed = await fetchInstagramOembed(cleanUrl);
+  if (oembed) {
+    if (oembed.authorName && !uname) uname = oembed.authorName;
+    if (oembed.title) title = oembed.title;
+    if (oembed.thumbnail && !cover) cover = oembed.thumbnail;
+  }
+
   let authorAvatar = null;
   if (uname) {
     authorAvatar = await fetchInstagramProfile(uname);
@@ -460,10 +494,11 @@ async function scrapeSnapInsta(igUrl) {
   return {
     source: 'snapinsta.to',
     type: type,
+    title: title,
     cover: cover,
     author: {
-      name: uname || 'Instagram Creator',
-      username: uname ? `@${uname}` : '',
+      name: uname || (oembed?.authorName || 'Instagram Creator'),
+      username: uname ? `@${uname}` : (oembed?.authorName ? `@${oembed.authorName}` : ''),
       avatar: authorAvatar || cover || null
     },
     downloads: {
@@ -565,7 +600,15 @@ async function scrapeVideoDropper(igUrl, endpoint = 'allinone') {
     type = 'carousel';
   }
 
-  const uname = extractUsername(cleanUrl);
+  let uname = extractUsername(cleanUrl);
+  let title = '';
+  const oembed = await fetchInstagramOembed(cleanUrl);
+  if (oembed) {
+    if (oembed.authorName && !uname) uname = oembed.authorName;
+    if (oembed.title) title = oembed.title;
+    if (oembed.thumbnail && !cover) cover = oembed.thumbnail;
+  }
+
   let authorAvatar = null;
   if (uname) {
     authorAvatar = await fetchInstagramProfile(uname);
@@ -574,10 +617,11 @@ async function scrapeVideoDropper(igUrl, endpoint = 'allinone') {
   return {
     source: 'videodropper.app',
     type: type,
+    title: title,
     cover: cover,
     author: {
-      name: uname || 'Instagram Creator',
-      username: uname ? `@${uname}` : '',
+      name: uname || (oembed?.authorName || 'Instagram Creator'),
+      username: uname ? `@${uname}` : (oembed?.authorName ? `@${oembed.authorName}` : ''),
       avatar: authorAvatar || cover || null
     },
     downloads: {
@@ -608,6 +652,7 @@ async function downloadInstagram(rawUrl) {
           platform: 'instagram',
           source: clipRes.source,
           type: clipRes.type,
+          title: clipRes.title,
           cover: clipRes.cover,
           author: clipRes.author,
           downloads: clipRes.downloads
@@ -624,6 +669,7 @@ async function downloadInstagram(rawUrl) {
           platform: 'instagram',
           source: snapRes.source,
           type: snapRes.type,
+          title: snapRes.title,
           cover: snapRes.cover,
           author: snapRes.author,
           downloads: snapRes.downloads
@@ -640,6 +686,7 @@ async function downloadInstagram(rawUrl) {
           platform: 'instagram',
           source: dropRes.source,
           type: dropRes.type,
+          title: dropRes.title,
           cover: dropRes.cover,
           author: dropRes.author,
           downloads: dropRes.downloads
@@ -659,25 +706,10 @@ async function downloadInstagram(rawUrl) {
         platform: 'instagram',
         source: clipRes.source,
         type: clipRes.type,
+        title: clipRes.title,
         cover: clipRes.cover,
         author: clipRes.author,
         downloads: clipRes.downloads
-      };
-    }
-  } catch (e) {}
-
-  try {
-    const snapRes = await scrapeSnapInsta(cleanUrl);
-    if (snapRes.downloads.video || (Array.isArray(snapRes.downloads.photos) && snapRes.downloads.photos.length > 0)) {
-      return {
-        status: 'success',
-        code: 200,
-        platform: 'instagram',
-        source: snapRes.source,
-        type: snapRes.type,
-        cover: snapRes.cover,
-        author: snapRes.author,
-        downloads: snapRes.downloads
       };
     }
   } catch (e) {}
@@ -691,9 +723,27 @@ async function downloadInstagram(rawUrl) {
         platform: 'instagram',
         source: dropRes.source,
         type: dropRes.type,
+        title: dropRes.title,
         cover: dropRes.cover,
         author: dropRes.author,
         downloads: dropRes.downloads
+      };
+    }
+  } catch (e) {}
+
+  try {
+    const snapRes = await scrapeSnapInsta(cleanUrl);
+    if (snapRes.downloads.video || (Array.isArray(snapRes.downloads.photos) && snapRes.downloads.photos.length > 0)) {
+      return {
+        status: 'success',
+        code: 200,
+        platform: 'instagram',
+        source: snapRes.source,
+        type: snapRes.type,
+        title: snapRes.title,
+        cover: snapRes.cover,
+        author: snapRes.author,
+        downloads: snapRes.downloads
       };
     }
   } catch (e) {}
@@ -704,6 +754,7 @@ async function downloadInstagram(rawUrl) {
 module.exports = {
   normalizeInstagramUrl,
   extractUsername,
+  fetchInstagramOembed,
   fetchInstagramProfile,
   scrapeSaveClip,
   scrapeVideoDropper,
