@@ -208,7 +208,13 @@
     var author = data.author || {};
     var defaultName = isTikTok ? 'TikTok Creator' : 'Instagram Creator';
     resName.textContent = author.name || defaultName;
-    resUser.textContent = author.username || '';
+
+    if (author.username && author.username.trim()){
+      var u = author.username.trim();
+      resUser.textContent = u.startsWith('@') ? u : '@' + u;
+    } else {
+      resUser.textContent = isTikTok ? '@tiktok' : '@instagram';
+    }
 
     var avatarSrc = author.avatar || data.cover || '';
     if (!avatarSrc) {
@@ -222,6 +228,10 @@
     resAvatar.onerror = function(){
       if (resAvatar.src !== safeUrl(data.cover) && data.cover){
         resAvatar.src = safeUrl(data.cover);
+      } else {
+        var initial = (author.name || (isTikTok ? 'TT' : 'IG')).trim();
+        var bg = isTikTok ? '000000' : 'bc1888';
+        resAvatar.src = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(initial) + '&background=' + bg + '&color=fff&size=128&bold=true';
       }
     };
 

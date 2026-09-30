@@ -235,7 +235,7 @@ async function scrapeVideoDropper(igUrl, endpoint = 'allinone') {
     cover: cover,
     author: {
       name: uname || 'Instagram Creator',
-      username: uname ? `@${uname}` : '',
+      username: uname ? `@${uname}` : '@instagram',
       avatar: cover || null
     },
     downloads: {
@@ -392,7 +392,7 @@ async function scrapeSaveClip(igUrl) {
     cover: cover,
     author: {
       name: uname || 'Instagram Creator',
-      username: uname ? `@${uname}` : '',
+      username: uname ? `@${uname}` : '@instagram',
       avatar: cover || null
     },
     downloads: {
@@ -533,7 +533,7 @@ async function scrapeSnapInsta(igUrl) {
     cover: cover,
     author: {
       name: uname || 'Instagram Creator',
-      username: uname ? `@${uname}` : '',
+      username: uname ? `@${uname}` : '@instagram',
       avatar: cover || null
     },
     downloads: {
