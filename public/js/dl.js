@@ -324,12 +324,36 @@
         }, { passive: true });
       }
     } else if (mainVideo){
+      var isHls = /\.m3u8($|\?)/i.test(mainVideo);
       var posterAttr = data.cover ? ' poster="' + esc(safeUrl(data.cover)) + '"' : '';
       resMediaWrap.innerHTML =
-        '<video class="res-video" controls playsinline preload="metadata"' + posterAttr + '>' +
+        '<video id="previewVideoPlayer" class="res-video" controls playsinline preload="metadata"' + posterAttr + '>' +
+          (isHls ? '<source src="' + esc(safeUrl(mainVideo)) + '" type="application/x-mpegURL">' : '') +
           '<source src="' + esc(safeUrl(mainVideo)) + '" type="video/mp4">' +
           'Browser Anda tidak mendukung pemutaran video.' +
         '</video>';
+
+      var videoEl = document.getElementById('previewVideoPlayer');
+      if (videoEl && isHls) {
+        if (videoEl.canPlayType('application/vnd.apple.mpegurl')) {
+          videoEl.src = safeUrl(mainVideo);
+        } else if (window.Hls && window.Hls.isSupported()) {
+          var hls = new window.Hls();
+          hls.loadSource(safeUrl(mainVideo));
+          hls.attachMedia(videoEl);
+        } else {
+          var hlsScript = document.createElement('script');
+          hlsScript.src = 'https://cdn.jsdelivr.net/npm/hls.js@1.5.17/dist/hls.min.js';
+          hlsScript.onload = function() {
+            if (window.Hls && window.Hls.isSupported() && videoEl) {
+              var hls = new window.Hls();
+              hls.loadSource(safeUrl(mainVideo));
+              hls.attachMedia(videoEl);
+            }
+          };
+          document.head.appendChild(hlsScript);
+        }
+      }
     } else if (data.cover){
       resMediaWrap.innerHTML =
         '<img src="' + esc(safeUrl(data.cover)) + '" alt="Cover preview" style="width:100%; max-height:360px; object-fit:contain; background:#0b0f17;">';
@@ -369,7 +393,7 @@
       actionsHtml +=
         '<a href="' + esc(safeUrl(proxyDl || vDl)) + '" target="_blank" rel="noopener" download="video.mp4" class="res-btn res-btn-primary">' +
           '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>' +
-          '<span>Unduh Video HD (Tanpa Watermark)</span>' +
+          '<span>Unduh Video HD</span>' +
         '</a>';
     }
 

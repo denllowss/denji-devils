@@ -3,6 +3,7 @@ const path = require('path');
 const { downloadTikTok } = require('./src/services/tiktok');
 const { downloadInstagram } = require('./src/services/instagram');
 const { downloadVildey } = require('./src/services/vildey');
+const { downloadVidmonstr } = require('./src/services/vidmonstr');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -19,6 +20,9 @@ function detectPlatform(url) {
   }
   if (str.includes('instagram.com') || str.includes('instagr.am')) {
     return 'instagram';
+  }
+  if (str.includes('vidmonstr.com') || str.includes('vidoy.com') || str.includes('overfetch.video')) {
+    return 'vidmonstr';
   }
   if (str.includes('vildey.com') || /\.mp4(\?.*)?$/i.test(str)) {
     return 'vildey';
@@ -41,7 +45,9 @@ async function handleDownload(req, res) {
 
   try {
     let result;
-    if (platform === 'vildey') {
+    if (platform === 'vidmonstr') {
+      result = await downloadVidmonstr(url);
+    } else if (platform === 'vildey') {
       result = await downloadVildey(url);
     } else if (platform === 'instagram') {
       result = await downloadInstagram(url);
@@ -54,7 +60,11 @@ async function handleDownload(req, res) {
         try {
           result = await downloadTikTok(url);
         } catch (e2) {
-          result = await downloadVildey(url);
+          try {
+            result = await downloadVidmonstr(url);
+          } catch (e3) {
+            result = await downloadVildey(url);
+          }
         }
       }
     }
