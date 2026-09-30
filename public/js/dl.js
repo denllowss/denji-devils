@@ -46,6 +46,13 @@
     return 'https://' + s;
   }
 
+  function isRealVideoUrl(u){
+    if (!u) return false;
+    var s = String(u).toLowerCase();
+    if (s.includes('.mp3') || s.includes('audio_mpeg') || s.includes('mime_type=audio') || s.includes('/music/')) return false;
+    return s.includes('.mp4') || s.includes('.mov') || s.includes('.m3u8') || s.includes('mime_type=video') || s.includes('/video/');
+  }
+
   if (input){
     input.addEventListener('input', function(){
       if (clearBtn){
@@ -176,7 +183,20 @@
     var photos = Array.isArray(dl.photos) ? dl.photos : [];
     var mediaItems = Array.isArray(dl.media) ? dl.media : [];
 
-    var hasVideo = !!(dl.video_hd || dl.video || mediaItems.find(function(m){ return m.type === 'video'; })?.url);
+    var mainVideo = dl.video_hd || dl.video;
+    var mainAudio = dl.audio;
+
+    if (mainVideo && !isRealVideoUrl(mainVideo)){
+      if (!mainAudio) mainAudio = mainVideo;
+      mainVideo = null;
+    }
+
+    if (!mainVideo && mediaItems.length > 0){
+      var vItem = mediaItems.find(function(m){ return m.type === 'video' && isRealVideoUrl(m.url); });
+      if (vItem) mainVideo = vItem.url;
+    }
+
+    var hasVideo = !!(mainVideo && isRealVideoUrl(mainVideo));
     var hasPhotos = photos.length > 0;
     var isExplicitPhotoUrl = inputUrl.includes('/photo/') || inputUrl.includes('/photomode/');
     var isLivePhoto = rawType === 'live_photo' || (hasPhotos && hasVideo);
@@ -246,14 +266,6 @@
       resTitle.style.display = 'block';
     } else {
       resTitle.style.display = 'none';
-    }
-
-    var mainVideo = dl.video_hd || dl.video;
-    var mainAudio = dl.audio;
-
-    if (!mainVideo && mediaItems.length > 0){
-      var vItem = mediaItems.find(function(m){ return m.type === 'video'; });
-      if (vItem) mainVideo = vItem.url;
     }
 
     if (isPhoto && photos.length === 0 && mediaItems.length > 0){
@@ -328,7 +340,7 @@
           }
         }, { passive: true });
       }
-    } else if (mainVideo){
+    } else if (mainVideo && isRealVideoUrl(mainVideo)){
       var isHls = /\.m3u8($|\?)/i.test(mainVideo);
       var posterAttr = data.cover ? ' poster="' + esc(safeUrl(data.cover)) + '"' : '';
       resMediaWrap.innerHTML =
@@ -393,14 +405,14 @@
           '</a>';
       }
 
-      if (mainVideo){
+      if (mainVideo && isRealVideoUrl(mainVideo)){
         actionsHtml +=
           '<a href="' + esc(safeUrl(mainVideo)) + '" target="_blank" rel="noopener" download="live-video.mp4" class="res-btn res-btn-secondary">' +
             '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>' +
             '<span>Unduh Video Live (Motion Clip)</span>' +
           '</a>';
       }
-    } else if (mainVideo){
+    } else if (mainVideo && isRealVideoUrl(mainVideo)){
       var vDl = dl.video_hd || dl.video;
       var proxyDl = mediaItems[0]?.download || vDl;
       actionsHtml +=

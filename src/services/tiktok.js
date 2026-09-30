@@ -30,6 +30,13 @@ const DEFAULT_HEADERS = {
   'Accept-Language': 'id,en-US;q=0.9,en;q=0.8'
 };
 
+function isValidVideoUrl(url) {
+  if (!url || typeof url !== 'string') return false;
+  const s = url.toLowerCase();
+  if (s.includes('.mp3') || s.includes('audio_mpeg') || s.includes('mime_type=audio') || s.includes('/music/')) return false;
+  return s.includes('.mp4') || s.includes('.mov') || s.includes('.m3u8') || s.includes('mime_type=video') || s.includes('/video/');
+}
+
 async function resolveTikTokUrl(rawUrl) {
   const url = String(rawUrl || '').trim();
   if (!url) return '';
@@ -71,15 +78,16 @@ async function scrapeTikWM(tiktokUrl) {
   }
 
   const hasImages = Array.isArray(data.images) && data.images.length > 0;
-  const hasVideo = !!(data.play || data.hdplay);
+  const rawVideo = data.hdplay || data.play;
+  const hasRealVideo = isValidVideoUrl(rawVideo);
   const explicitPhoto = isPhotoUrl(tiktokUrl);
 
   let type = 'video';
-  if (hasImages && hasVideo) {
+  if (hasImages && hasRealVideo) {
     type = 'live_photo';
-  } else if (explicitPhoto || (hasImages && !hasVideo)) {
+  } else if (explicitPhoto || (hasImages && !hasRealVideo)) {
     type = 'image';
-  } else if (hasVideo) {
+  } else if (hasRealVideo) {
     type = 'video';
   }
 
@@ -95,14 +103,16 @@ async function scrapeTikWM(tiktokUrl) {
       });
     });
   }
-  if (hasVideo) {
+  if (hasRealVideo) {
     mediaList.push({
       type: 'video',
-      url: data.hdplay || data.play,
+      url: rawVideo,
       thumbnail: data.cover || data.origin_cover || null,
-      download: data.hdplay || data.play
+      download: rawVideo
     });
   }
+
+  const realAudio = data.music || data.music_info?.play || null;
 
   return {
     source: 'tikwm',
@@ -118,10 +128,10 @@ async function scrapeTikWM(tiktokUrl) {
       avatar: data.author?.avatar || ''
     },
     downloads: {
-      video: data.hdplay || data.play || null,
-      video_hd: data.hdplay || data.play || null,
-      video_watermark: data.wmplay || null,
-      audio: data.music || data.music_info?.play || null,
+      video: hasRealVideo ? rawVideo : null,
+      video_hd: hasRealVideo ? rawVideo : null,
+      video_watermark: isValidVideoUrl(data.wmplay) ? data.wmplay : null,
+      audio: realAudio,
       photos: hasImages ? data.images : undefined,
       media: mediaList
     },
@@ -160,10 +170,10 @@ async function scrapeLoveTik(tiktokUrl) {
   let audio = null;
 
   (data.links || []).forEach((link) => {
-    if (link.t === 'mp4' && !videoSd) {
+    if (link.t === 'mp4' && !videoSd && isValidVideoUrl(link.a)) {
       videoSd = link.a;
     }
-    if (link.t === 'hd' && !videoHd) {
+    if (link.t === 'hd' && !videoHd && isValidVideoUrl(link.a)) {
       videoHd = link.a;
     }
     if (link.t === 'mp3' && !audio) {
@@ -173,14 +183,14 @@ async function scrapeLoveTik(tiktokUrl) {
 
   const rawPhotos = Array.isArray(data.images) ? data.images : [];
   const explicitPhoto = isPhotoUrl(tiktokUrl);
-  const hasVideoLinks = !!(videoSd || videoHd);
+  const hasRealVideo = !!(videoSd || videoHd);
 
   let type = 'video';
-  if (rawPhotos.length > 0 && hasVideoLinks) {
+  if (rawPhotos.length > 0 && hasRealVideo) {
     type = 'live_photo';
-  } else if (explicitPhoto || (rawPhotos.length > 0 && !hasVideoLinks)) {
+  } else if (explicitPhoto || (rawPhotos.length > 0 && !hasRealVideo)) {
     type = 'image';
-  } else if (hasVideoLinks) {
+  } else if (hasRealVideo) {
     type = 'video';
   }
 
@@ -196,12 +206,13 @@ async function scrapeLoveTik(tiktokUrl) {
       });
     });
   }
-  if (videoHd || videoSd) {
+  if (hasRealVideo) {
+    const vUrl = videoHd || videoSd;
     mediaList.push({
       type: 'video',
-      url: videoHd || videoSd,
+      url: vUrl,
       thumbnail: data.cover || null,
-      download: videoHd || videoSd
+      download: vUrl
     });
   }
 
@@ -217,8 +228,8 @@ async function scrapeLoveTik(tiktokUrl) {
       avatar: data.author_avatar || ''
     },
     downloads: {
-      video: videoHd || videoSd || null,
-      video_hd: videoHd || videoSd || null,
+      video: hasRealVideo ? (videoHd || videoSd) : null,
+      video_hd: hasRealVideo ? (videoHd || videoSd) : null,
       audio: audio || null,
       photos: rawPhotos.length > 0 ? rawPhotos : undefined,
       media: mediaList
@@ -272,7 +283,8 @@ async function scrapeSSSTik(tiktokUrl) {
   const authorAvatar = $('.result_author').attr('src') || '';
   const title = $('.maintext').text().trim() || $('p').first().text().trim() || '';
 
-  const sdLink = $('a.without_watermark').attr('href') || '';
+  const rawSdLink = $('a.without_watermark').attr('href') || '';
+  const sdLink = isValidVideoUrl(rawSdLink) ? rawSdLink : '';
   const audioLink = $('a.music').attr('href') || '';
 
   let hdLink = '';
@@ -295,12 +307,15 @@ async function scrapeSSSTik(tiktokUrl) {
       });
 
       if (hdRes.headers['hx-redirect']) {
-        hdLink = hdRes.headers['hx-redirect'];
+        const h = hdRes.headers['hx-redirect'];
+        if (isValidVideoUrl(h)) hdLink = h;
       } else if (hdRes.headers['location']) {
-        hdLink = hdRes.headers['location'];
+        const l = hdRes.headers['location'];
+        if (isValidVideoUrl(l)) hdLink = l;
       } else if (hdRes.data && typeof hdRes.data === 'string') {
         const $$ = cheerio.load(hdRes.data);
-        hdLink = $$('a').attr('href') || '';
+        const parsed = $$('a').attr('href') || '';
+        if (isValidVideoUrl(parsed)) hdLink = parsed;
       }
     } catch (e) {}
   }
@@ -318,14 +333,14 @@ async function scrapeSSSTik(tiktokUrl) {
   const cover = bgMatch ? bgMatch[1] : (photos[0] || null);
 
   const explicitPhoto = isPhotoUrl(tiktokUrl);
-  const hasVideoLinks = !!(sdLink || hdLink);
+  const hasRealVideo = !!(sdLink || hdLink);
 
   let type = 'video';
-  if (photos.length > 0 && hasVideoLinks) {
+  if (photos.length > 0 && hasRealVideo) {
     type = 'live_photo';
-  } else if (explicitPhoto || (photos.length > 0 && !hasVideoLinks)) {
+  } else if (explicitPhoto || (photos.length > 0 && !hasRealVideo)) {
     type = 'image';
-  } else if (hasVideoLinks) {
+  } else if (hasRealVideo) {
     type = 'video';
   }
 
@@ -341,12 +356,13 @@ async function scrapeSSSTik(tiktokUrl) {
       });
     });
   }
-  if (hasVideoLinks) {
+  if (hasRealVideo) {
+    const vUrl = hdLink || sdLink;
     mediaList.push({
       type: 'video',
-      url: hdLink || sdLink,
+      url: vUrl,
       thumbnail: cover,
-      download: hdLink || sdLink
+      download: vUrl
     });
   }
 
@@ -361,8 +377,8 @@ async function scrapeSSSTik(tiktokUrl) {
       avatar: authorAvatar
     },
     downloads: {
-      video: hdLink || sdLink || null,
-      video_hd: hdLink || sdLink || null,
+      video: hasRealVideo ? (hdLink || sdLink) : null,
+      video_hd: hasRealVideo ? (hdLink || sdLink) : null,
       audio: audioLink || null,
       photos: photos.length > 0 ? photos : undefined,
       media: mediaList
@@ -436,6 +452,7 @@ async function downloadTikTok(rawUrl) {
 }
 
 module.exports = {
+  isValidVideoUrl,
   resolveTikTokUrl,
   isPhotoUrl,
   isVideoUrl,
