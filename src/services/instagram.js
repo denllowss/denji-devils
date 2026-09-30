@@ -1,6 +1,7 @@
 const crypto = require('crypto');
 const axios = require('axios');
 const cheerio = require('cheerio');
+const vm = require('vm');
 
 const DEFAULT_HEADERS = {
   'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
@@ -49,7 +50,7 @@ async function fetchInstagramOembed(url) {
   try {
     const res = await axios.get(`https://www.instagram.com/api/v1/oembed/?url=${encodeURIComponent(url)}`, {
       headers: DEFAULT_HEADERS,
-      timeout: 2000
+      timeout: 1500
     });
     if (res.status === 200 && res.data) {
       return {
@@ -60,47 +61,6 @@ async function fetchInstagramOembed(url) {
     }
   } catch (e) {}
   return null;
-}
-
-function decodeBase(d, e, f) {
-  const g = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+/';
-  const h = g.slice(0, e);
-  const i = g.slice(0, f);
-  let j = d.split('').reverse().reduce((a, b, c) => {
-    if (h.indexOf(b) !== -1) {
-      return a + h.indexOf(b) * Math.pow(e, c);
-    }
-    return a;
-  }, 0);
-  let k = '';
-  while (j > 0) {
-    k = i[j % f] + k;
-    j = (j - (j % f)) / f;
-  }
-  return k || '0';
-}
-
-function decodeHunter(h, u, n, t, e, r) {
-  r = '';
-  for (let i = 0, len = h.length; i < len; i++) {
-    let s = '';
-    while (i < len && h[i] !== n[e]) {
-      s += h[i];
-      i++;
-    }
-    for (let j = 0; j < n.length; j++) {
-      s = s.split(n[j]).join(j);
-    }
-    r += String.fromCharCode(parseInt(decodeBase(s, e, 10), 10) - t);
-  }
-  return decodeURIComponent(r);
-}
-
-function unpackHunterCode(str) {
-  const match = str.match(/\}\s*\(\s*["\x27]([^"\x27]+)["\x27]\s*,\s*(\d+)\s*,\s*["\x27]([^"\x27]+)["\x27]\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)/);
-  if (!match) return str;
-  const [_, h, u, n, t, e, r] = match;
-  return decodeHunter(h, parseInt(u, 10), n, parseInt(t, 10), parseInt(e, 10), parseInt(r, 10));
 }
 
 function extractJwtUrl(urlStr) {
@@ -116,16 +76,138 @@ function extractJwtUrl(urlStr) {
   return null;
 }
 
-function extractHtmlFromUnpacked(unpacked) {
-  const match = unpacked.match(/innerHTML\s*=\s*"((?:[^"\\]|\\.)*)";/);
-  if (match) {
-    try {
-      return JSON.parse(`"${match[1]}"`);
-    } catch (e) {
-      return match[1].replace(/\\"/g, '"').replace(/\\\\/g, '\\');
-    }
+function unpackSnapSave(raw) {
+  let result = '';
+  const context = {
+    eval: (code) => { result = code; },
+    window: {},
+    document: {}
+  };
+  vm.createContext(context);
+  try {
+    vm.runInContext(raw, context);
+  } catch (e) {}
+  return result;
+}
+
+async function scrapeSnapSave(igUrl) {
+  const cleanUrl = normalizeInstagramUrl(igUrl);
+  const res = await axios.post('https://snapsave.app/action.php?lang=id', new URLSearchParams({
+    url: cleanUrl
+  }).toString(), {
+    headers: {
+      'User-Agent': DEFAULT_HEADERS['User-Agent'],
+      'Referer': 'https://snapsave.app/id',
+      'Origin': 'https://snapsave.app',
+      'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    timeout: 5000
+  });
+
+  const unpacked = unpackSnapSave(res.data);
+  const htmlMatch = unpacked.match(/innerHTML\s*=\s*"((?:[^"\\]|\\.)*)";/);
+  if (!htmlMatch) {
+    throw new Error('SnapSave unpack failed');
   }
-  return unpacked;
+
+  const html = JSON.parse(`"${htmlMatch[1]}"`);
+  const $ = cheerio.load(html);
+  const mediaList = [];
+  const videoList = [];
+  const imageList = [];
+  let cover = null;
+
+  $('.download-items, .download-box, .row > div').each((_, el) => {
+    const item = $(el);
+    const thumbImg = item.find('img').attr('src') || item.find('img').attr('data-src') || '';
+    const directThumb = extractJwtUrl(thumbImg) || thumbImg;
+
+    if (!cover && directThumb) cover = directThumb;
+
+    item.find('a').each((__, aEl) => {
+      const href = $(aEl).attr('href') || '';
+      const text = $(aEl).text().toLowerCase();
+
+      if (!href || href === '/' || href.includes('google') || href.includes('terms') || href.includes('privacy')) return;
+
+      const directCdn = extractJwtUrl(href) || href;
+      const isVid = text.includes('video') || directCdn.includes('.mp4') || href.includes('.mp4');
+      const isImg = text.includes('foto') || text.includes('photo') || text.includes('gambar') || directCdn.includes('.jpg') || directCdn.includes('.jpeg') || directCdn.includes('.png');
+
+      if (isVid) {
+        if (!videoList.includes(directCdn)) {
+          videoList.push(directCdn);
+          mediaList.push({
+            type: 'video',
+            url: directCdn,
+            thumbnail: directThumb || null,
+            download: href
+          });
+        }
+      } else if (isImg && !text.includes('thumbnail')) {
+        if (!imageList.includes(directCdn)) {
+          imageList.push(directCdn);
+          mediaList.push({
+            type: 'image',
+            url: directCdn,
+            download: href
+          });
+        }
+      }
+    });
+  });
+
+  if (mediaList.length === 0) {
+    $('a').each((_, el) => {
+      const href = $(el).attr('href') || '';
+      if (!href || href === '/' || href.includes('google')) return;
+      const direct = extractJwtUrl(href) || href;
+      if (direct.includes('.mp4')) {
+        videoList.push(direct);
+        mediaList.push({ type: 'video', url: direct, download: href });
+      } else if (direct.includes('.jpg') || direct.includes('.png') || direct.includes('.jpeg')) {
+        imageList.push(direct);
+        mediaList.push({ type: 'image', url: direct, download: href });
+      }
+    });
+  }
+
+  const isStory = cleanUrl.includes('/stories/') || cleanUrl.includes('/story/');
+  const isCarousel = mediaList.length > 1;
+  let type = isStory ? 'story' : 'video';
+  if (imageList.length > 0 && videoList.length === 0) {
+    type = isStory ? 'story' : (isCarousel ? 'carousel' : 'image');
+  }
+
+  let uname = extractUsername(cleanUrl);
+  let title = '';
+  try {
+    const oembed = await fetchInstagramOembed(cleanUrl);
+    if (oembed) {
+      if (oembed.authorName && !uname) uname = oembed.authorName;
+      if (oembed.title) title = oembed.title;
+      if (oembed.thumbnail && !cover) cover = oembed.thumbnail;
+    }
+  } catch (e) {}
+
+  return {
+    source: 'snapsave.app',
+    type: type,
+    title: title,
+    cover: cover,
+    author: {
+      name: uname || 'Instagram Creator',
+      username: uname ? `@${uname}` : '@instagram',
+      avatar: cover || null
+    },
+    downloads: {
+      video: videoList[0] || null,
+      video_hd: videoList[0] || null,
+      audio: null,
+      photos: imageList.length > 0 ? imageList : undefined,
+      media: mediaList
+    }
+  };
 }
 
 async function scrapeVideoDropper(igUrl, endpoint = 'allinone') {
@@ -138,7 +220,7 @@ async function scrapeVideoDropper(igUrl, endpoint = 'allinone') {
       'Referer': 'https://videodropper.app/',
       'Origin': 'https://videodropper.app'
     },
-    timeout: 7000
+    timeout: 6000
   });
 
   const data = res.data;
@@ -248,310 +330,29 @@ async function scrapeVideoDropper(igUrl, endpoint = 'allinone') {
   };
 }
 
-async function scrapeSaveClip(igUrl) {
-  const cleanUrl = normalizeInstagramUrl(igUrl);
-  const k_token = '95c09b2f49414bafab55c43c874be2cd857a64dfd40b6279ede3869b2b13ea0e';
-  const k_exp = '1790213633';
-  const k_url_search = 'https://v3.saveclip.app/api/ajaxSearch';
-
-  let cftoken = '';
-  try {
-    const verifyRes = await axios.post(
-      'https://saveclip.app/api/userverify',
-      new URLSearchParams({ url: cleanUrl }).toString(),
-      {
-        headers: {
-          ...DEFAULT_HEADERS,
-          'Referer': 'https://saveclip.app/id8/instagram-story-download',
-          'Origin': 'https://saveclip.app',
-          'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        timeout: 4000
-      }
-    );
-    cftoken = verifyRes.data?.token || '';
-  } catch (e) {}
-
-  const searchRes = await axios.post(
-    k_url_search,
-    new URLSearchParams({
-      k_exp,
-      k_token,
-      q: cleanUrl,
-      t: 'media',
-      lang: 'id',
-      v: 'v2',
-      cftoken
-    }).toString(),
-    {
-      headers: {
-        ...DEFAULT_HEADERS,
-        'Referer': 'https://saveclip.app/id8/instagram-story-download',
-        'Origin': 'https://saveclip.app',
-        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-        'X-Requested-With': 'XMLHttpRequest'
-      },
-      timeout: 6000
-    }
-  );
-
-  const resData = searchRes.data;
-  if (!resData || resData.status !== 'ok' || !resData.data) {
-    throw new Error(resData?.mess || 'SaveClip search failed');
-  }
-
-  let rawHtml = resData.data;
-  if (rawHtml.includes('eval(function(')) {
-    const unpacked = unpackHunterCode(rawHtml);
-    rawHtml = extractHtmlFromUnpacked(unpacked);
-  }
-
-  const $ = cheerio.load(rawHtml);
-  const mediaList = [];
-  const videoList = [];
-  const imageList = [];
-  let cover = null;
-
-  $('.download-items, .download-box li, .media-box, .row > div').each((_, el) => {
-    const item = $(el);
-    const thumbImg = item.find('img').attr('src') || item.find('img').attr('data-src') || '';
-    const directThumb = extractJwtUrl(thumbImg) || thumbImg;
-
-    if (!cover && directThumb) cover = directThumb;
-
-    item.find('a').each((__, aEl) => {
-      const href = $(aEl).attr('href') || '';
-      const text = $(aEl).text().toLowerCase();
-
-      if (!href || href.startsWith('/') || href.includes('google') || href.includes('terms')) return;
-
-      const directCdn = extractJwtUrl(href) || href;
-      const isVid = text.includes('video') || directCdn.includes('.mp4') || href.includes('.mp4');
-      const isImg = text.includes('foto') || text.includes('photo') || text.includes('gambar') || text.includes('thumbnail') || directCdn.includes('.jpg') || directCdn.includes('.jpeg') || directCdn.includes('.png');
-
-      if (isVid) {
-        if (!videoList.includes(directCdn)) {
-          videoList.push(directCdn);
-          mediaList.push({
-            type: 'video',
-            url: directCdn,
-            thumbnail: directThumb || null,
-            download: href
-          });
-        }
-      } else if (isImg && !text.includes('thumbnail')) {
-        if (!imageList.includes(directCdn)) {
-          imageList.push(directCdn);
-          mediaList.push({
-            type: 'image',
-            url: directCdn,
-            download: href
-          });
-        }
-      }
-    });
-  });
-
-  if (mediaList.length === 0) {
-    $('a').each((_, el) => {
-      const href = $(el).attr('href') || '';
-      if (!href || href.startsWith('/') || href.includes('google')) return;
-      const direct = extractJwtUrl(href) || href;
-      if (direct.includes('.mp4')) {
-        videoList.push(direct);
-        mediaList.push({ type: 'video', url: direct, download: href });
-      } else if (direct.includes('.jpg') || direct.includes('.png') || direct.includes('.jpeg')) {
-        imageList.push(direct);
-        mediaList.push({ type: 'image', url: direct, download: href });
-      }
-    });
-  }
-
-  const isStory = cleanUrl.includes('/stories/') || cleanUrl.includes('/story/');
-  const isCarousel = mediaList.length > 1;
-  let type = isStory ? 'story' : 'video';
-  if (imageList.length > 0 && videoList.length === 0) {
-    type = isStory ? 'story' : (isCarousel ? 'carousel' : 'image');
-  }
-
-  let uname = extractUsername(cleanUrl);
-  let title = '';
-  try {
-    const oembed = await fetchInstagramOembed(cleanUrl);
-    if (oembed) {
-      if (oembed.authorName && !uname) uname = oembed.authorName;
-      if (oembed.title) title = oembed.title;
-      if (oembed.thumbnail && !cover) cover = oembed.thumbnail;
-    }
-  } catch (e) {}
-
-  return {
-    source: 'saveclip.app',
-    type: type,
-    title: title,
-    cover: cover,
-    author: {
-      name: uname || 'Instagram Creator',
-      username: uname ? `@${uname}` : '@instagram',
-      avatar: cover || null
-    },
-    downloads: {
-      video: videoList[0] || null,
-      video_hd: videoList[0] || null,
-      audio: null,
-      photos: imageList.length > 0 ? imageList : undefined,
-      media: mediaList
-    }
-  };
-}
-
-async function scrapeSnapInsta(igUrl) {
-  const cleanUrl = normalizeInstagramUrl(igUrl);
-  let token = null;
-
-  try {
-    const verifyRes = await axios.post(
-      'https://snapinsta.to/api/userverify',
-      new URLSearchParams({ url: cleanUrl }).toString(),
-      {
-        headers: {
-          ...DEFAULT_HEADERS,
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'Referer': 'https://snapinsta.to/en46',
-          'Origin': 'https://snapinsta.to'
-        },
-        timeout: 4000,
-        validateStatus: (s) => s >= 200 && s < 500
-      }
-    );
-    token = verifyRes.data?.token || null;
-  } catch (e) {}
-
-  if (!token) {
-    throw new Error('Snapinsta verify failed');
-  }
-
-  const searchRes = await axios.post(
-    'https://snapinsta.to/api/ajaxSearch',
-    new URLSearchParams({
-      q: cleanUrl,
-      t: 'media',
-      lang: 'en',
-      v: 'v2',
-      cftoken: token
-    }).toString(),
-    {
-      headers: {
-        ...DEFAULT_HEADERS,
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Referer': 'https://snapinsta.to/en46',
-        'Origin': 'https://snapinsta.to'
-      },
-      timeout: 6000
-    }
-  );
-
-  const resData = searchRes.data;
-  if (!resData || resData.status !== 'ok' || !resData.data) {
-    throw new Error(resData?.mess || 'Snapinsta search failed');
-  }
-
-  let rawHtml = resData.data;
-  if (rawHtml.includes('eval(function(')) {
-    const unpacked = unpackHunterCode(rawHtml);
-    rawHtml = extractHtmlFromUnpacked(unpacked);
-  }
-
-  const $ = cheerio.load(rawHtml);
-  const mediaList = [];
-  const videoList = [];
-  const imageList = [];
-  let cover = null;
-
-  $('.download-items, .download-box li, .media-box').each((_, el) => {
-    const item = $(el);
-    const thumbImg = item.find('img').attr('src') || item.find('img').attr('data-src') || '';
-    const directThumb = extractJwtUrl(thumbImg) || thumbImg;
-
-    if (!cover && directThumb) cover = directThumb;
-
-    item.find('a').each((__, aEl) => {
-      const href = $(aEl).attr('href') || '';
-      const text = $(aEl).text().toLowerCase();
-
-      if (!href || href.startsWith('/') || href.includes('google')) return;
-
-      const directCdn = extractJwtUrl(href) || href;
-      const isVid = text.includes('video') || directCdn.includes('.mp4');
-      const isImg = text.includes('foto') || text.includes('photo') || text.includes('gambar') || directCdn.includes('.jpg') || directCdn.includes('.jpeg') || directCdn.includes('.png');
-
-      if (isVid) {
-        if (!videoList.includes(directCdn)) {
-          videoList.push(directCdn);
-          mediaList.push({
-            type: 'video',
-            url: directCdn,
-            thumbnail: directThumb || null,
-            download: href
-          });
-        }
-      } else if (isImg && !text.includes('thumbnail')) {
-        if (!imageList.includes(directCdn)) {
-          imageList.push(directCdn);
-          mediaList.push({
-            type: 'image',
-            url: directCdn,
-            download: href
-          });
-        }
-      }
-    });
-  });
-
-  const isStory = cleanUrl.includes('/stories/') || cleanUrl.includes('/story/');
-  const isCarousel = mediaList.length > 1;
-  let type = isStory ? 'story' : 'video';
-  if (imageList.length > 0 && videoList.length === 0) {
-    type = isStory ? 'story' : (isCarousel ? 'carousel' : 'image');
-  }
-
-  let uname = extractUsername(cleanUrl);
-  let title = '';
-  try {
-    const oembed = await fetchInstagramOembed(cleanUrl);
-    if (oembed) {
-      if (oembed.authorName && !uname) uname = oembed.authorName;
-      if (oembed.title) title = oembed.title;
-      if (oembed.thumbnail && !cover) cover = oembed.thumbnail;
-    }
-  } catch (e) {}
-
-  return {
-    source: 'snapinsta.to',
-    type: type,
-    title: title,
-    cover: cover,
-    author: {
-      name: uname || 'Instagram Creator',
-      username: uname ? `@${uname}` : '@instagram',
-      avatar: cover || null
-    },
-    downloads: {
-      video: videoList[0] || null,
-      video_hd: videoList[0] || null,
-      audio: null,
-      photos: imageList.length > 0 ? imageList : undefined,
-      media: mediaList
-    }
-  };
-}
-
 async function downloadInstagram(rawUrl) {
   if (!rawUrl || typeof rawUrl !== 'string') {
     throw new Error('Parameter URL Instagram diperlukan');
   }
 
   const cleanUrl = normalizeInstagramUrl(rawUrl);
+
+  try {
+    const snapRes = await scrapeSnapSave(cleanUrl);
+    if (snapRes.downloads.video || (Array.isArray(snapRes.downloads.photos) && snapRes.downloads.photos.length > 0) || (Array.isArray(snapRes.downloads.media) && snapRes.downloads.media.length > 0)) {
+      return {
+        status: 'success',
+        code: 200,
+        platform: 'instagram',
+        source: snapRes.source,
+        type: snapRes.type,
+        title: snapRes.title,
+        cover: snapRes.cover,
+        author: snapRes.author,
+        downloads: snapRes.downloads
+      };
+    }
+  } catch (e) {}
 
   try {
     const dropRes = await scrapeVideoDropper(cleanUrl, 'allinone');
@@ -570,40 +371,6 @@ async function downloadInstagram(rawUrl) {
     }
   } catch (e) {}
 
-  try {
-    const clipRes = await scrapeSaveClip(cleanUrl);
-    if (clipRes.downloads.video || (Array.isArray(clipRes.downloads.photos) && clipRes.downloads.photos.length > 0) || (Array.isArray(clipRes.downloads.media) && clipRes.downloads.media.length > 0)) {
-      return {
-        status: 'success',
-        code: 200,
-        platform: 'instagram',
-        source: clipRes.source,
-        type: clipRes.type,
-        title: clipRes.title,
-        cover: clipRes.cover,
-        author: clipRes.author,
-        downloads: clipRes.downloads
-      };
-    }
-  } catch (e) {}
-
-  try {
-    const snapRes = await scrapeSnapInsta(cleanUrl);
-    if (snapRes.downloads.video || (Array.isArray(snapRes.downloads.photos) && snapRes.downloads.photos.length > 0) || (Array.isArray(snapRes.downloads.media) && snapRes.downloads.media.length > 0)) {
-      return {
-        status: 'success',
-        code: 200,
-        platform: 'instagram',
-        source: snapRes.source,
-        type: snapRes.type,
-        title: snapRes.title,
-        cover: snapRes.cover,
-        author: snapRes.author,
-        downloads: snapRes.downloads
-      };
-    }
-  } catch (e) {}
-
   throw new Error('Tidak dapat mengunduh media dari Instagram. Pastikan postingan atau reel bersifat publik.');
 }
 
@@ -611,8 +378,7 @@ module.exports = {
   normalizeInstagramUrl,
   extractUsername,
   fetchInstagramOembed,
+  scrapeSnapSave,
   scrapeVideoDropper,
-  scrapeSaveClip,
-  scrapeSnapInsta,
   downloadInstagram
 };
