@@ -1,7 +1,29 @@
+const https = require('https');
+const http = require('http');
 const crypto = require('crypto');
 const axios = require('axios');
 const cheerio = require('cheerio');
 const vm = require('vm');
+
+const httpsAgent = new https.Agent({
+  keepAlive: true,
+  maxSockets: 50,
+  maxFreeSockets: 20,
+  timeout: 6000
+});
+
+const httpAgent = new http.Agent({
+  keepAlive: true,
+  maxSockets: 50,
+  maxFreeSockets: 20,
+  timeout: 6000
+});
+
+const client = axios.create({
+  httpAgent,
+  httpsAgent,
+  timeout: 6000
+});
 
 const DEFAULT_HEADERS = {
   'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
@@ -48,7 +70,7 @@ function extractUsername(url) {
 
 async function fetchInstagramOembed(url) {
   try {
-    const res = await axios.get(`https://www.instagram.com/api/v1/oembed/?url=${encodeURIComponent(url)}`, {
+    const res = await client.get(`https://www.instagram.com/api/v1/oembed/?url=${encodeURIComponent(url)}`, {
       headers: DEFAULT_HEADERS,
       timeout: 1500
     });
@@ -92,7 +114,7 @@ function unpackSnapSave(raw) {
 
 async function scrapeSnapSave(igUrl) {
   const cleanUrl = normalizeInstagramUrl(igUrl);
-  const res = await axios.post('https://snapsave.app/action.php?lang=id', new URLSearchParams({
+  const res = await client.post('https://snapsave.app/action.php?lang=id', new URLSearchParams({
     url: cleanUrl
   }).toString(), {
     headers: {
@@ -101,7 +123,7 @@ async function scrapeSnapSave(igUrl) {
       'Origin': 'https://snapsave.app',
       'Content-Type': 'application/x-www-form-urlencoded'
     },
-    timeout: 5000
+    timeout: 4500
   });
 
   const unpacked = unpackSnapSave(res.data);
@@ -180,20 +202,11 @@ async function scrapeSnapSave(igUrl) {
   }
 
   let uname = extractUsername(cleanUrl);
-  let title = '';
-  try {
-    const oembed = await fetchInstagramOembed(cleanUrl);
-    if (oembed) {
-      if (oembed.authorName && !uname) uname = oembed.authorName;
-      if (oembed.title) title = oembed.title;
-      if (oembed.thumbnail && !cover) cover = oembed.thumbnail;
-    }
-  } catch (e) {}
 
   return {
     source: 'snapsave.app',
     type: type,
-    title: title,
+    title: '',
     cover: cover,
     author: {
       name: uname || 'Instagram Creator',
@@ -213,14 +226,14 @@ async function scrapeSnapSave(igUrl) {
 async function scrapeVideoDropper(igUrl, endpoint = 'allinone') {
   const cleanUrl = normalizeInstagramUrl(igUrl);
   const enc = encryptVideoDropperUrl(cleanUrl);
-  const res = await axios.get(`https://api.videodropper.app/${endpoint}`, {
+  const res = await client.get(`https://api.videodropper.app/${endpoint}`, {
     headers: {
       'url': enc,
       'User-Agent': DEFAULT_HEADERS['User-Agent'],
       'Referer': 'https://videodropper.app/',
       'Origin': 'https://videodropper.app'
     },
-    timeout: 6000
+    timeout: 5000
   });
 
   const data = res.data;
@@ -300,20 +313,11 @@ async function scrapeVideoDropper(igUrl, endpoint = 'allinone') {
   }
 
   let uname = extractUsername(cleanUrl);
-  let title = '';
-  try {
-    const oembed = await fetchInstagramOembed(cleanUrl);
-    if (oembed) {
-      if (oembed.authorName && !uname) uname = oembed.authorName;
-      if (oembed.title) title = oembed.title;
-      if (oembed.thumbnail && !cover) cover = oembed.thumbnail;
-    }
-  } catch (e) {}
 
   return {
     source: 'videodropper.app',
     type: type,
-    title: title,
+    title: '',
     cover: cover,
     author: {
       name: uname || 'Instagram Creator',
@@ -337,41 +341,58 @@ async function downloadInstagram(rawUrl) {
 
   const cleanUrl = normalizeInstagramUrl(rawUrl);
 
+  const oembedPromise = fetchInstagramOembed(cleanUrl).catch(() => null);
+
+  let result = null;
+
   try {
     const snapRes = await scrapeSnapSave(cleanUrl);
     if (snapRes.downloads.video || (Array.isArray(snapRes.downloads.photos) && snapRes.downloads.photos.length > 0) || (Array.isArray(snapRes.downloads.media) && snapRes.downloads.media.length > 0)) {
-      return {
-        status: 'success',
-        code: 200,
-        platform: 'instagram',
-        source: snapRes.source,
-        type: snapRes.type,
-        title: snapRes.title,
-        cover: snapRes.cover,
-        author: snapRes.author,
-        downloads: snapRes.downloads
-      };
+      result = snapRes;
     }
   } catch (e) {}
+
+  if (!result) {
+    try {
+      const dropRes = await scrapeVideoDropper(cleanUrl, 'allinone');
+      if (dropRes.downloads.video || (Array.isArray(dropRes.downloads.photos) && dropRes.downloads.photos.length > 0) || (Array.isArray(dropRes.downloads.media) && dropRes.downloads.media.length > 0)) {
+        result = dropRes;
+      }
+    } catch (e) {}
+  }
+
+  if (!result) {
+    throw new Error('Tidak dapat mengunduh media dari Instagram. Pastikan postingan atau reel bersifat publik.');
+  }
 
   try {
-    const dropRes = await scrapeVideoDropper(cleanUrl, 'allinone');
-    if (dropRes.downloads.video || (Array.isArray(dropRes.downloads.photos) && dropRes.downloads.photos.length > 0) || (Array.isArray(dropRes.downloads.media) && dropRes.downloads.media.length > 0)) {
-      return {
-        status: 'success',
-        code: 200,
-        platform: 'instagram',
-        source: dropRes.source,
-        type: dropRes.type,
-        title: dropRes.title,
-        cover: dropRes.cover,
-        author: dropRes.author,
-        downloads: dropRes.downloads
-      };
+    const oembed = await oembedPromise;
+    if (oembed) {
+      if (oembed.authorName) {
+        result.author.name = oembed.authorName;
+        result.author.username = `@${oembed.authorName}`;
+      }
+      if (oembed.title) {
+        result.title = oembed.title;
+      }
+      if (oembed.thumbnail && !result.cover) {
+        result.cover = oembed.thumbnail;
+        if (!result.author.avatar) result.author.avatar = oembed.thumbnail;
+      }
     }
   } catch (e) {}
 
-  throw new Error('Tidak dapat mengunduh media dari Instagram. Pastikan postingan atau reel bersifat publik.');
+  return {
+    status: 'success',
+    code: 200,
+    platform: 'instagram',
+    source: result.source,
+    type: result.type,
+    title: result.title || '',
+    cover: result.cover || null,
+    author: result.author,
+    downloads: result.downloads
+  };
 }
 
 module.exports = {
