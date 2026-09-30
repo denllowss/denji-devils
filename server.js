@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const { downloadTikTok } = require('./src/services/tiktok');
 const { downloadInstagram } = require('./src/services/instagram');
+const { downloadVildey } = require('./src/services/vildey');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -19,6 +20,9 @@ function detectPlatform(url) {
   if (str.includes('instagram.com') || str.includes('instagr.am')) {
     return 'instagram';
   }
+  if (str.includes('vildey.com') || /\.mp4(\?.*)?$/i.test(str)) {
+    return 'vildey';
+  }
   return 'unknown';
 }
 
@@ -29,15 +33,7 @@ async function handleDownload(req, res) {
     return res.status(400).json({
       status: 'error',
       code: 400,
-      message: 'Parameter URL (TikTok / Instagram) wajib diisi',
-      usage: {
-        get: '/api/dl?url=https://www.instagram.com/reel/DWMHED1jVvj/',
-        post: {
-          endpoint: '/api/dl',
-          headers: { 'Content-Type': 'application/json' },
-          body: { url: 'https://www.tiktok.com/@username/video/1234567890' }
-        }
-      }
+      message: 'Parameter URL wajib diisi'
     });
   }
 
@@ -45,15 +41,21 @@ async function handleDownload(req, res) {
 
   try {
     let result;
-    if (platform === 'instagram') {
+    if (platform === 'vildey') {
+      result = await downloadVildey(url);
+    } else if (platform === 'instagram') {
       result = await downloadInstagram(url);
     } else if (platform === 'tiktok') {
       result = await downloadTikTok(url);
     } else {
       try {
         result = await downloadInstagram(url);
-      } catch (e) {
-        result = await downloadTikTok(url);
+      } catch (e1) {
+        try {
+          result = await downloadTikTok(url);
+        } catch (e2) {
+          result = await downloadVildey(url);
+        }
       }
     }
     return res.status(200).json(result);

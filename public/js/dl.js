@@ -169,6 +169,7 @@
   function renderResult(data, inputUrl){
     var platform = (data.platform || 'media').toLowerCase();
     var isTikTok = platform === 'tiktok';
+    var isInstagram = platform === 'instagram';
     var rawType = String(data.type || '').toLowerCase();
 
     var dl = data.downloads || {};
@@ -192,8 +193,8 @@
 
     var isStory = rawType === 'story' || inputUrl.includes('/stories/');
 
-    resPlatformTag.className = 'res-platform-tag ' + (isTikTok ? 'tiktok' : 'instagram');
-    resPlatformTag.textContent = isTikTok ? 'TIKTOK' : 'INSTAGRAM';
+    resPlatformTag.className = 'res-platform-tag ' + (isTikTok ? 'tiktok' : (isInstagram ? 'instagram' : 'tiktok'));
+    resPlatformTag.textContent = isTikTok ? 'TIKTOK' : (isInstagram ? 'INSTAGRAM' : 'VIDEO HD');
 
     if (isTikTok){
       resTypeTag.textContent = isPhoto ? 'SLIDE FOTO' : 'VIDEO HD';
@@ -202,24 +203,24 @@
     } else if (isPhoto){
       resTypeTag.textContent = photos.length > 1 ? 'CAROUSEL' : 'FOTO HD';
     } else {
-      resTypeTag.textContent = 'REELS / VIDEO';
+      resTypeTag.textContent = 'VIDEO HD';
     }
 
     var author = data.author || {};
-    var defaultName = isTikTok ? 'TikTok Creator' : 'Instagram Creator';
+    var defaultName = isTikTok ? 'TikTok Creator' : (isInstagram ? 'Instagram Creator' : 'Video Creator');
     resName.textContent = author.name || defaultName;
 
     if (author.username && author.username.trim()){
       var u = author.username.trim();
       resUser.textContent = u.startsWith('@') ? u : '@' + u;
     } else {
-      resUser.textContent = isTikTok ? '@tiktok' : '@instagram';
+      resUser.textContent = isTikTok ? '@tiktok' : (isInstagram ? '@instagram' : '');
     }
 
     var avatarSrc = author.avatar || data.cover || '';
     if (!avatarSrc) {
-      var initial = (author.name || (isTikTok ? 'TT' : 'IG')).trim();
-      var bg = isTikTok ? '000000' : 'bc1888';
+      var initial = (author.name || (isTikTok ? 'TT' : (isInstagram ? 'IG' : 'VD'))).trim();
+      var bg = isTikTok ? '000000' : (isInstagram ? 'bc1888' : '323c1f');
       avatarSrc = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(initial) + '&background=' + bg + '&color=fff&size=128&bold=true';
     }
 
@@ -229,8 +230,8 @@
       if (resAvatar.src !== safeUrl(data.cover) && data.cover){
         resAvatar.src = safeUrl(data.cover);
       } else {
-        var initial = (author.name || (isTikTok ? 'TT' : 'IG')).trim();
-        var bg = isTikTok ? '000000' : 'bc1888';
+        var initial = (author.name || (isTikTok ? 'TT' : (isInstagram ? 'IG' : 'VD'))).trim();
+        var bg = isTikTok ? '000000' : (isInstagram ? 'bc1888' : '323c1f');
         resAvatar.src = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(initial) + '&background=' + bg + '&color=fff&size=128&bold=true';
       }
     };
