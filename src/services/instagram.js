@@ -328,24 +328,43 @@ async function scrapeSaveClip(igUrl) {
 
 async function scrapeSnapInsta(igUrl) {
   const cleanUrl = normalizeInstagramUrl(igUrl);
-  const verifyRes = await axios.post(
-    'https://snapinsta.to/api/userverify',
-    new URLSearchParams({ url: cleanUrl }).toString(),
-    {
-      headers: {
-        ...DEFAULT_HEADERS,
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Referer': 'https://snapinsta.to/en46',
-        'Origin': 'https://snapinsta.to'
-      },
-      timeout: 10000,
-      validateStatus: (s) => s >= 200 && s < 500
-    }
-  );
+  let token = null;
 
-  const token = verifyRes.data?.token;
+  try {
+    const verifyRes = await axios.post(
+      'https://snapinsta.to/api/userverify',
+      new URLSearchParams({ url: cleanUrl }).toString(),
+      {
+        headers: {
+          ...DEFAULT_HEADERS,
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Referer': 'https://snapinsta.to/en46',
+          'Origin': 'https://snapinsta.to'
+        },
+        timeout: 10000,
+        validateStatus: (s) => s >= 200 && s < 500
+      }
+    );
+    token = verifyRes.data?.token || null;
+  } catch (e) {}
+
   if (!token) {
-    throw new Error('Snapinsta token verification failed');
+    try {
+      const { stdout: vOut } = await execFilePromise('curl', [
+        '-s', '-X', 'POST', 'https://snapinsta.to/api/userverify',
+        '-H', `User-Agent: ${DEFAULT_HEADERS['User-Agent']}`,
+        '-H', 'Referer: https://snapinsta.to/en46',
+        '-H', 'Origin: https://snapinsta.to',
+        '-H', 'Content-Type: application/x-www-form-urlencoded',
+        '--data', `url=${encodeURIComponent(cleanUrl)}`
+      ]);
+      const vdata = JSON.parse(vOut);
+      token = vdata.token || null;
+    } catch (e) {}
+  }
+
+  if (!token) {
+    throw new Error('Snapinsta verify failed');
   }
 
   const searchRes = await axios.post(
@@ -612,17 +631,23 @@ async function downloadInstagram(rawUrl) {
       }
     } catch (e) {}
 
-    const dropRes = await scrapeVideoDropper(cleanUrl, 'story');
-    return {
-      status: 'success',
-      code: 200,
-      platform: 'instagram',
-      source: dropRes.source,
-      type: dropRes.type,
-      cover: dropRes.cover,
-      author: dropRes.author,
-      downloads: dropRes.downloads
-    };
+    try {
+      const dropRes = await scrapeVideoDropper(cleanUrl, 'story');
+      if (dropRes.downloads.video || (Array.isArray(dropRes.downloads.photos) && dropRes.downloads.photos.length > 0)) {
+        return {
+          status: 'success',
+          code: 200,
+          platform: 'instagram',
+          source: dropRes.source,
+          type: dropRes.type,
+          cover: dropRes.cover,
+          author: dropRes.author,
+          downloads: dropRes.downloads
+        };
+      }
+    } catch (e) {}
+
+    throw new Error('Tidak dapat mengunduh story Instagram. Pastikan akun tidak privat dan story masih aktif.');
   }
 
   try {
@@ -637,6 +662,22 @@ async function downloadInstagram(rawUrl) {
         cover: clipRes.cover,
         author: clipRes.author,
         downloads: clipRes.downloads
+      };
+    }
+  } catch (e) {}
+
+  try {
+    const snapRes = await scrapeSnapInsta(cleanUrl);
+    if (snapRes.downloads.video || (Array.isArray(snapRes.downloads.photos) && snapRes.downloads.photos.length > 0)) {
+      return {
+        status: 'success',
+        code: 200,
+        platform: 'instagram',
+        source: snapRes.source,
+        type: snapRes.type,
+        cover: snapRes.cover,
+        author: snapRes.author,
+        downloads: snapRes.downloads
       };
     }
   } catch (e) {}
@@ -657,17 +698,7 @@ async function downloadInstagram(rawUrl) {
     }
   } catch (e) {}
 
-  const snapRes = await scrapeSnapInsta(cleanUrl);
-  return {
-    status: 'success',
-    code: 200,
-    platform: 'instagram',
-    source: snapRes.source,
-    type: snapRes.type,
-    cover: snapRes.cover,
-    author: snapRes.author,
-    downloads: snapRes.downloads
-  };
+  throw new Error('Tidak dapat mengunduh media dari Instagram. Pastikan postingan atau reel bersifat publik.');
 }
 
 module.exports = {
