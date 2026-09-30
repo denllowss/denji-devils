@@ -179,9 +179,12 @@
     var hasVideo = !!(dl.video_hd || dl.video || mediaItems.find(function(m){ return m.type === 'video'; })?.url);
     var hasPhotos = photos.length > 0;
     var isExplicitPhotoUrl = inputUrl.includes('/photo/') || inputUrl.includes('/photomode/');
+    var isLivePhoto = rawType === 'live_photo' || (hasPhotos && hasVideo);
 
     var isPhoto = false;
-    if (isExplicitPhotoUrl) {
+    if (isLivePhoto) {
+      isPhoto = true;
+    } else if (isExplicitPhotoUrl) {
       isPhoto = true;
     } else if (hasPhotos && !hasVideo) {
       isPhoto = true;
@@ -196,7 +199,9 @@
     resPlatformTag.className = 'res-platform-tag ' + (isTikTok ? 'tiktok' : (isInstagram ? 'instagram' : 'tiktok'));
     resPlatformTag.textContent = isTikTok ? 'TIKTOK' : (isInstagram ? 'INSTAGRAM' : 'VIDEO HD');
 
-    if (isTikTok){
+    if (isLivePhoto){
+      resTypeTag.textContent = 'FOTO LIVE';
+    } else if (isTikTok){
       resTypeTag.textContent = isPhoto ? 'SLIDE FOTO' : 'VIDEO HD';
     } else if (isStory){
       resTypeTag.textContent = 'STORY';
@@ -385,6 +390,14 @@
           '<a href="' + esc(safeUrl(photos[0])) + '" target="_blank" rel="noopener" download="slide-1.jpg" class="res-btn res-btn-primary" id="activeSlideDlBtn">' +
             '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>' +
             '<span>Unduh Foto Slide #1</span>' +
+          '</a>';
+      }
+
+      if (mainVideo){
+        actionsHtml +=
+          '<a href="' + esc(safeUrl(mainVideo)) + '" target="_blank" rel="noopener" download="live-video.mp4" class="res-btn res-btn-secondary">' +
+            '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>' +
+            '<span>Unduh Video Live (Motion Clip)</span>' +
           '</a>';
       }
     } else if (mainVideo){

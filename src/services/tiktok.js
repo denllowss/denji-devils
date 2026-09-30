@@ -7,6 +7,7 @@ const httpsAgent = new https.Agent({
   keepAlive: true,
   maxSockets: 50,
   maxFreeSockets: 20,
+  rejectUnauthorized: false,
   timeout: 6000
 });
 
@@ -52,7 +53,7 @@ async function resolveTikTokUrl(rawUrl) {
 
 function isPhotoUrl(url) {
   const str = String(url || '').toLowerCase();
-  return str.includes('/photo/') || str.includes('/photomode/');
+  return str.includes('/photo/') || str.includes('/photomode/') || str.includes('/live_photo');
 }
 
 function isVideoUrl(url) {
@@ -74,16 +75,16 @@ async function scrapeTikWM(tiktokUrl) {
   const explicitPhoto = isPhotoUrl(tiktokUrl);
 
   let type = 'video';
-  if (explicitPhoto) {
-    type = 'image';
-  } else if (hasImages && (!hasVideo || data.duration === 0)) {
+  if (hasImages && hasVideo) {
+    type = 'live_photo';
+  } else if (explicitPhoto || (hasImages && !hasVideo)) {
     type = 'image';
   } else if (hasVideo) {
     type = 'video';
   }
 
   const mediaList = [];
-  if (type === 'image' && data.images) {
+  if (hasImages) {
     data.images.forEach((img, idx) => {
       mediaList.push({
         type: 'image',
@@ -93,7 +94,8 @@ async function scrapeTikWM(tiktokUrl) {
         download: img
       });
     });
-  } else if (data.play || data.hdplay) {
+  }
+  if (hasVideo) {
     mediaList.push({
       type: 'video',
       url: data.hdplay || data.play,
@@ -116,11 +118,11 @@ async function scrapeTikWM(tiktokUrl) {
       avatar: data.author?.avatar || ''
     },
     downloads: {
-      video: type === 'video' ? (data.play || null) : null,
-      video_hd: type === 'video' ? (data.hdplay || data.play || null) : null,
-      video_watermark: type === 'video' ? (data.wmplay || null) : null,
+      video: data.hdplay || data.play || null,
+      video_hd: data.hdplay || data.play || null,
+      video_watermark: data.wmplay || null,
       audio: data.music || data.music_info?.play || null,
-      photos: type === 'image' && hasImages ? data.images : undefined,
+      photos: hasImages ? data.images : undefined,
       media: mediaList
     },
     stats: {
@@ -174,16 +176,16 @@ async function scrapeLoveTik(tiktokUrl) {
   const hasVideoLinks = !!(videoSd || videoHd);
 
   let type = 'video';
-  if (explicitPhoto) {
-    type = 'image';
-  } else if (!hasVideoLinks && rawPhotos.length > 0) {
+  if (rawPhotos.length > 0 && hasVideoLinks) {
+    type = 'live_photo';
+  } else if (explicitPhoto || (rawPhotos.length > 0 && !hasVideoLinks)) {
     type = 'image';
   } else if (hasVideoLinks) {
     type = 'video';
   }
 
   const mediaList = [];
-  if (type === 'image' && rawPhotos.length > 0) {
+  if (rawPhotos.length > 0) {
     rawPhotos.forEach((imgUrl, idx) => {
       mediaList.push({
         type: 'image',
@@ -193,7 +195,8 @@ async function scrapeLoveTik(tiktokUrl) {
         download: imgUrl
       });
     });
-  } else if (videoHd || videoSd) {
+  }
+  if (videoHd || videoSd) {
     mediaList.push({
       type: 'video',
       url: videoHd || videoSd,
@@ -214,10 +217,10 @@ async function scrapeLoveTik(tiktokUrl) {
       avatar: data.author_avatar || ''
     },
     downloads: {
-      video: type === 'video' ? (videoSd || videoHd || null) : null,
-      video_hd: type === 'video' ? (videoHd || videoSd || null) : null,
+      video: videoHd || videoSd || null,
+      video_hd: videoHd || videoSd || null,
       audio: audio || null,
-      photos: type === 'image' && rawPhotos.length > 0 ? rawPhotos : undefined,
+      photos: rawPhotos.length > 0 ? rawPhotos : undefined,
       media: mediaList
     }
   };
@@ -318,16 +321,16 @@ async function scrapeSSSTik(tiktokUrl) {
   const hasVideoLinks = !!(sdLink || hdLink);
 
   let type = 'video';
-  if (explicitPhoto) {
-    type = 'image';
-  } else if (!hasVideoLinks && photos.length > 0) {
+  if (photos.length > 0 && hasVideoLinks) {
+    type = 'live_photo';
+  } else if (explicitPhoto || (photos.length > 0 && !hasVideoLinks)) {
     type = 'image';
   } else if (hasVideoLinks) {
     type = 'video';
   }
 
   const mediaList = [];
-  if (type === 'image' && photos.length > 0) {
+  if (photos.length > 0) {
     photos.forEach((pUrl, idx) => {
       mediaList.push({
         type: 'image',
@@ -337,7 +340,8 @@ async function scrapeSSSTik(tiktokUrl) {
         download: pUrl
       });
     });
-  } else if (hasVideoLinks) {
+  }
+  if (hasVideoLinks) {
     mediaList.push({
       type: 'video',
       url: hdLink || sdLink,
@@ -357,10 +361,10 @@ async function scrapeSSSTik(tiktokUrl) {
       avatar: authorAvatar
     },
     downloads: {
-      video: type === 'video' ? (sdLink || hdLink || null) : null,
-      video_hd: type === 'video' ? (hdLink || sdLink || null) : null,
+      video: hdLink || sdLink || null,
+      video_hd: hdLink || sdLink || null,
       audio: audioLink || null,
-      photos: type === 'image' && photos.length > 0 ? photos : undefined,
+      photos: photos.length > 0 ? photos : undefined,
       media: mediaList
     }
   };
@@ -376,12 +380,6 @@ async function downloadTikTok(rawUrl) {
   try {
     const tikRes = await scrapeTikWM(resolved);
     if (tikRes.downloads.video || (Array.isArray(tikRes.downloads.photos) && tikRes.downloads.photos.length > 0)) {
-      if (tikRes.downloads.video || tikRes.downloads.video_hd) {
-        if (!isPhotoUrl(resolved) && !isPhotoUrl(rawUrl)) {
-          tikRes.type = 'video';
-          tikRes.downloads.photos = undefined;
-        }
-      }
       return {
         status: 'success',
         code: 200,
@@ -402,10 +400,6 @@ async function downloadTikTok(rawUrl) {
   try {
     const loveRes = await scrapeLoveTik(resolved);
     if (loveRes.downloads?.video || loveRes.downloads?.video_hd || (Array.isArray(loveRes.downloads?.photos) && loveRes.downloads.photos.length > 0)) {
-      if (!isPhotoUrl(resolved) && !isPhotoUrl(rawUrl)) {
-        loveRes.type = 'video';
-        loveRes.downloads.photos = undefined;
-      }
       return {
         status: 'success',
         code: 200,
@@ -424,12 +418,6 @@ async function downloadTikTok(rawUrl) {
   try {
     const sssRes = await scrapeSSSTik(resolved);
     if (sssRes.downloads.video || (Array.isArray(sssRes.downloads.photos) && sssRes.downloads.photos.length > 0)) {
-      if (sssRes.downloads.video || sssRes.downloads.video_hd) {
-        if (!isPhotoUrl(resolved) && !isPhotoUrl(rawUrl)) {
-          sssRes.type = 'video';
-          sssRes.downloads.photos = undefined;
-        }
-      }
       return {
         status: 'success',
         code: 200,
