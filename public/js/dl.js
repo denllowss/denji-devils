@@ -23,7 +23,6 @@
 
   var currentSlideIdx = 0;
   var currentSlideList = [];
-  var currentResultData = null;
 
   function showToast(msg, ms){
     if (!toastEl) return;
@@ -126,7 +125,6 @@
         throw new Error(data.message || 'Gagal memproses tautan. Pastikan akun atau postingan bersifat publik.');
       }
 
-      currentResultData = data;
       renderResult(data, url);
     } catch(err){
       errorBox.textContent = err.message || 'Terjadi kesalahan saat memproses media.';
@@ -179,9 +177,16 @@
 
     var hasVideo = !!(dl.video_hd || dl.video || mediaItems.find(function(m){ return m.type === 'video'; })?.url);
     var hasPhotos = photos.length > 0;
+    var isExplicitPhotoUrl = inputUrl.includes('/photo/') || inputUrl.includes('/photomode/');
 
-    var isPhoto = (rawType === 'image' || rawType === 'carousel' || (isTikTok && inputUrl.includes('/photo/')) || (hasPhotos && !hasVideo));
-    if (hasVideo && !inputUrl.includes('/photo/') && rawType !== 'image') {
+    var isPhoto = false;
+    if (isExplicitPhotoUrl) {
+      isPhoto = true;
+    } else if (hasPhotos && !hasVideo) {
+      isPhoto = true;
+    } else if (rawType === 'carousel' || (rawType === 'image' && !hasVideo)) {
+      isPhoto = true;
+    } else if (hasVideo) {
       isPhoto = false;
     }
 
@@ -201,18 +206,24 @@
     }
 
     var author = data.author || {};
-    resName.textContent = author.name || (isTikTok ? 'TikTok Creator' : 'Instagram Creator');
+    var defaultName = isTikTok ? 'TikTok Creator' : 'Instagram Creator';
+    resName.textContent = author.name || defaultName;
     resUser.textContent = author.username || '';
 
-    if (author.avatar){
-      resAvatar.src = safeUrl(author.avatar);
-      resAvatar.style.display = 'block';
-    } else if (data.cover){
-      resAvatar.src = safeUrl(data.cover);
-      resAvatar.style.display = 'block';
-    } else {
-      resAvatar.style.display = 'none';
+    var avatarSrc = author.avatar || data.cover || '';
+    if (!avatarSrc) {
+      var initial = (author.name || (isTikTok ? 'TT' : 'IG')).trim();
+      var bg = isTikTok ? '000000' : 'bc1888';
+      avatarSrc = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(initial) + '&background=' + bg + '&color=fff&size=128&bold=true';
     }
+
+    resAvatar.src = safeUrl(avatarSrc);
+    resAvatar.style.display = 'block';
+    resAvatar.onerror = function(){
+      if (resAvatar.src !== safeUrl(data.cover) && data.cover){
+        resAvatar.src = safeUrl(data.cover);
+      }
+    };
 
     if (data.title && data.title.trim()){
       resTitle.textContent = data.title.trim();

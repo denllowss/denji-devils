@@ -31,6 +31,23 @@ function normalizeInstagramUrl(rawUrl) {
   }
 }
 
+function extractUsername(url) {
+  const str = String(url || '').trim();
+  const storyMatch = str.match(/instagram\.com\/stories\/([a-zA-Z0-9_\.]+)/i);
+  if (storyMatch && storyMatch[1] && storyMatch[1].toLowerCase() !== 'highlights') {
+    return storyMatch[1];
+  }
+  const directUserMatch = str.match(/instagram\.com\/([a-zA-Z0-9_\.]+)\/(?:p|reel|tv)\//i);
+  if (directUserMatch && directUserMatch[1]) {
+    return directUserMatch[1];
+  }
+  const rootUserMatch = str.match(/instagram\.com\/([a-zA-Z0-9_\.]+)\/?(?:[?#]|$)/i);
+  if (rootUserMatch && rootUserMatch[1] && !['p', 'reel', 'reels', 'stories', 'tv', 'explore', 'direct', 'accounts'].includes(rootUserMatch[1].toLowerCase())) {
+    return rootUserMatch[1];
+  }
+  return null;
+}
+
 function decodeBase(d, e, f) {
   const g = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+/';
   const h = g.slice(0, e);
@@ -95,6 +112,68 @@ function extractHtmlFromUnpacked(unpacked) {
     }
   }
   return unpacked;
+}
+
+async function fetchInstagramProfile(username) {
+  if (!username) return null;
+  const cleanUrl = `https://www.instagram.com/${username}/`;
+  let k_token = '95c09b2f49414bafab55c43c874be2cd857a64dfd40b6279ede3869b2b13ea0e';
+  let k_exp = '1790213633';
+  let k_url_search = 'https://v3.saveclip.app/api/ajaxSearch';
+
+  try {
+    const { stdout: pOut } = await execFilePromise('curl', [
+      '-s', 'https://saveclip.app/id8/instagram-story-download',
+      '-H', `User-Agent: ${DEFAULT_HEADERS['User-Agent']}`,
+      '-H', 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+    ]);
+    const tokenMatch = pOut.match(/k_token\s*=\s*[\x22\x27]([^\x22\x27]+)[\x22\x27]/);
+    const expMatch = pOut.match(/k_exp\s*=\s*[\x22\x27]([^\x22\x27]+)[\x22\x27]/);
+    const urlSearchMatch = pOut.match(/k_url_search\s*=\s*[\x22\x27]([^\x22\x27]+)[\x22\x27]/);
+    if (tokenMatch) k_token = tokenMatch[1];
+    if (expMatch) k_exp = expMatch[1];
+    if (urlSearchMatch) k_url_search = urlSearchMatch[1];
+  } catch (e) {}
+
+  let cftoken = '';
+  try {
+    const { stdout: vOut } = await execFilePromise('curl', [
+      '-s', '-X', 'POST', 'https://saveclip.app/api/userverify',
+      '-H', `User-Agent: ${DEFAULT_HEADERS['User-Agent']}`,
+      '-H', 'Referer: https://saveclip.app/id8/instagram-story-download',
+      '-H', 'Origin: https://saveclip.app',
+      '-H', 'Content-Type: application/x-www-form-urlencoded',
+      '--data', `url=${encodeURIComponent(cleanUrl)}`
+    ]);
+    const vdata = JSON.parse(vOut);
+    cftoken = vdata.token || '';
+  } catch (e) {}
+
+  try {
+    const { stdout: sOut } = await execFilePromise('curl', [
+      '-s', '-X', 'POST', k_url_search,
+      '-H', `User-Agent: ${DEFAULT_HEADERS['User-Agent']}`,
+      '-H', 'Referer: https://saveclip.app/id8/instagram-story-download',
+      '-H', 'Origin: https://saveclip.app',
+      '-H', 'Content-Type: application/x-www-form-urlencoded; charset=UTF-8',
+      '-H', 'X-Requested-With: XMLHttpRequest',
+      '--data', `k_exp=${encodeURIComponent(k_exp)}&k_token=${encodeURIComponent(k_token)}&q=${encodeURIComponent(cleanUrl)}&t=media&lang=id&v=v2&cftoken=${encodeURIComponent(cftoken)}`
+    ]);
+
+    const resData = JSON.parse(sOut);
+    let rawHtml = resData.data || '';
+    if (rawHtml.includes('eval(function(')) {
+      const unpacked = unpackHunterCode(rawHtml);
+      rawHtml = extractHtmlFromUnpacked(unpacked);
+    }
+
+    const $ = cheerio.load(rawHtml);
+    const firstA = $('a[title*="Avatar"], a:contains("Avatar"), a:contains("Unduh Avatar")').first().attr('href');
+    const firstImg = $('img').first().attr('src');
+    return extractJwtUrl(firstA) || extractJwtUrl(firstImg) || firstImg || null;
+  } catch (e) {
+    return null;
+  }
 }
 
 async function scrapeSaveClip(igUrl) {
@@ -222,10 +301,21 @@ async function scrapeSaveClip(igUrl) {
     type = isStory ? 'story' : (isCarousel ? 'carousel' : 'image');
   }
 
+  const uname = extractUsername(cleanUrl);
+  let authorAvatar = null;
+  if (uname) {
+    authorAvatar = await fetchInstagramProfile(uname);
+  }
+
   return {
     source: 'saveclip.app',
     type: type,
     cover: cover,
+    author: {
+      name: uname || 'Instagram Creator',
+      username: uname ? `@${uname}` : '',
+      avatar: authorAvatar || cover || null
+    },
     downloads: {
       video: videoList[0] || null,
       video_hd: videoList[0] || null,
@@ -270,10 +360,9 @@ async function scrapeSnapInsta(igUrl) {
     {
       headers: {
         ...DEFAULT_HEADERS,
-        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+        'Content-Type': 'application/x-www-form-urlencoded',
         'Referer': 'https://snapinsta.to/en46',
-        'Origin': 'https://snapinsta.to',
-        'X-Requested-With': 'XMLHttpRequest'
+        'Origin': 'https://snapinsta.to'
       },
       timeout: 15000
     }
@@ -296,56 +385,68 @@ async function scrapeSnapInsta(igUrl) {
   const imageList = [];
   let cover = null;
 
-  $('.download-box, .media-box, .row > div').each((_, el) => {
+  $('.download-items, .download-box li, .media-box').each((_, el) => {
     const item = $(el);
-    const downloadHref = item.find('a.btn-download, a.abutton, a[href*="download"], .download-bottom a').attr('href');
-    const thumb = item.find('img').attr('src') || item.find('img').attr('data-src');
+    const thumbImg = item.find('img').attr('src') || item.find('img').attr('data-src') || '';
+    const directThumb = extractJwtUrl(thumbImg) || thumbImg;
 
-    if (downloadHref) {
-      if (!cover && thumb) cover = thumb;
-      const isVid = downloadHref.includes('.mp4') || downloadHref.includes('dl.snapinsta') || item.find('.icon-video').length > 0;
+    if (!cover && directThumb) cover = directThumb;
+
+    item.find('a').each((__, aEl) => {
+      const href = $(aEl).attr('href') || '';
+      const text = $(aEl).text().toLowerCase();
+
+      if (!href || href.startsWith('/') || href.includes('google')) return;
+
+      const directCdn = extractJwtUrl(href) || href;
+      const isVid = text.includes('video') || directCdn.includes('.mp4');
+      const isImg = text.includes('foto') || text.includes('photo') || text.includes('gambar') || directCdn.includes('.jpg') || directCdn.includes('.jpeg') || directCdn.includes('.png');
+
       if (isVid) {
-        videoList.push(downloadHref);
-        mediaList.push({ type: 'video', url: downloadHref, thumbnail: thumb || null });
-      } else {
-        imageList.push(downloadHref);
-        mediaList.push({ type: 'image', url: downloadHref });
-      }
-    }
-  });
-
-  if (mediaList.length === 0) {
-    $('a').each((_, el) => {
-      const href = $(el).attr('href');
-      if (href && (href.startsWith('http') || href.startsWith('/'))) {
-        const fullHref = href.startsWith('/') ? `https://snapinsta.to${href}` : href;
-        if (fullHref.includes('.mp4')) {
-          videoList.push(fullHref);
-          mediaList.push({ type: 'video', url: fullHref });
-        } else if (fullHref.includes('.jpg') || fullHref.includes('.jpeg') || fullHref.includes('.png')) {
-          imageList.push(fullHref);
-          mediaList.push({ type: 'image', url: fullHref });
+        if (!videoList.includes(directCdn)) {
+          videoList.push(directCdn);
+          mediaList.push({
+            type: 'video',
+            url: directCdn,
+            thumbnail: directThumb || null,
+            download: href
+          });
+        }
+      } else if (isImg && !text.includes('thumbnail')) {
+        if (!imageList.includes(directCdn)) {
+          imageList.push(directCdn);
+          mediaList.push({
+            type: 'image',
+            url: directCdn,
+            download: href
+          });
         }
       }
     });
-  }
+  });
 
-  if (mediaList.length === 0) {
-    throw new Error('No media extracted from Snapinsta');
-  }
-
+  const isStory = cleanUrl.includes('/stories/') || cleanUrl.includes('/story/');
   const isCarousel = mediaList.length > 1;
-  let type = 'video';
+  let type = isStory ? 'story' : 'video';
   if (imageList.length > 0 && videoList.length === 0) {
-    type = isCarousel ? 'carousel' : 'image';
-  } else if (isCarousel) {
-    type = 'carousel';
+    type = isStory ? 'story' : (isCarousel ? 'carousel' : 'image');
+  }
+
+  const uname = extractUsername(cleanUrl);
+  let authorAvatar = null;
+  if (uname) {
+    authorAvatar = await fetchInstagramProfile(uname);
   }
 
   return {
     source: 'snapinsta.to',
     type: type,
     cover: cover,
+    author: {
+      name: uname || 'Instagram Creator',
+      username: uname ? `@${uname}` : '',
+      avatar: authorAvatar || cover || null
+    },
     downloads: {
       video: videoList[0] || null,
       video_hd: videoList[0] || null,
@@ -445,10 +546,21 @@ async function scrapeVideoDropper(igUrl, endpoint = 'allinone') {
     type = 'carousel';
   }
 
+  const uname = extractUsername(cleanUrl);
+  let authorAvatar = null;
+  if (uname) {
+    authorAvatar = await fetchInstagramProfile(uname);
+  }
+
   return {
     source: 'videodropper.app',
     type: type,
     cover: cover,
+    author: {
+      name: uname || 'Instagram Creator',
+      username: uname ? `@${uname}` : '',
+      avatar: authorAvatar || cover || null
+    },
     downloads: {
       video: videoList[0] || null,
       video_hd: videoList[0] || null,
@@ -469,86 +581,99 @@ async function downloadInstagram(rawUrl) {
 
   if (isStory) {
     try {
-      const scRes = await scrapeSaveClip(cleanUrl);
-      if (scRes.downloads.video || (scRes.downloads.photos && scRes.downloads.photos.length > 0) || (scRes.downloads.media && scRes.downloads.media.length > 0)) {
+      const clipRes = await scrapeSaveClip(cleanUrl);
+      if (clipRes.downloads.video || (Array.isArray(clipRes.downloads.photos) && clipRes.downloads.photos.length > 0)) {
         return {
           status: 'success',
           code: 200,
           platform: 'instagram',
-          source: scRes.source,
-          type: 'story',
-          cover: scRes.cover,
-          downloads: scRes.downloads
+          source: clipRes.source,
+          type: clipRes.type,
+          cover: clipRes.cover,
+          author: clipRes.author,
+          downloads: clipRes.downloads
         };
       }
     } catch (e) {}
+
+    try {
+      const snapRes = await scrapeSnapInsta(cleanUrl);
+      if (snapRes.downloads.video || (Array.isArray(snapRes.downloads.photos) && snapRes.downloads.photos.length > 0)) {
+        return {
+          status: 'success',
+          code: 200,
+          platform: 'instagram',
+          source: snapRes.source,
+          type: snapRes.type,
+          cover: snapRes.cover,
+          author: snapRes.author,
+          downloads: snapRes.downloads
+        };
+      }
+    } catch (e) {}
+
+    const dropRes = await scrapeVideoDropper(cleanUrl, 'story');
+    return {
+      status: 'success',
+      code: 200,
+      platform: 'instagram',
+      source: dropRes.source,
+      type: dropRes.type,
+      cover: dropRes.cover,
+      author: dropRes.author,
+      downloads: dropRes.downloads
+    };
   }
 
   try {
-    const scRes = await scrapeSaveClip(cleanUrl);
-    if (scRes.downloads.video || (scRes.downloads.photos && scRes.downloads.photos.length > 0) || (scRes.downloads.media && scRes.downloads.media.length > 0)) {
+    const clipRes = await scrapeSaveClip(cleanUrl);
+    if (clipRes.downloads.video || (Array.isArray(clipRes.downloads.photos) && clipRes.downloads.photos.length > 0)) {
       return {
         status: 'success',
         code: 200,
         platform: 'instagram',
-        source: scRes.source,
-        type: scRes.type,
-        cover: scRes.cover,
-        downloads: scRes.downloads
+        source: clipRes.source,
+        type: clipRes.type,
+        cover: clipRes.cover,
+        author: clipRes.author,
+        downloads: clipRes.downloads
       };
     }
   } catch (e) {}
 
   try {
-    const vdRes = await scrapeVideoDropper(cleanUrl, 'allinone');
-    if (vdRes.downloads.video || (vdRes.downloads.photos && vdRes.downloads.photos.length > 0) || (vdRes.downloads.media && vdRes.downloads.media.length > 0)) {
+    const dropRes = await scrapeVideoDropper(cleanUrl, 'allinone');
+    if (dropRes.downloads.video || (Array.isArray(dropRes.downloads.photos) && dropRes.downloads.photos.length > 0)) {
       return {
         status: 'success',
         code: 200,
         platform: 'instagram',
-        source: vdRes.source,
-        type: vdRes.type,
-        cover: vdRes.cover,
-        downloads: vdRes.downloads
+        source: dropRes.source,
+        type: dropRes.type,
+        cover: dropRes.cover,
+        author: dropRes.author,
+        downloads: dropRes.downloads
       };
     }
   } catch (e) {}
 
-  try {
-    const snapRes = await scrapeSnapInsta(cleanUrl);
-    if (snapRes.downloads.video || (snapRes.downloads.photos && snapRes.downloads.photos.length > 0)) {
-      return {
-        status: 'success',
-        code: 200,
-        platform: 'instagram',
-        source: snapRes.source,
-        type: snapRes.type,
-        cover: snapRes.cover,
-        downloads: snapRes.downloads
-      };
-    }
-  } catch (e) {}
-
-  try {
-    const photoRes = await scrapeVideoDropper(cleanUrl, 'photo');
-    if (photoRes.downloads.photos && photoRes.downloads.photos.length > 0) {
-      return {
-        status: 'success',
-        code: 200,
-        platform: 'instagram',
-        source: photoRes.source,
-        type: photoRes.type,
-        cover: photoRes.cover,
-        downloads: photoRes.downloads
-      };
-    }
-  } catch (e) {}
-
-  throw new Error('Tidak dapat mengunduh media dari Instagram. Pastikan postingan atau story bersifat publik.');
+  const snapRes = await scrapeSnapInsta(cleanUrl);
+  return {
+    status: 'success',
+    code: 200,
+    platform: 'instagram',
+    source: snapRes.source,
+    type: snapRes.type,
+    cover: snapRes.cover,
+    author: snapRes.author,
+    downloads: snapRes.downloads
+  };
 }
 
 module.exports = {
   normalizeInstagramUrl,
+  extractUsername,
+  fetchInstagramProfile,
   scrapeSaveClip,
   scrapeVideoDropper,
   scrapeSnapInsta,

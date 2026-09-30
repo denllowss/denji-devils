@@ -47,13 +47,17 @@ async function scrapeTikWM(tiktokUrl) {
     throw new Error('Data tidak ditemukan di TikWM');
   }
 
-  const isImages = Array.isArray(data.images) && data.images.length > 0;
-  const isExplicitPhoto = isPhotoUrl(tiktokUrl);
-  const isExplicitVideo = isVideoUrl(tiktokUrl);
+  const hasImages = Array.isArray(data.images) && data.images.length > 0;
+  const hasVideo = !!(data.play || data.hdplay);
+  const explicitPhoto = isPhotoUrl(tiktokUrl);
 
   let type = 'video';
-  if (isExplicitPhoto || (isImages && !isExplicitVideo)) {
+  if (explicitPhoto) {
     type = 'image';
+  } else if (hasImages && (!hasVideo || data.duration === 0)) {
+    type = 'image';
+  } else if (hasVideo) {
+    type = 'video';
   }
 
   const mediaList = [];
@@ -94,7 +98,7 @@ async function scrapeTikWM(tiktokUrl) {
       video_hd: type === 'video' ? (data.hdplay || data.play || null) : null,
       video_watermark: type === 'video' ? (data.wmplay || null) : null,
       audio: data.music || data.music_info?.play || null,
-      photos: type === 'image' && isImages ? data.images : undefined,
+      photos: type === 'image' && hasImages ? data.images : undefined,
       media: mediaList
     },
     stats: {
@@ -198,13 +202,16 @@ async function scrapeSSSTik(tiktokUrl) {
   const bgMatch = overlayStyle.match(/url\(([^)]+)\)/);
   const cover = bgMatch ? bgMatch[1] : (photos[0] || null);
 
-  const isExplicitPhoto = isPhotoUrl(tiktokUrl);
-  const isExplicitVideo = isVideoUrl(tiktokUrl);
+  const explicitPhoto = isPhotoUrl(tiktokUrl);
   const hasVideoLinks = !!(sdLink || hdLink);
 
   let type = 'video';
-  if (isExplicitPhoto || (!hasVideoLinks && photos.length > 0 && !isExplicitVideo)) {
+  if (explicitPhoto) {
     type = 'image';
+  } else if (!hasVideoLinks && photos.length > 0) {
+    type = 'image';
+  } else if (hasVideoLinks) {
+    type = 'video';
   }
 
   const mediaList = [];
@@ -262,35 +269,37 @@ async function scrapeLoveTik(tiktokUrl) {
   );
 
   const data = res.data;
-  if (!data || data.status !== 'ok' || !data.links) {
-    throw new Error(data?.mess || 'Gagal memproses via Lovetik');
+  if (!data || data.status !== 'ok') {
+    throw new Error(data?.mess || 'Gagal memproses LoveTik');
   }
 
-  const links = data.links || [];
   let videoSd = null;
   let videoHd = null;
   let audio = null;
 
-  links.forEach((l) => {
-    const t = (l.t || '').toLowerCase();
-    const ft = (l.ft || '').toLowerCase();
-    const a = l.a || '';
-    if (ft === 'mp3' || t.includes('audio') || t.includes('music')) {
-      audio = a;
-    } else if (t.includes('hd') || t.includes('1080')) {
-      videoHd = a;
-    } else if (ft === 'mp4' || t.includes('watermark') || t.includes('download')) {
-      if (!videoSd) videoSd = a;
+  (data.links || []).forEach((link) => {
+    if (link.t === 'mp4' && !videoSd) {
+      videoSd = link.a;
+    }
+    if (link.t === 'hd' && !videoHd) {
+      videoHd = link.a;
+    }
+    if (link.t === 'mp3' && !audio) {
+      audio = link.a;
     }
   });
 
   const rawPhotos = Array.isArray(data.images) ? data.images : [];
-  const isExplicitPhoto = isPhotoUrl(tiktokUrl);
-  const isExplicitVideo = isVideoUrl(tiktokUrl);
+  const explicitPhoto = isPhotoUrl(tiktokUrl);
+  const hasVideoLinks = !!(videoSd || videoHd);
 
   let type = 'video';
-  if (isExplicitPhoto || (rawPhotos.length > 0 && !isExplicitVideo)) {
+  if (explicitPhoto) {
     type = 'image';
+  } else if (!hasVideoLinks && rawPhotos.length > 0) {
+    type = 'image';
+  } else if (hasVideoLinks) {
+    type = 'video';
   }
 
   const mediaList = [];
@@ -304,7 +313,7 @@ async function scrapeLoveTik(tiktokUrl) {
         download: imgUrl
       });
     });
-  } else if (videoSd || videoHd) {
+  } else if (videoHd || videoSd) {
     mediaList.push({
       type: 'video',
       url: videoHd || videoSd,
@@ -344,6 +353,12 @@ async function downloadTikTok(rawUrl) {
   try {
     const tikRes = await scrapeTikWM(resolved);
     if (tikRes.downloads.video || (Array.isArray(tikRes.downloads.photos) && tikRes.downloads.photos.length > 0)) {
+      if (tikRes.downloads.video || tikRes.downloads.video_hd) {
+        if (!isPhotoUrl(resolved) && !isPhotoUrl(rawUrl)) {
+          tikRes.type = 'video';
+          tikRes.downloads.photos = undefined;
+        }
+      }
       return {
         status: 'success',
         code: 200,
@@ -364,6 +379,12 @@ async function downloadTikTok(rawUrl) {
   try {
     const sssRes = await scrapeSSSTik(resolved);
     if (sssRes.downloads.video || (Array.isArray(sssRes.downloads.photos) && sssRes.downloads.photos.length > 0)) {
+      if (sssRes.downloads.video || sssRes.downloads.video_hd) {
+        if (!isPhotoUrl(resolved) && !isPhotoUrl(rawUrl)) {
+          sssRes.type = 'video';
+          sssRes.downloads.photos = undefined;
+        }
+      }
       return {
         status: 'success',
         code: 200,
@@ -379,6 +400,12 @@ async function downloadTikTok(rawUrl) {
   } catch (e) {}
 
   const loveRes = await scrapeLoveTik(resolved);
+  if (loveRes.downloads?.video || loveRes.downloads?.video_hd) {
+    if (!isPhotoUrl(resolved) && !isPhotoUrl(rawUrl)) {
+      loveRes.type = 'video';
+      loveRes.downloads.photos = undefined;
+    }
+  }
   return {
     status: 'success',
     code: 200,
