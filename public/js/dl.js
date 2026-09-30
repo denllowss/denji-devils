@@ -23,6 +23,7 @@
 
   var currentSlideIdx = 0;
   var currentSlideList = [];
+  var currentMediaItems = [];
 
   function showToast(msg, ms){
     if (!toastEl) return;
@@ -149,17 +150,42 @@
     if (idx >= currentSlideList.length) idx = 0;
     currentSlideIdx = idx;
 
+    var currentItem = currentMediaItems[idx] || {};
+    var currentImg = currentItem.url || currentSlideList[idx];
+    var currentLiveVid = currentItem.live_video;
+
     var imgEl = document.getElementById('activeSlideImg');
     var badgeEl = document.getElementById('activeSlideBadge');
     var activeDlBtn = document.getElementById('activeSlideDlBtn');
+    var activeLiveBtn = document.getElementById('activeSlideLiveBtn');
 
-    if (imgEl) imgEl.src = safeUrl(currentSlideList[idx]);
-    if (badgeEl) badgeEl.textContent = (idx + 1) + ' / ' + currentSlideList.length;
+    if (imgEl) imgEl.src = safeUrl(currentImg);
+
+    if (badgeEl){
+      if (currentLiveVid && isRealVideoUrl(currentLiveVid)){
+        badgeEl.innerHTML = (idx + 1) + ' / ' + currentSlideList.length + ' &bull; <span style="color:#f1fcbd; font-weight:800;">LIVE</span>';
+      } else {
+        badgeEl.textContent = (idx + 1) + ' / ' + currentSlideList.length;
+      }
+    }
+
     if (activeDlBtn){
-      activeDlBtn.href = safeUrl(currentSlideList[idx]);
+      activeDlBtn.href = safeUrl(currentImg);
       activeDlBtn.setAttribute('download', 'slide-' + (idx + 1) + '.jpg');
       var labelSpan = activeDlBtn.querySelector('span');
       if (labelSpan) labelSpan.textContent = 'Unduh Foto Slide #' + (idx + 1);
+    }
+
+    if (activeLiveBtn){
+      if (currentLiveVid && isRealVideoUrl(currentLiveVid)){
+        activeLiveBtn.href = safeUrl(currentLiveVid);
+        activeLiveBtn.setAttribute('download', 'live-video-slide-' + (idx + 1) + '.mp4');
+        var liveSpan = activeLiveBtn.querySelector('span');
+        if (liveSpan) liveSpan.textContent = 'Unduh Video Live Slide #' + (idx + 1) + ' (MP4)';
+        activeLiveBtn.style.display = 'inline-flex';
+      } else {
+        activeLiveBtn.style.display = 'none';
+      }
     }
 
     var thumbs = document.querySelectorAll('.res-thumb-item');
@@ -191,26 +217,27 @@
       mainVideo = null;
     }
 
+    var hasLiveVideos = mediaItems.some(function(m){ return m.live_video && isRealVideoUrl(m.live_video); });
+
     if (!mainVideo && mediaItems.length > 0){
       var vItem = mediaItems.find(function(m){ return m.type === 'video' && isRealVideoUrl(m.url); });
       if (vItem) mainVideo = vItem.url;
     }
 
-    var hasVideo = !!(mainVideo && isRealVideoUrl(mainVideo));
     var hasPhotos = photos.length > 0;
     var isExplicitPhotoUrl = inputUrl.includes('/photo/') || inputUrl.includes('/photomode/');
-    var isLivePhoto = rawType === 'live_photo' || (hasPhotos && hasVideo);
+    var isLivePhoto = rawType === 'live_photo' || hasLiveVideos;
 
     var isPhoto = false;
     if (isLivePhoto) {
       isPhoto = true;
     } else if (isExplicitPhotoUrl) {
       isPhoto = true;
-    } else if (hasPhotos && !hasVideo) {
+    } else if (hasPhotos && !mainVideo) {
       isPhoto = true;
-    } else if (rawType === 'carousel' || (rawType === 'image' && !hasVideo)) {
+    } else if (rawType === 'carousel' || (rawType === 'image' && !mainVideo)) {
       isPhoto = true;
-    } else if (hasVideo) {
+    } else if (mainVideo) {
       isPhoto = false;
     }
 
@@ -274,14 +301,21 @@
       });
     }
 
+    currentMediaItems = mediaItems.length > 0 ? mediaItems : photos.map(function(p, i){
+      return { index: i + 1, url: p, live_video: null };
+    });
+
     if (isPhoto && photos.length > 0){
       currentSlideIdx = 0;
       currentSlideList = photos;
 
+      var firstItem = currentMediaItems[0] || {};
+      var isFirstLive = firstItem.live_video && isRealVideoUrl(firstItem.live_video);
+
       var slideHtml =
         '<div class="res-slide-container">' +
           '<div class="res-slide-stage" id="slideStage">' +
-            '<span class="res-slide-badge" id="activeSlideBadge">1 / ' + photos.length + '</span>';
+            '<span class="res-slide-badge" id="activeSlideBadge">1 / ' + photos.length + (isFirstLive ? ' &bull; <span style="color:#f1fcbd; font-weight:800;">LIVE</span>' : '') + '</span>';
 
       if (photos.length > 1){
         slideHtml +=
@@ -300,9 +334,12 @@
       if (photos.length > 1){
         slideHtml += '<div class="res-thumbs">';
         photos.forEach(function(imgUrl, idx){
+          var item = currentMediaItems[idx] || {};
+          var itemIsLive = item.live_video && isRealVideoUrl(item.live_video);
           slideHtml +=
-            '<div class="res-thumb-item' + (idx === 0 ? ' active' : '') + '" data-idx="' + idx + '">' +
+            '<div class="res-thumb-item' + (idx === 0 ? ' active' : '') + '" data-idx="' + idx + '" style="position:relative;">' +
               '<img class="res-thumb-img" src="' + esc(safeUrl(imgUrl)) + '" alt="Thumb ' + (idx + 1) + '" loading="lazy">' +
+              (itemIsLive ? '<span style="position:absolute; bottom:2px; right:2px; font-size:8px; font-weight:800; background:#fe2c55; color:#fff; padding:1px 3px; border-radius:4px; line-height:1;">LIVE</span>' : '') +
             '</div>';
         });
         slideHtml += '</div>';
@@ -391,9 +428,12 @@
     var actionsHtml = '';
 
     if (isPhoto && photos.length > 0){
+      var curItem = currentMediaItems[0] || {};
+      var curLive = curItem.live_video && isRealVideoUrl(curItem.live_video);
+
       if (photos.length === 1){
         actionsHtml +=
-          '<a href="' + esc(safeUrl(photos[0])) + '" target="_blank" rel="noopener" download="photo.jpg" class="res-btn res-btn-primary">' +
+          '<a href="' + esc(safeUrl(photos[0])) + '" target="_blank" rel="noopener" download="photo.jpg" class="res-btn res-btn-primary" id="activeSlideDlBtn">' +
             '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>' +
             '<span>Unduh Foto HD</span>' +
           '</a>';
@@ -405,12 +445,23 @@
           '</a>';
       }
 
-      if (mainVideo && isRealVideoUrl(mainVideo)){
-        actionsHtml +=
-          '<a href="' + esc(safeUrl(mainVideo)) + '" target="_blank" rel="noopener" download="live-video.mp4" class="res-btn res-btn-secondary">' +
-            '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>' +
-            '<span>Unduh Video Live (Motion Clip)</span>' +
-          '</a>';
+      actionsHtml +=
+        '<a href="' + (curLive ? esc(safeUrl(curItem.live_video)) : '#') + '" target="_blank" rel="noopener" download="live-video-slide-1.mp4" class="res-btn res-btn-secondary" id="activeSlideLiveBtn" style="display:' + (curLive ? 'inline-flex' : 'none') + ';">' +
+          '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>' +
+          '<span>Unduh Video Live Slide #1 (MP4)</span>' +
+        '</a>';
+
+      var allLiveItems = currentMediaItems.filter(function(m){ return m.live_video && isRealVideoUrl(m.live_video); });
+      if (allLiveItems.length > 1){
+        actionsHtml += '<div style="display:flex; flex-direction:column; gap:6px; margin-top:4px;">';
+        allLiveItems.forEach(function(item){
+          actionsHtml +=
+            '<a href="' + esc(safeUrl(item.live_video)) + '" target="_blank" rel="noopener" download="live-video-slide-' + item.index + '.mp4" class="res-btn res-btn-outline" style="font-size:12px; padding:9px 12px;">' +
+              '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>' +
+              '<span>Unduh Video Live Slide #' + item.index + ' (MP4)</span>' +
+            '</a>';
+        });
+        actionsHtml += '</div>';
       }
     } else if (mainVideo && isRealVideoUrl(mainVideo)){
       var vDl = dl.video_hd || dl.video;
@@ -447,7 +498,8 @@
     var copyBtn = document.getElementById('copyDirectBtn');
     if (copyBtn){
       copyBtn.addEventListener('click', function(){
-        var copyTarget = (isPhoto && photos.length > 0) ? photos[currentSlideIdx] : (mainVideo || inputUrl);
+        var cur = currentMediaItems[currentSlideIdx] || {};
+        var copyTarget = cur.live_video || ((isPhoto && photos.length > 0) ? photos[currentSlideIdx] : (mainVideo || inputUrl));
         if (navigator.clipboard){
           navigator.clipboard.writeText(copyTarget).then(function(){
             showToast('Tautan berhasil disalin');

@@ -80,10 +80,12 @@ async function scrapeTikWM(tiktokUrl) {
   const hasImages = Array.isArray(data.images) && data.images.length > 0;
   const rawVideo = data.hdplay || data.play;
   const hasRealVideo = isValidVideoUrl(rawVideo);
+  const liveImages = Array.isArray(data.live_images) ? data.live_images : [];
+  const hasLiveImages = liveImages.some(v => isValidVideoUrl(v));
   const explicitPhoto = isPhotoUrl(tiktokUrl);
 
   let type = 'video';
-  if (hasImages && hasRealVideo) {
+  if (hasLiveImages || (hasImages && hasRealVideo)) {
     type = 'live_photo';
   } else if (explicitPhoto || (hasImages && !hasRealVideo)) {
     type = 'image';
@@ -94,12 +96,14 @@ async function scrapeTikWM(tiktokUrl) {
   const mediaList = [];
   if (hasImages) {
     data.images.forEach((img, idx) => {
+      const liveVid = liveImages[idx] && isValidVideoUrl(liveImages[idx]) ? liveImages[idx] : null;
       mediaList.push({
-        type: 'image',
+        type: liveVid ? 'live_photo' : 'image',
         index: idx + 1,
         url: img,
         thumbnail: img,
-        download: img
+        download: img,
+        live_video: liveVid
       });
     });
   }
@@ -112,6 +116,8 @@ async function scrapeTikWM(tiktokUrl) {
     });
   }
 
+  const firstLiveVideo = liveImages.find(v => isValidVideoUrl(v)) || null;
+  const primaryVideo = hasRealVideo ? rawVideo : firstLiveVideo;
   const realAudio = data.music || data.music_info?.play || null;
 
   return {
@@ -128,11 +134,12 @@ async function scrapeTikWM(tiktokUrl) {
       avatar: data.author?.avatar || ''
     },
     downloads: {
-      video: hasRealVideo ? rawVideo : null,
-      video_hd: hasRealVideo ? rawVideo : null,
+      video: primaryVideo,
+      video_hd: primaryVideo,
       video_watermark: isValidVideoUrl(data.wmplay) ? data.wmplay : null,
       audio: realAudio,
       photos: hasImages ? data.images : undefined,
+      live_photos: hasLiveImages ? liveImages : undefined,
       media: mediaList
     },
     stats: {
@@ -182,11 +189,13 @@ async function scrapeLoveTik(tiktokUrl) {
   });
 
   const rawPhotos = Array.isArray(data.images) ? data.images : [];
+  const rawLive = Array.isArray(data.live_images) ? data.live_images : [];
   const explicitPhoto = isPhotoUrl(tiktokUrl);
   const hasRealVideo = !!(videoSd || videoHd);
+  const hasLive = rawLive.some(v => isValidVideoUrl(v));
 
   let type = 'video';
-  if (rawPhotos.length > 0 && hasRealVideo) {
+  if (hasLive || (rawPhotos.length > 0 && hasRealVideo)) {
     type = 'live_photo';
   } else if (explicitPhoto || (rawPhotos.length > 0 && !hasRealVideo)) {
     type = 'image';
@@ -197,12 +206,14 @@ async function scrapeLoveTik(tiktokUrl) {
   const mediaList = [];
   if (rawPhotos.length > 0) {
     rawPhotos.forEach((imgUrl, idx) => {
+      const liveVid = rawLive[idx] && isValidVideoUrl(rawLive[idx]) ? rawLive[idx] : null;
       mediaList.push({
-        type: 'image',
+        type: liveVid ? 'live_photo' : 'image',
         index: idx + 1,
         url: imgUrl,
         thumbnail: imgUrl,
-        download: imgUrl
+        download: imgUrl,
+        live_video: liveVid
       });
     });
   }
@@ -216,6 +227,8 @@ async function scrapeLoveTik(tiktokUrl) {
     });
   }
 
+  const primaryVideo = hasRealVideo ? (videoHd || videoSd) : (rawLive.find(v => isValidVideoUrl(v)) || null);
+
   return {
     source: 'lovetik.com',
     type: type,
@@ -228,10 +241,11 @@ async function scrapeLoveTik(tiktokUrl) {
       avatar: data.author_avatar || ''
     },
     downloads: {
-      video: hasRealVideo ? (videoHd || videoSd) : null,
-      video_hd: hasRealVideo ? (videoHd || videoSd) : null,
+      video: primaryVideo,
+      video_hd: primaryVideo,
       audio: audio || null,
       photos: rawPhotos.length > 0 ? rawPhotos : undefined,
+      live_photos: hasLive ? rawLive : undefined,
       media: mediaList
     }
   };
