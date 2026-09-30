@@ -8,6 +8,8 @@
 <meta name="description" content="Unduh video, audio MP3, foto slide, reels, story, dan carousel dari TikTok dan Instagram secara gratis, cepat, tanpa watermark dalam kualitas HD.">
 <meta name="robots" content="index, follow">
 <meta name="theme-color" content="#c8d97c">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Denji Downloader">
 <meta property="og:title" content="Denji Downloader | TikTok & Instagram">
@@ -213,6 +215,7 @@
   cursor: pointer;
   box-shadow: 2px 3px 0 rgba(0, 0, 0, 0.2);
   transition: all var(--t-fast) var(--ease);
+  touch-action: manipulation;
 }
 
 .dl-submit-btn:hover:not(:disabled){
@@ -438,7 +441,7 @@
 .res-slide-stage{
   position: relative;
   width: 100%;
-  height: 340px;
+  height: clamp(260px, 45vh, 360px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -488,6 +491,7 @@
   cursor: pointer;
   z-index: 6;
   transition: all var(--t-fast) var(--ease);
+  touch-action: manipulation;
 }
 
 .res-slide-nav:hover{
@@ -586,6 +590,7 @@
   cursor: pointer;
   border: 2px solid var(--button-style-border-color);
   transition: all var(--t-fast) var(--ease);
+  touch-action: manipulation;
 }
 
 .res-btn-primary{
@@ -671,6 +676,7 @@
   text-decoration: none;
   box-shadow: 2px 3px 0 var(--button-style-border-color);
   transition: all var(--t-fast) var(--ease);
+  touch-action: manipulation;
 }
 
 .nav-home-btn:hover{
@@ -682,6 +688,29 @@
 .nav-home-btn:active{
   transform: translate(1px, 1px);
   box-shadow: 1px 1px 0 var(--button-style-border-color);
+}
+
+@media (max-width: 360px){
+  .dl-card{
+    padding: 14px 12px;
+  }
+  .dl-input-group{
+    padding: 3px 4px 3px 10px;
+  }
+  .dl-input{
+    font-size: 13px;
+  }
+  .dl-paste-btn{
+    padding: 5px 8px;
+    font-size: 11px;
+  }
+  .dl-submit-btn{
+    padding: 11px 16px;
+    font-size: 13.5px;
+  }
+  .res-btn-grid{
+    grid-template-columns: 1fr;
+  }
 }
 </style>
 </head>
