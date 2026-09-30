@@ -52,7 +52,7 @@ async function fetchInstagramOembed(url) {
   try {
     const res = await axios.get(`https://www.instagram.com/api/v1/oembed/?url=${encodeURIComponent(url)}`, {
       headers: DEFAULT_HEADERS,
-      timeout: 8000
+      timeout: 2500
     });
     if (res.status === 200 && res.data) {
       return {
@@ -134,28 +134,14 @@ function extractHtmlFromUnpacked(unpacked) {
 async function fetchInstagramProfile(username) {
   if (!username) return null;
   const cleanUrl = `https://www.instagram.com/${username}/`;
-  let k_token = '95c09b2f49414bafab55c43c874be2cd857a64dfd40b6279ede3869b2b13ea0e';
-  let k_exp = '1790213633';
-  let k_url_search = 'https://v3.saveclip.app/api/ajaxSearch';
-
-  try {
-    const { stdout: pOut } = await execFilePromise('curl', [
-      '-s', 'https://saveclip.app/id8/instagram-story-download',
-      '-H', `User-Agent: ${DEFAULT_HEADERS['User-Agent']}`,
-      '-H', 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
-    ]);
-    const tokenMatch = pOut.match(/k_token\s*=\s*[\x22\x27]([^\x22\x27]+)[\x22\x27]/);
-    const expMatch = pOut.match(/k_exp\s*=\s*[\x22\x27]([^\x22\x27]+)[\x22\x27]/);
-    const urlSearchMatch = pOut.match(/k_url_search\s*=\s*[\x22\x27]([^\x22\x27]+)[\x22\x27]/);
-    if (tokenMatch) k_token = tokenMatch[1];
-    if (expMatch) k_exp = expMatch[1];
-    if (urlSearchMatch) k_url_search = urlSearchMatch[1];
-  } catch (e) {}
+  const k_token = '95c09b2f49414bafab55c43c874be2cd857a64dfd40b6279ede3869b2b13ea0e';
+  const k_exp = '1790213633';
+  const k_url_search = 'https://v3.saveclip.app/api/ajaxSearch';
 
   let cftoken = '';
   try {
     const { stdout: vOut } = await execFilePromise('curl', [
-      '-s', '-X', 'POST', 'https://saveclip.app/api/userverify',
+      '-s', '--max-time', '3', '-X', 'POST', 'https://saveclip.app/api/userverify',
       '-H', `User-Agent: ${DEFAULT_HEADERS['User-Agent']}`,
       '-H', 'Referer: https://saveclip.app/id8/instagram-story-download',
       '-H', 'Origin: https://saveclip.app',
@@ -168,7 +154,7 @@ async function fetchInstagramProfile(username) {
 
   try {
     const { stdout: sOut } = await execFilePromise('curl', [
-      '-s', '-X', 'POST', k_url_search,
+      '-s', '--max-time', '4', '-X', 'POST', k_url_search,
       '-H', `User-Agent: ${DEFAULT_HEADERS['User-Agent']}`,
       '-H', 'Referer: https://saveclip.app/id8/instagram-story-download',
       '-H', 'Origin: https://saveclip.app',
@@ -201,7 +187,7 @@ async function scrapeSaveClip(igUrl) {
 
   try {
     const { stdout: pOut } = await execFilePromise('curl', [
-      '-s', 'https://saveclip.app/id8/instagram-story-download',
+      '-s', '--max-time', '4', 'https://saveclip.app/id8/instagram-story-download',
       '-H', `User-Agent: ${DEFAULT_HEADERS['User-Agent']}`,
       '-H', 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
       '-H', 'Accept-Language: id,en-US;q=0.9,en;q=0.8'
@@ -218,7 +204,7 @@ async function scrapeSaveClip(igUrl) {
   let cftoken = '';
   try {
     const { stdout: vOut } = await execFilePromise('curl', [
-      '-s', '-X', 'POST', 'https://saveclip.app/api/userverify',
+      '-s', '--max-time', '4', '-X', 'POST', 'https://saveclip.app/api/userverify',
       '-H', `User-Agent: ${DEFAULT_HEADERS['User-Agent']}`,
       '-H', 'Referer: https://saveclip.app/id8/instagram-story-download',
       '-H', 'Origin: https://saveclip.app',
@@ -230,7 +216,7 @@ async function scrapeSaveClip(igUrl) {
   } catch (e) {}
 
   const { stdout: sOut } = await execFilePromise('curl', [
-    '-s', '-X', 'POST', k_url_search,
+    '-s', '--max-time', '8', '-X', 'POST', k_url_search,
     '-H', `User-Agent: ${DEFAULT_HEADERS['User-Agent']}`,
     '-H', 'Referer: https://saveclip.app/id8/instagram-story-download',
     '-H', 'Origin: https://saveclip.app',
@@ -320,16 +306,20 @@ async function scrapeSaveClip(igUrl) {
 
   let uname = extractUsername(cleanUrl);
   let title = '';
-  const oembed = await fetchInstagramOembed(cleanUrl);
-  if (oembed) {
-    if (oembed.authorName && !uname) uname = oembed.authorName;
-    if (oembed.title) title = oembed.title;
-    if (oembed.thumbnail && !cover) cover = oembed.thumbnail;
-  }
+  try {
+    const oembed = await fetchInstagramOembed(cleanUrl);
+    if (oembed) {
+      if (oembed.authorName && !uname) uname = oembed.authorName;
+      if (oembed.title) title = oembed.title;
+      if (oembed.thumbnail && !cover) cover = oembed.thumbnail;
+    }
+  } catch (e) {}
 
   let authorAvatar = null;
   if (uname) {
-    authorAvatar = await fetchInstagramProfile(uname);
+    try {
+      authorAvatar = await fetchInstagramProfile(uname);
+    } catch (e) {}
   }
 
   return {
@@ -338,8 +328,8 @@ async function scrapeSaveClip(igUrl) {
     title: title,
     cover: cover,
     author: {
-      name: uname || (oembed?.authorName || 'Instagram Creator'),
-      username: uname ? `@${uname}` : (oembed?.authorName ? `@${oembed.authorName}` : ''),
+      name: uname || 'Instagram Creator',
+      username: uname ? `@${uname}` : '',
       avatar: authorAvatar || cover || null
     },
     downloads: {
@@ -367,7 +357,7 @@ async function scrapeSnapInsta(igUrl) {
           'Referer': 'https://snapinsta.to/en46',
           'Origin': 'https://snapinsta.to'
         },
-        timeout: 10000,
+        timeout: 6000,
         validateStatus: (s) => s >= 200 && s < 500
       }
     );
@@ -377,7 +367,7 @@ async function scrapeSnapInsta(igUrl) {
   if (!token) {
     try {
       const { stdout: vOut } = await execFilePromise('curl', [
-        '-s', '-X', 'POST', 'https://snapinsta.to/api/userverify',
+        '-s', '--max-time', '4', '-X', 'POST', 'https://snapinsta.to/api/userverify',
         '-H', `User-Agent: ${DEFAULT_HEADERS['User-Agent']}`,
         '-H', 'Referer: https://snapinsta.to/en46',
         '-H', 'Origin: https://snapinsta.to',
@@ -409,7 +399,7 @@ async function scrapeSnapInsta(igUrl) {
         'Referer': 'https://snapinsta.to/en46',
         'Origin': 'https://snapinsta.to'
       },
-      timeout: 15000
+      timeout: 8000
     }
   );
 
@@ -479,16 +469,20 @@ async function scrapeSnapInsta(igUrl) {
 
   let uname = extractUsername(cleanUrl);
   let title = '';
-  const oembed = await fetchInstagramOembed(cleanUrl);
-  if (oembed) {
-    if (oembed.authorName && !uname) uname = oembed.authorName;
-    if (oembed.title) title = oembed.title;
-    if (oembed.thumbnail && !cover) cover = oembed.thumbnail;
-  }
+  try {
+    const oembed = await fetchInstagramOembed(cleanUrl);
+    if (oembed) {
+      if (oembed.authorName && !uname) uname = oembed.authorName;
+      if (oembed.title) title = oembed.title;
+      if (oembed.thumbnail && !cover) cover = oembed.thumbnail;
+    }
+  } catch (e) {}
 
   let authorAvatar = null;
   if (uname) {
-    authorAvatar = await fetchInstagramProfile(uname);
+    try {
+      authorAvatar = await fetchInstagramProfile(uname);
+    } catch (e) {}
   }
 
   return {
@@ -497,8 +491,8 @@ async function scrapeSnapInsta(igUrl) {
     title: title,
     cover: cover,
     author: {
-      name: uname || (oembed?.authorName || 'Instagram Creator'),
-      username: uname ? `@${uname}` : (oembed?.authorName ? `@${oembed.authorName}` : ''),
+      name: uname || 'Instagram Creator',
+      username: uname ? `@${uname}` : '',
       avatar: authorAvatar || cover || null
     },
     downloads: {
@@ -521,7 +515,7 @@ async function scrapeVideoDropper(igUrl, endpoint = 'allinone') {
       'Referer': 'https://videodropper.app/',
       'Origin': 'https://videodropper.app'
     },
-    timeout: 15000
+    timeout: 8000
   });
 
   const data = res.data;
@@ -602,16 +596,20 @@ async function scrapeVideoDropper(igUrl, endpoint = 'allinone') {
 
   let uname = extractUsername(cleanUrl);
   let title = '';
-  const oembed = await fetchInstagramOembed(cleanUrl);
-  if (oembed) {
-    if (oembed.authorName && !uname) uname = oembed.authorName;
-    if (oembed.title) title = oembed.title;
-    if (oembed.thumbnail && !cover) cover = oembed.thumbnail;
-  }
+  try {
+    const oembed = await fetchInstagramOembed(cleanUrl);
+    if (oembed) {
+      if (oembed.authorName && !uname) uname = oembed.authorName;
+      if (oembed.title) title = oembed.title;
+      if (oembed.thumbnail && !cover) cover = oembed.thumbnail;
+    }
+  } catch (e) {}
 
   let authorAvatar = null;
   if (uname) {
-    authorAvatar = await fetchInstagramProfile(uname);
+    try {
+      authorAvatar = await fetchInstagramProfile(uname);
+    } catch (e) {}
   }
 
   return {
@@ -620,8 +618,8 @@ async function scrapeVideoDropper(igUrl, endpoint = 'allinone') {
     title: title,
     cover: cover,
     author: {
-      name: uname || (oembed?.authorName || 'Instagram Creator'),
-      username: uname ? `@${uname}` : (oembed?.authorName ? `@${oembed.authorName}` : ''),
+      name: uname || 'Instagram Creator',
+      username: uname ? `@${uname}` : '',
       avatar: authorAvatar || cover || null
     },
     downloads: {
