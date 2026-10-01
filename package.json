@@ -1,7 +1,6 @@
 {
   "name": "denji-linktree",
   "version": "1.0.0",
-  "description": "Denji Link in Bio",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -13,6 +12,6 @@
     "express": "^4.19.2"
   },
   "engines": {
-    "node": "20.x"
+    "node": "24.x"
   }
 }
