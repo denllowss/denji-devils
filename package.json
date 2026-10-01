@@ -7,9 +7,19 @@
     "dev": "node server.js"
   },
   "dependencies": {
+    "@raihan07/vidly": "^13.0.2",
+    "@sasmeee/igdl": "^0.0.1-security",
+    "ab-downloader": "^2.0.0",
     "axios": "^1.20.0",
+    "btch-downloader": "^6.4.0",
+    "cakkatrok-instagram-downloader": "^2.0.2",
     "cheerio": "^1.2.0",
-    "express": "^4.19.2"
+    "express": "^4.19.2",
+    "insta-fetcher": "^1.4.0",
+    "instagram-url-direct": "^2.0.7",
+    "ruhend-scraper": "^10.0.3",
+    "snapsave-media-downloader": "^2.5.1",
+    "socket.io-client": "^4.8.4"
   },
   "engines": {
     "node": "24.x"

@@ -22,7 +22,7 @@ const httpAgent = new http.Agent({
 const client = axios.create({
   httpAgent,
   httpsAgent,
-  timeout: 6000
+  timeout: 7000
 });
 
 const DEFAULT_HEADERS = {
@@ -72,7 +72,7 @@ async function fetchInstagramOembed(url) {
   try {
     const res = await client.get(`https://www.instagram.com/api/v1/oembed/?url=${encodeURIComponent(url)}`, {
       headers: DEFAULT_HEADERS,
-      timeout: 1500
+      timeout: 3000
     });
     if (res.status === 200 && res.data) {
       return {
@@ -98,7 +98,53 @@ function extractJwtUrl(urlStr) {
   return null;
 }
 
+function decodeSnapApp(args) {
+  let [h, u, n, t, e, r] = args;
+  const tNum = Number(t);
+  const eNum = Number(e);
+  function decode(d, e, f) {
+    const g = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+/".split("");
+    const hArr = g.slice(0, e);
+    const iArr = g.slice(0, f);
+    let j = d.split("").reverse().reduce((a, b, c) => {
+      const idx = hArr.indexOf(b);
+      if (idx !== -1) return a + idx * Math.pow(e, c);
+      return a;
+    }, 0);
+    let k = "";
+    while (j > 0) {
+      k = iArr[j % f] + k;
+      j = Math.floor(j / f);
+    }
+    return k || "0";
+  }
+  let result = "";
+  for (let i = 0, len = h.length; i < len;) {
+    let s = "";
+    while (i < len && h[i] !== n[eNum]) {
+      s += h[i];
+      i++;
+    }
+    i++;
+    for (let j = 0; j < n.length; j++) s = s.replace(new RegExp(n[j], "g"), j.toString());
+    result += String.fromCharCode(Number(decode(s, eNum, 10)) - tNum);
+  }
+  try {
+    const bytes = new Uint8Array(result.split("").map(c => c.charCodeAt(0)));
+    return new TextDecoder("utf-8").decode(bytes);
+  } catch (e) {
+    return result;
+  }
+}
+
 function unpackSnapSave(raw) {
+  if (typeof raw !== 'string') return '';
+  if (raw.includes('decodeURIComponent(escape(r))}(')) {
+    try {
+      const rawArgs = raw.split('decodeURIComponent(escape(r))}(')[1].split('))')[0].split(',').map(v => v.replace(/"/g, '').trim());
+      return decodeSnapApp(rawArgs);
+    } catch (e) {}
+  }
   let result = '';
   const context = {
     eval: (code) => { result = code; },
@@ -123,23 +169,25 @@ async function scrapeSnapSave(igUrl) {
       'Origin': 'https://snapsave.app',
       'Content-Type': 'application/x-www-form-urlencoded'
     },
-    timeout: 4500
+    timeout: 5000
   });
 
   const unpacked = unpackSnapSave(res.data);
+  let html = unpacked;
   const htmlMatch = unpacked.match(/innerHTML\s*=\s*"((?:[^"\\]|\\.)*)";/);
-  if (!htmlMatch) {
-    throw new Error('SnapSave unpack failed');
+  if (htmlMatch) {
+    try {
+      html = JSON.parse(`"${htmlMatch[1]}"`);
+    } catch (e) {}
   }
 
-  const html = JSON.parse(`"${htmlMatch[1]}"`);
   const $ = cheerio.load(html);
   const mediaList = [];
   const videoList = [];
   const imageList = [];
   let cover = null;
 
-  $('.download-items, .download-box, .row > div').each((_, el) => {
+  $('.download-items, .download-box, .row > div, .download-bottom').each((_, el) => {
     const item = $(el);
     const thumbImg = item.find('img').attr('src') || item.find('img').attr('data-src') || '';
     const directThumb = extractJwtUrl(thumbImg) || thumbImg;
@@ -340,9 +388,7 @@ async function downloadInstagram(rawUrl) {
   }
 
   const cleanUrl = normalizeInstagramUrl(rawUrl);
-
   const oembedPromise = fetchInstagramOembed(cleanUrl).catch(() => null);
-
   let result = null;
 
   try {
@@ -362,6 +408,35 @@ async function downloadInstagram(rawUrl) {
   }
 
   if (!result) {
+    const oembed = await oembedPromise;
+    if (oembed) {
+      const uname = oembed.authorName || extractUsername(cleanUrl);
+      return {
+        status: 'success',
+        code: 200,
+        platform: 'instagram',
+        source: 'instagram.oembed',
+        type: 'video',
+        title: oembed.title || '',
+        cover: oembed.thumbnail || null,
+        author: {
+          name: oembed.authorName || uname || 'Instagram Creator',
+          username: uname ? `@${uname}` : '@instagram',
+          avatar: oembed.thumbnail || null
+        },
+        downloads: {
+          video: null,
+          video_hd: null,
+          audio: null,
+          photos: oembed.thumbnail ? [oembed.thumbnail] : undefined,
+          media: oembed.thumbnail ? [{
+            type: 'image',
+            url: oembed.thumbnail,
+            download: oembed.thumbnail
+          }] : []
+        }
+      };
+    }
     throw new Error('Tidak dapat mengunduh media dari Instagram. Pastikan postingan atau reel bersifat publik.');
   }
 
