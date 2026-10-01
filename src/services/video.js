@@ -76,7 +76,21 @@ async function downloadVideo(rawUrl) {
     };
   }
 
-  if (url.includes('vidmonstr.com') || url.includes('vidoy.com') || url.includes('overfetch.video')) {
+  let parsedOrigin = '';
+  try {
+    const p = new URL(url);
+    parsedOrigin = p.origin;
+  } catch (e) {}
+
+  const isVidmonstrFamily = url.includes('vidkud.com') ||
+    url.includes('vidovr.com') ||
+    url.includes('vidmonstr.com') ||
+    url.includes('vidoy.com') ||
+    url.includes('overfetch.video') ||
+    url.includes('/ip129jk') ||
+    url.includes('stream.php');
+
+  if (isVidmonstrFamily) {
     if (url.includes('stream.php')) {
       try {
         const res = await client.get(url, {
@@ -85,7 +99,8 @@ async function downloadVideo(rawUrl) {
         const html = typeof res.data === 'string' ? res.data : '';
         const $ = cheerio.load(html);
         const m3u8Match = html.match(/https:\/\/[^"'\s<>]+\.m3u8/);
-        const videoSrc = $('video source').attr('src') || (m3u8Match ? m3u8Match[0] : url);
+        const srcMatch = html.match(/<source[^>]+src=['"]([^'"]+)['"]/i) || html.match(/src:\s*['"]([^'"]+\.mp4[^'"]*)['"]/i);
+        const videoSrc = $('video source').attr('src') || (srcMatch ? srcMatch[1] : (m3u8Match ? m3u8Match[0] : url));
         const poster = $('video').attr('poster') || null;
         const titleMatch = html.match(/"title":\s*"([^"]+)"/);
         const title = titleMatch ? titleMatch[1] : ($('title').text().trim() || 'Video HD');
@@ -95,7 +110,7 @@ async function downloadVideo(rawUrl) {
           code: 200,
           platform: 'video',
           type: 'video',
-          id: 'vidmonstr',
+          id: 'video',
           title: title,
           cover: poster,
           author: {
@@ -120,12 +135,8 @@ async function downloadVideo(rawUrl) {
       } catch (e) {}
     }
 
-    const idMatch = url.match(/vidmonstr\.com\/(?:e\/|d\/)?([a-zA-Z0-9]+)/i);
-    const videoId = idMatch ? idMatch[1] : '';
-    const pageUrl = videoId ? ('https://vidmonstr.com/e/' + videoId) : url;
-
     try {
-      const res1 = await client.get(pageUrl, {
+      const res1 = await client.get(url, {
         headers: DEFAULT_HEADERS
       });
 
@@ -136,25 +147,32 @@ async function downloadVideo(rawUrl) {
 
       const iframeIdMatch = html1.match(/var\s+iframeId\s*=\s*['"]([^'"]+)['"]/);
       const tokenMatch = html1.match(/var\s+embedToken\s*=\s*['"]([^'"]+)['"]/);
+      const directIpMatch = html1.match(/\/ip129jk\?[^'"]+/i) || html1.match(/ip129jk\?id=([a-zA-Z0-9]+)&(?:amp;)?t=([a-zA-Z0-9_\-\.]+)/i);
 
+      let ipUrl = '';
       if (iframeIdMatch && tokenMatch) {
-        const ipUrl = 'https://vidmonstr.com/ip129jk?id=' + iframeIdMatch[1] + '&t=' + tokenMatch[1];
+        ipUrl = `${parsedOrigin}/ip129jk?id=${iframeIdMatch[1]}&t=${tokenMatch[1]}`;
+      } else if (directIpMatch) {
+        ipUrl = directIpMatch[0].startsWith('http') ? directIpMatch[0] : `${parsedOrigin}${directIpMatch[0].startsWith('/') ? '' : '/'}${directIpMatch[0]}`;
+      }
+
+      if (ipUrl) {
         const res2 = await client.get(ipUrl, {
           headers: {
             ...DEFAULT_HEADERS,
-            'Referer': pageUrl
+            'Referer': url
           }
         });
 
         const html2 = typeof res2.data === 'string' ? res2.data : '';
-        let streamUrl = null;
-        const streamMatch = html2.match(/https:\/\/vidmonstr\.com\/stream\.php\?[^"'\\<>\s]+/);
+        const streamMatch = html2.match(/href=['"]([^'"]*stream\.php[^'"]*)['"]/i) ||
+          html2.match(/(https?:\/\/[^\/]+\/stream\.php[^'"\\<>\s]+)/i) ||
+          html2.match(/https:\/\/[^"'\s<>]+\/stream\.php\?[^"'\\<>\s]+/);
+
+        let streamUrl = '';
         if (streamMatch) {
-          streamUrl = streamMatch[0].replace(/&amp;/g, '&').replace(/\\u0026/g, '&');
-        }
-        if (!streamUrl) {
-          const rawPlayerMatch = html2.match(/playerPath\s*=\s*['"]([^'"]+)['"]/);
-          if (rawPlayerMatch) streamUrl = rawPlayerMatch[1].replace(/\\u0026/g, '&');
+          const rawStream = streamMatch[1] || streamMatch[0];
+          streamUrl = (rawStream.startsWith('http') ? rawStream : `${parsedOrigin}${rawStream.startsWith('/') ? '' : '/'}${rawStream}`).replace(/&amp;/g, '&').replace(/\\u0026/g, '&');
         }
 
         if (streamUrl) {
@@ -168,17 +186,18 @@ async function downloadVideo(rawUrl) {
           const html3 = typeof res3.data === 'string' ? res3.data : '';
           const $3 = cheerio.load(html3);
           const m3u8Match = html3.match(/https:\/\/[^"'\s<>]+\.m3u8/);
-          const videoSrc = $3('video source').attr('src') || (m3u8Match ? m3u8Match[0] : streamUrl);
+          const srcMatch = html3.match(/<source[^>]+src=['"]([^'"]+)['"]/i) || html3.match(/src:\s*['"]([^'"]+\.mp4[^'"]*)['"]/i);
+          const videoSrc = $3('video source').attr('src') || (srcMatch ? srcMatch[1] : (m3u8Match ? m3u8Match[0] : streamUrl));
           const pagePoster = $3('video').attr('poster') || rawCover;
           const titleMatch = html3.match(/"title":\s*"([^"]+)"/);
-          const pageTitle = (titleMatch ? titleMatch[1] : rawTitle);
+          const pageTitle = titleMatch ? titleMatch[1] : rawTitle;
 
           return {
             status: 'success',
             code: 200,
             platform: 'video',
             type: 'video',
-            id: videoId || iframeIdMatch[1],
+            id: iframeIdMatch ? iframeIdMatch[1] : 'video',
             title: pageTitle,
             cover: pagePoster,
             author: {
@@ -239,61 +258,69 @@ async function downloadVideo(rawUrl) {
   }
 
   try {
-    const pageRes = await client.get(url, {
+    const res = await client.get(url, {
       headers: DEFAULT_HEADERS
     });
-    const html = typeof pageRes.data === 'string' ? pageRes.data : '';
-    if (html) {
-      const $ = cheerio.load(html);
-      const ogVideo = $('meta[property="og:video"]').attr('content') ||
-                      $('meta[property="og:video:secure_url"]').attr('content') ||
-                      $('meta[name="twitter:player:stream"]').attr('content');
-      const tagVideo = $('video source').attr('src') || $('video').attr('src') || $('source').attr('src');
-      const m3u8Match = html.match(/https?:\/\/[^"'\s<>]+\.m3u8[^\s"'<>]*/);
-      const mp4Match = html.match(/https?:\/\/[^"'\s<>]+\.mp4[^\s"'<>]*/);
-      const foundVideo = ogVideo || tagVideo || (mp4Match ? mp4Match[0] : (m3u8Match ? m3u8Match[0] : null));
+    const html = typeof res.data === 'string' ? res.data : '';
+    const $ = cheerio.load(html);
 
-      if (foundVideo) {
-        let absVideo = foundVideo;
-        if (!absVideo.startsWith('http')) {
-          const base = new URL(url);
-          absVideo = new URL(absVideo, base.origin).toString();
-        }
-        const ogImage = $('meta[property="og:image"]').attr('content') || $('video').attr('poster') || null;
-        const pageTitle = $('meta[property="og:title"]').attr('content') || $('title').text().trim() || 'Video HD';
+    let foundVideo = null;
+    let foundPoster = $('video').attr('poster') || $('meta[property="og:image"]').attr('content') || null;
+    let foundTitle = $('meta[property="og:title"]').attr('content') || $('title').text().trim() || 'Video HD';
 
-        return {
-          status: 'success',
-          code: 200,
-          platform: 'video',
-          type: 'video',
-          id: 'vid-' + Math.random().toString(36).substring(2, 8),
-          title: pageTitle,
-          cover: ogImage,
-          author: {
-            name: 'Video Creator',
-            username: '',
-            avatar: ogImage
-          },
-          downloads: {
-            video: absVideo,
-            video_hd: absVideo,
-            audio: null,
-            media: [
-              {
-                type: 'video',
-                url: absVideo,
-                thumbnail: ogImage,
-                download: absVideo
-              }
-            ]
-          }
-        };
+    $('video source').each((_, el) => {
+      const src = $(el).attr('src');
+      if (src && !foundVideo && (src.includes('.mp4') || src.includes('.m3u8') || src.includes('.webm'))) {
+        foundVideo = src;
       }
+    });
+
+    if (!foundVideo) {
+      const vidAttr = $('video').attr('src');
+      if (vidAttr && (vidAttr.includes('.mp4') || vidAttr.includes('.m3u8') || vidAttr.includes('.webm'))) {
+        foundVideo = vidAttr;
+      }
+    }
+
+    if (!foundVideo) {
+      const m3u8Match = html.match(/https:\/\/[^"'\s<>]+\.m3u8/);
+      const mp4Match = html.match(/https:\/\/[^"'\s<>]+\.mp4[^"'\s<>]*/);
+      if (m3u8Match) foundVideo = m3u8Match[0];
+      else if (mp4Match) foundVideo = mp4Match[0];
+    }
+
+    if (foundVideo) {
+      return {
+        status: 'success',
+        code: 200,
+        platform: 'video',
+        type: 'video',
+        id: 'video',
+        title: foundTitle,
+        cover: foundPoster,
+        author: {
+          name: 'Video Creator',
+          username: '',
+          avatar: foundPoster
+        },
+        downloads: {
+          video: foundVideo,
+          video_hd: foundVideo,
+          audio: null,
+          media: [
+            {
+              type: 'video',
+              url: foundVideo,
+              thumbnail: foundPoster,
+              download: foundVideo
+            }
+          ]
+        }
+      };
     }
   } catch (e) {}
 
-  throw new Error('Gagal mengekstrak video. Pastikan tautan video dapat diakses secara publik.');
+  throw new Error('Tidak dapat menemukan aliran video dari tautan yang diberikan.');
 }
 
 module.exports = {

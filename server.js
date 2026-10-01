@@ -20,7 +20,7 @@ function detectPlatform(url) {
   if (str.includes('instagram.com') || str.includes('instagr.am')) {
     return 'instagram';
   }
-  if (str.includes('vidmonstr.com') || str.includes('vidoy.com') || str.includes('overfetch.video') || str.includes('vildey.com') || /\.(mp4|m3u8|webm|mov|m4v|ts|mpd|mkv)($|\?)/i.test(str)) {
+  if (str.includes('vidkud.com') || str.includes('vidovr.com') || str.includes('vidmonstr.com') || str.includes('vidoy.com') || str.includes('overfetch.video') || str.includes('vildey.com') || /\.(mp4|m3u8|webm|mov|m4v|ts|mpd|mkv)($|\?)/i.test(str)) {
     return 'video';
   }
   return 'unknown';
@@ -111,8 +111,7 @@ app.get('/api/profile', (req, res) => {
       { platform: 'instagram', url: 'https://instagram.com' },
       { platform: 'tiktok', url: 'https://www.tiktok.com/@inidenjiww?_r=1&_t=ZS-98NmL8bGBee' },
       { platform: 'pinterest', url: 'https://www.pinterest.com' },
-      { platform: 'linkedin', url: 'https://linkedin.com' },
-      { platform: 'email', url: 'mailto:nothing@mail.lol' }
+      { platform: 'linkedin', url: 'https://linkedin.com' }
     ]
   });
 });
