@@ -1,6 +1,7 @@
 const express = require('express');
 const http = require('http');
 const https = require('https');
+const fs = require('fs');
 const path = require('path');
 const { downloadTikTok } = require('./src/services/tiktok');
 const { downloadInstagram } = require('./src/services/instagram');
@@ -11,6 +12,13 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.get('/sw.js', (req, res) => {
+  res.setHeader('Content-Type', 'application/javascript; charset=UTF-8');
+  res.setHeader('Service-Worker-Allowed', '/');
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  fs.createReadStream(path.join(__dirname, 'sw.js')).pipe(res);
+});
 
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -191,10 +199,6 @@ app.get('/api/profile', (req, res) => {
       { platform: 'linkedin', url: 'https://linkedin.com' }
     ]
   });
-});
-
-app.get('/sw.js', (req, res) => {
-  res.sendFile(path.join(__dirname, 'sw.js'));
 });
 
 app.get('*', (req, res) => {
