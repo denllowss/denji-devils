@@ -51,7 +51,7 @@
     if (!u) return false;
     var s = String(u).toLowerCase();
     if (s.includes('.mp3') || s.includes('audio_mpeg') || s.includes('mime_type=audio') || s.includes('/music/')) return false;
-    return s.includes('.mp4') || s.includes('.mov') || s.includes('.m3u8') || s.includes('mime_type=video') || s.includes('/video/');
+    return s.includes('.mp4') || s.includes('.mov') || s.includes('.m3u8') || s.includes('mime_type=video') || s.includes('/video/') || s.includes('.webm') || s.includes('.mkv');
   }
 
   if (input){
@@ -199,6 +199,56 @@
     });
   }
 
+  function setFolderVideo(idx){
+    if (!currentMediaItems || !currentMediaItems.length) return;
+    if (idx < 0) idx = currentMediaItems.length - 1;
+    if (idx >= currentMediaItems.length) idx = 0;
+    currentSlideIdx = idx;
+
+    var item = currentMediaItems[idx];
+    if (!item) return;
+
+    var videoEl = document.getElementById('previewVideoPlayer');
+    if (videoEl){
+      var isHls = /\.m3u8($|\?)/i.test(item.url);
+      if (item.thumbnail) videoEl.poster = safeUrl(item.thumbnail);
+      if (isHls){
+        if (videoEl.canPlayType('application/vnd.apple.mpegurl')) {
+          videoEl.src = safeUrl(item.url);
+        } else if (window.Hls && window.Hls.isSupported()) {
+          var hls = new window.Hls();
+          hls.loadSource(safeUrl(item.url));
+          hls.attachMedia(videoEl);
+        }
+      } else {
+        videoEl.src = safeUrl(item.url);
+      }
+      videoEl.load();
+    }
+
+    var mainDlBtn = document.getElementById('activeFolderDlBtn');
+    if (mainDlBtn){
+      mainDlBtn.href = safeUrl(item.download || item.url);
+      var labelSpan = mainDlBtn.querySelector('span');
+      if (labelSpan) labelSpan.textContent = 'Unduh Video #' + (idx + 1) + ' (HD)';
+    }
+
+    var badgeEl = document.getElementById('activeFolderBadge');
+    if (badgeEl){
+      badgeEl.textContent = (idx + 1) + ' / ' + currentMediaItems.length + (item.title ? ' • ' + item.title : '');
+    }
+
+    var folderThumbs = document.querySelectorAll('.folder-thumb-item');
+    folderThumbs.forEach(function(t, i){
+      if (i === idx){
+        t.classList.add('active');
+        t.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      } else {
+        t.classList.remove('active');
+      }
+    });
+  }
+
   function renderResult(data, inputUrl){
     var platform = (data.platform || 'media').toLowerCase();
     var isTikTok = platform === 'tiktok';
@@ -227,9 +277,12 @@
     var hasPhotos = photos.length > 0;
     var isExplicitPhotoUrl = inputUrl.includes('/photo/') || inputUrl.includes('/photomode/');
     var isLivePhoto = rawType === 'live_photo' || hasLiveVideos;
+    var isFolder = rawType === 'folder' || (!hasPhotos && mediaItems.length > 1 && mediaItems.every(function(m){ return m.type === 'video'; }));
 
     var isPhoto = false;
-    if (isLivePhoto) {
+    if (isFolder) {
+      isPhoto = false;
+    } else if (isLivePhoto) {
       isPhoto = true;
     } else if (isExplicitPhotoUrl) {
       isPhoto = true;
@@ -246,7 +299,9 @@
     resPlatformTag.className = 'res-platform-tag ' + (isTikTok ? 'tiktok' : (isInstagram ? 'instagram' : 'tiktok'));
     resPlatformTag.textContent = isTikTok ? 'TIKTOK' : (isInstagram ? 'INSTAGRAM' : 'VIDEO HD');
 
-    if (isLivePhoto){
+    if (isFolder){
+      resTypeTag.textContent = 'FOLDER (' + mediaItems.length + ' VIDEO)';
+    } else if (isLivePhoto){
       resTypeTag.textContent = 'FOTO LIVE';
     } else if (isTikTok){
       resTypeTag.textContent = isPhoto ? 'SLIDE FOTO' : 'VIDEO HD';
@@ -259,7 +314,7 @@
     }
 
     var author = data.author || {};
-    var defaultName = isTikTok ? 'TikTok Creator' : (isInstagram ? 'Instagram Creator' : 'Video Creator');
+    var defaultName = isTikTok ? 'TikTok Creator' : (isInstagram ? 'Instagram Creator' : (isFolder ? 'Video Folder' : 'Video Creator'));
     resName.textContent = author.name || defaultName;
 
     if (author.username && author.username.trim()){
@@ -305,7 +360,69 @@
       return { index: i + 1, url: p, live_video: null };
     });
 
-    if (isPhoto && photos.length > 0){
+    if (isFolder && mediaItems.length > 0){
+      currentSlideIdx = 0;
+      var firstVid = mediaItems[0] || {};
+      var isHls = /\.m3u8($|\?)/i.test(firstVid.url);
+      var posterAttr = firstVid.thumbnail ? ' poster="' + esc(safeUrl(firstVid.thumbnail)) + '"' : '';
+
+      var folderHtml =
+        '<div class="res-slide-container">' +
+          '<div style="position:relative; width:100%;">' +
+            '<span class="res-slide-badge" id="activeFolderBadge" style="z-index:5;">1 / ' + mediaItems.length + (firstVid.title ? ' • ' + esc(firstVid.title) : '') + '</span>' +
+            '<video id="previewVideoPlayer" class="res-video" controls playsinline preload="metadata"' + posterAttr + '>' +
+              (isHls ? '<source src="' + esc(safeUrl(firstVid.url)) + '" type="application/x-mpegURL">' : '') +
+              '<source src="' + esc(safeUrl(firstVid.url)) + '" type="video/mp4">' +
+              'Browser Anda tidak mendukung pemutaran video.' +
+            '</video>' +
+          '</div>';
+
+      if (mediaItems.length > 1){
+        folderHtml += '<div class="res-thumbs">';
+        mediaItems.forEach(function(item, idx){
+          var thumbImg = item.thumbnail || data.cover || 'https://ui-avatars.com/api/?name=' + (idx + 1) + '&background=323c1f&color=fff&size=128&bold=true';
+          folderHtml +=
+            '<div class="res-thumb-item folder-thumb-item' + (idx === 0 ? ' active' : '') + '" data-idx="' + idx + '" style="position:relative;">' +
+              '<img class="res-thumb-img" src="' + esc(safeUrl(thumbImg)) + '" alt="Video ' + (idx + 1) + '" loading="lazy">' +
+              '<span style="position:absolute; bottom:2px; left:2px; font-size:9px; font-weight:800; background:rgba(0,0,0,0.75); color:#fff; padding:1px 4px; border-radius:4px; line-height:1.2;">#' + (idx + 1) + '</span>' +
+            '</div>';
+        });
+        folderHtml += '</div>';
+      }
+
+      folderHtml += '</div>';
+      resMediaWrap.innerHTML = folderHtml;
+
+      var folderThumbEls = document.querySelectorAll('.folder-thumb-item');
+      folderThumbEls.forEach(function(el){
+        el.addEventListener('click', function(){
+          var idx = parseInt(el.getAttribute('data-idx'), 10) || 0;
+          setFolderVideo(idx);
+        });
+      });
+
+      var videoEl = document.getElementById('previewVideoPlayer');
+      if (videoEl && isHls) {
+        if (videoEl.canPlayType('application/vnd.apple.mpegurl')) {
+          videoEl.src = safeUrl(firstVid.url);
+        } else if (window.Hls && window.Hls.isSupported()) {
+          var hls = new window.Hls();
+          hls.loadSource(safeUrl(firstVid.url));
+          hls.attachMedia(videoEl);
+        } else {
+          var hlsScript = document.createElement('script');
+          hlsScript.src = 'https://cdn.jsdelivr.net/npm/hls.js@1.5.17/dist/hls.min.js';
+          hlsScript.onload = function() {
+            if (window.Hls && window.Hls.isSupported() && videoEl) {
+              var hls = new window.Hls();
+              hls.loadSource(safeUrl(firstVid.url));
+              hls.attachMedia(videoEl);
+            }
+          };
+          document.head.appendChild(hlsScript);
+        }
+      }
+    } else if (isPhoto && photos.length > 0){
       currentSlideIdx = 0;
       currentSlideList = photos;
 
@@ -427,7 +544,25 @@
 
     var actionsHtml = '';
 
-    if (isPhoto && photos.length > 0){
+    if (isFolder && mediaItems.length > 0){
+      var curVid = mediaItems[0] || {};
+      actionsHtml +=
+        '<a href="' + esc(safeUrl(curVid.download || curVid.url)) + '" target="_blank" rel="noopener" download="video-1.mp4" class="res-btn res-btn-primary" id="activeFolderDlBtn">' +
+          '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>' +
+          '<span>Unduh Video #1 (HD)</span>' +
+        '</a>';
+
+      actionsHtml += '<div style="display:flex; flex-direction:column; gap:6px; margin-top:6px;">';
+      mediaItems.forEach(function(item, idx){
+        var itemTitle = item.title ? (idx + 1) + '. ' + item.title : 'Unduh Video #' + (idx + 1) + ' (HD)';
+        actionsHtml +=
+          '<a href="' + esc(safeUrl(item.download || item.url)) + '" target="_blank" rel="noopener" download="video-' + (idx + 1) + '.mp4" class="res-btn res-btn-outline" style="font-size:12px; padding:10px 14px; text-align:left; justify-content:flex-start;">' +
+            '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="flex:0 0 auto;"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>' +
+            '<span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; flex:1;">' + esc(itemTitle) + '</span>' +
+          '</a>';
+      });
+      actionsHtml += '</div>';
+    } else if (isPhoto && photos.length > 0){
       var curItem = currentMediaItems[0] || {};
       var curLive = curItem.live_video && isRealVideoUrl(curItem.live_video);
 
@@ -499,7 +634,7 @@
     if (copyBtn){
       copyBtn.addEventListener('click', function(){
         var cur = currentMediaItems[currentSlideIdx] || {};
-        var copyTarget = cur.live_video || cur.url || ((isPhoto && photos.length > 0) ? photos[currentSlideIdx] : (mainVideo || inputUrl));
+        var copyTarget = cur.download || cur.url || cur.live_video || ((isPhoto && photos.length > 0) ? photos[currentSlideIdx] : (mainVideo || inputUrl));
         if (navigator.clipboard){
           navigator.clipboard.writeText(copyTarget).then(function(){
             showToast('Tautan berhasil disalin');

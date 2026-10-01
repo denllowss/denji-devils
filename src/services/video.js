@@ -31,6 +31,158 @@ const DEFAULT_HEADERS = {
   'Accept-Language': 'id,en-US;q=0.9,en;q=0.8'
 };
 
+async function resolveVidmonstrVideo(pageUrl, origin) {
+  try {
+    const res1 = await client.get(pageUrl, {
+      headers: DEFAULT_HEADERS
+    });
+
+    const html1 = typeof res1.data === 'string' ? res1.data : '';
+    const $1 = cheerio.load(html1);
+    const rawTitle = $1('title').text().trim() || 'Video HD';
+    const rawCover = $1('img.thumbnail').attr('src') || null;
+
+    const iframeIdMatch = html1.match(/var\s+iframeId\s*=\s*['"]([^'"]+)['"]/);
+    const tokenMatch = html1.match(/var\s+embedToken\s*=\s*['"]([^'"]+)['"]/);
+    const directIpMatch = html1.match(/\/ip129jk\?[^'"]+/i) || html1.match(/ip129jk\?id=([a-zA-Z0-9]+)&(?:amp;)?t=([a-zA-Z0-9_\-\.]+)/i);
+
+    let ipUrl = '';
+    if (iframeIdMatch && tokenMatch) {
+      ipUrl = `${origin}/ip129jk?id=${iframeIdMatch[1]}&t=${tokenMatch[1]}`;
+    } else if (directIpMatch) {
+      ipUrl = directIpMatch[0].startsWith('http') ? directIpMatch[0] : `${origin}${directIpMatch[0].startsWith('/') ? '' : '/'}${directIpMatch[0]}`;
+    }
+
+    if (!ipUrl) return null;
+
+    const res2 = await client.get(ipUrl, {
+      headers: {
+        ...DEFAULT_HEADERS,
+        'Referer': pageUrl
+      }
+    });
+
+    const html2 = typeof res2.data === 'string' ? res2.data : '';
+    const streamMatch = html2.match(/href=['"]([^'"]*stream\.php[^'"]*)['"]/i) ||
+      html2.match(/(https?:\/\/[^\/]+\/stream\.php[^'"\\<>\s]+)/i) ||
+      html2.match(/https:\/\/[^"'\s<>]+\/stream\.php\?[^"'\\<>\s]+/);
+
+    let streamUrl = '';
+    if (streamMatch) {
+      const rawStream = streamMatch[1] || streamMatch[0];
+      streamUrl = (rawStream.startsWith('http') ? rawStream : `${origin}${rawStream.startsWith('/') ? '' : '/'}${rawStream}`).replace(/&amp;/g, '&').replace(/\\u0026/g, '&');
+    }
+
+    if (!streamUrl) return null;
+
+    const res3 = await client.get(streamUrl, {
+      headers: {
+        ...DEFAULT_HEADERS,
+        'Referer': ipUrl
+      }
+    });
+
+    const html3 = typeof res3.data === 'string' ? res3.data : '';
+    const $3 = cheerio.load(html3);
+    const m3u8Match = html3.match(/https:\/\/[^"'\s<>]+\.m3u8/);
+    const srcMatch = html3.match(/<source[^>]+src=['"]([^'"]+)['"]/i) || html3.match(/src:\s*['"]([^'"]+\.mp4[^'"]*)['"]/i);
+    const videoSrc = $3('video source').attr('src') || (srcMatch ? srcMatch[1] : (m3u8Match ? m3u8Match[0] : streamUrl));
+    const pagePoster = $3('video').attr('poster') || rawCover;
+    const titleMatch = html3.match(/"title":\s*"([^"]+)"/);
+    const pageTitle = titleMatch ? titleMatch[1] : rawTitle;
+
+    return {
+      title: pageTitle,
+      cover: pagePoster,
+      url: videoSrc
+    };
+  } catch (e) {
+    return null;
+  }
+}
+
+async function scrapeVidmonstrFolder(folderUrl, origin) {
+  const res = await client.get(folderUrl, {
+    headers: DEFAULT_HEADERS
+  });
+
+  const html = typeof res.data === 'string' ? res.data : '';
+  const $ = cheerio.load(html);
+
+  const folderTitle = ($('h1.drive-title').text().trim() || $('title').text().trim() || 'Folder Video').replace(/^[📂📁\s]+/, '').trim();
+
+  const rawItems = [];
+  $('article.drive-file-card').each((_, el) => {
+    const card = $(el);
+    const linkEl = card.find('a.thumb-link, a.file-name').first();
+    const href = linkEl.attr('href') || '';
+    const thumbImg = card.find('img').attr('src') || null;
+    const itemTitle = card.find('.file-name').text().trim() || card.find('a').attr('title') || 'Video';
+    if (href) {
+      rawItems.push({
+        href: href.startsWith('http') ? href : `${origin}${href.startsWith('/') ? '' : '/'}${href}`,
+        thumbnail: thumbImg && !thumbImg.includes('blank.jpg') ? thumbImg : null,
+        title: itemTitle
+      });
+    }
+  });
+
+  if (rawItems.length === 0) {
+    const fileRegex = /<a[^>]+href=['"](\/[de]\/[a-zA-Z0-9]+)['"][^>]*class=['"]thumb-link['"][^>]*>[\s\S]*?<img[^>]+src=['"]([^'"]+)['"][\s\S]*?<\/a>[\s\S]*?<a[^>]+class=['"]file-name['"][^>]*>([^<]+)<\/a>/gi;
+    let m;
+    while ((m = fileRegex.exec(html)) !== null) {
+      rawItems.push({
+        href: `${origin}${m[1]}`,
+        thumbnail: m[2] && !m[2].includes('blank.jpg') ? m[2] : null,
+        title: m[3].trim()
+      });
+    }
+  }
+
+  if (rawItems.length === 0) {
+    throw new Error('Tidak ada video yang ditemukan di dalam folder.');
+  }
+
+  const resolvedList = await Promise.all(rawItems.map(async (item, i) => {
+    const v = await resolveVidmonstrVideo(item.href, origin);
+    const vUrl = v?.url || item.href;
+    const vCover = v?.cover || item.thumbnail;
+    const vTitle = v?.title || item.title;
+    return {
+      type: 'video',
+      index: i + 1,
+      title: vTitle,
+      thumbnail: vCover,
+      url: vUrl,
+      download: vUrl
+    };
+  }));
+
+  const firstCover = resolvedList[0]?.thumbnail || null;
+  const firstVideo = resolvedList[0]?.url || null;
+
+  return {
+    status: 'success',
+    code: 200,
+    platform: 'video',
+    type: 'folder',
+    id: 'folder',
+    title: folderTitle,
+    cover: firstCover,
+    author: {
+      name: 'Video Folder',
+      username: '',
+      avatar: firstCover
+    },
+    downloads: {
+      video: firstVideo,
+      video_hd: firstVideo,
+      audio: null,
+      media: resolvedList
+    }
+  };
+}
+
 async function downloadVideo(rawUrl) {
   const url = String(rawUrl || '').trim();
   if (!url) {
@@ -82,15 +234,25 @@ async function downloadVideo(rawUrl) {
     parsedOrigin = p.origin;
   } catch (e) {}
 
+  const isFolderUrl = /\/f\/[a-zA-Z0-9_\-]+/i.test(url) || url.includes('/folder/');
+
+  if (isFolderUrl && parsedOrigin) {
+    try {
+      const folderResult = await scrapeVidmonstrFolder(url, parsedOrigin);
+      if (folderResult) return folderResult;
+    } catch (e) {}
+  }
+
   const isVidmonstrFamily = url.includes('vidkud.com') ||
     url.includes('vidovr.com') ||
     url.includes('vidmonstr.com') ||
     url.includes('vidoy.com') ||
     url.includes('overfetch.video') ||
     url.includes('/ip129jk') ||
-    url.includes('stream.php');
+    url.includes('stream.php') ||
+    /\/([de])\/[a-zA-Z0-9_\-]+/i.test(url);
 
-  if (isVidmonstrFamily) {
+  if (isVidmonstrFamily && parsedOrigin) {
     if (url.includes('stream.php')) {
       try {
         const res = await client.get(url, {
@@ -135,93 +297,36 @@ async function downloadVideo(rawUrl) {
       } catch (e) {}
     }
 
-    try {
-      const res1 = await client.get(url, {
-        headers: DEFAULT_HEADERS
-      });
-
-      const html1 = typeof res1.data === 'string' ? res1.data : '';
-      const $1 = cheerio.load(html1);
-      const rawTitle = $1('title').text().trim() || 'Video HD';
-      const rawCover = $1('img.thumbnail').attr('src') || null;
-
-      const iframeIdMatch = html1.match(/var\s+iframeId\s*=\s*['"]([^'"]+)['"]/);
-      const tokenMatch = html1.match(/var\s+embedToken\s*=\s*['"]([^'"]+)['"]/);
-      const directIpMatch = html1.match(/\/ip129jk\?[^'"]+/i) || html1.match(/ip129jk\?id=([a-zA-Z0-9]+)&(?:amp;)?t=([a-zA-Z0-9_\-\.]+)/i);
-
-      let ipUrl = '';
-      if (iframeIdMatch && tokenMatch) {
-        ipUrl = `${parsedOrigin}/ip129jk?id=${iframeIdMatch[1]}&t=${tokenMatch[1]}`;
-      } else if (directIpMatch) {
-        ipUrl = directIpMatch[0].startsWith('http') ? directIpMatch[0] : `${parsedOrigin}${directIpMatch[0].startsWith('/') ? '' : '/'}${directIpMatch[0]}`;
-      }
-
-      if (ipUrl) {
-        const res2 = await client.get(ipUrl, {
-          headers: {
-            ...DEFAULT_HEADERS,
-            'Referer': url
-          }
-        });
-
-        const html2 = typeof res2.data === 'string' ? res2.data : '';
-        const streamMatch = html2.match(/href=['"]([^'"]*stream\.php[^'"]*)['"]/i) ||
-          html2.match(/(https?:\/\/[^\/]+\/stream\.php[^'"\\<>\s]+)/i) ||
-          html2.match(/https:\/\/[^"'\s<>]+\/stream\.php\?[^"'\\<>\s]+/);
-
-        let streamUrl = '';
-        if (streamMatch) {
-          const rawStream = streamMatch[1] || streamMatch[0];
-          streamUrl = (rawStream.startsWith('http') ? rawStream : `${parsedOrigin}${rawStream.startsWith('/') ? '' : '/'}${rawStream}`).replace(/&amp;/g, '&').replace(/\\u0026/g, '&');
-        }
-
-        if (streamUrl) {
-          const res3 = await client.get(streamUrl, {
-            headers: {
-              ...DEFAULT_HEADERS,
-              'Referer': ipUrl
+    const resolved = await resolveVidmonstrVideo(url, parsedOrigin);
+    if (resolved) {
+      return {
+        status: 'success',
+        code: 200,
+        platform: 'video',
+        type: 'video',
+        id: 'video',
+        title: resolved.title,
+        cover: resolved.cover,
+        author: {
+          name: 'Video Creator',
+          username: '',
+          avatar: resolved.cover
+        },
+        downloads: {
+          video: resolved.url,
+          video_hd: resolved.url,
+          audio: null,
+          media: [
+            {
+              type: 'video',
+              url: resolved.url,
+              thumbnail: resolved.cover,
+              download: resolved.url
             }
-          });
-
-          const html3 = typeof res3.data === 'string' ? res3.data : '';
-          const $3 = cheerio.load(html3);
-          const m3u8Match = html3.match(/https:\/\/[^"'\s<>]+\.m3u8/);
-          const srcMatch = html3.match(/<source[^>]+src=['"]([^'"]+)['"]/i) || html3.match(/src:\s*['"]([^'"]+\.mp4[^'"]*)['"]/i);
-          const videoSrc = $3('video source').attr('src') || (srcMatch ? srcMatch[1] : (m3u8Match ? m3u8Match[0] : streamUrl));
-          const pagePoster = $3('video').attr('poster') || rawCover;
-          const titleMatch = html3.match(/"title":\s*"([^"]+)"/);
-          const pageTitle = titleMatch ? titleMatch[1] : rawTitle;
-
-          return {
-            status: 'success',
-            code: 200,
-            platform: 'video',
-            type: 'video',
-            id: iframeIdMatch ? iframeIdMatch[1] : 'video',
-            title: pageTitle,
-            cover: pagePoster,
-            author: {
-              name: 'Video Creator',
-              username: '',
-              avatar: pagePoster
-            },
-            downloads: {
-              video: videoSrc,
-              video_hd: videoSrc,
-              audio: null,
-              media: [
-                {
-                  type: 'video',
-                  url: videoSrc,
-                  thumbnail: pagePoster,
-                  download: videoSrc
-                }
-              ]
-            }
-          };
+          ]
         }
-      }
-    } catch (e) {}
+      };
+    }
   }
 
   if (url.includes('vildey.com')) {
