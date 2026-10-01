@@ -6,6 +6,10 @@
       "destination": "/api/index.js"
     },
     {
+      "source": "/docs",
+      "destination": "/docs.html"
+    },
+    {
       "source": "/dl",
       "destination": "/dl.html"
     }

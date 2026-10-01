@@ -141,6 +141,10 @@ async function handleDownload(req, res) {
   }
 }
 
+app.get('/docs', (req, res) => {
+  return res.sendFile(path.join(__dirname, 'public', 'docs.html'));
+});
+
 app.get('/dl', (req, res) => {
   const isJson = (req.headers.accept && req.headers.accept.includes('application/json')) || req.query.json === 'true';
   const hasUrl = !!req.query.url;

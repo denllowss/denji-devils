@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>Denji API Documentation & Playground</title>
+<meta name="description" content="Dokumentasi resmi API Denji Downloader & Media Extractor. Lengkap dengan interaktif Playground, cURL, Fetch, dan Python SDK examples.">
+<meta name="theme-color" content="#0b0f17">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg: #090d14;
+  --bg-card: #0f1420;
+  --bg-card-hover: #141c2c;
+  --bg-input: #070a10;
+  --border: #1e283d;
+  --border-focus: #4b6cb7;
+  --text-main: #f1f5f9;
+  --text-muted: #8e9bb0;
+  --accent: #d8ff5a;
+  --accent-text: #090d14;
+  --accent-glow: rgba(216, 255, 90, 0.2);
+  --blue: #38bdf8;
+  --green: #4ade80;
+  --yellow: #facc15;
+  --red: #f87171;
+  --purple: #c084fc;
+  --code-bg: #05070c;
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --radius: 12px;
+}
+
+*{
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body{
+  background-color: var(--bg);
+  color: var(--text-main);
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+a{
+  color: inherit;
+  text-decoration: none;
+}
+
+.topbar{
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(9, 13, 20, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 24px;
+}
+
+.topbar-content{
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.brand{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 800;
+  font-size: 17px;
+  color: #fff;
+  letter-spacing: -0.02em;
+}
+
+.brand-badge{
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  background: rgba(216, 255, 90, 0.12);
+  color: var(--accent);
+  border: 1px solid rgba(216, 255, 90, 0.3);
+  border-radius: 99px;
+  font-family: var(--font-mono);
+}
+
+.nav-links{
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.nav-link{
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  transition: color 0.15s ease;
+}
+
+.nav-link:hover{
+  color: #fff;
+}
+
+.nav-btn{
+  font-size: 13px;
+  font-weight: 700;
+  padding: 8px 14px;
+  background: var(--accent);
+  color: var(--accent-text);
+  border-radius: 8px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.nav-btn:hover{
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px var(--accent-glow);
+}
+
+.layout{
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 24px 64px;
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 36px;
+}
+
+.sidebar{
+  position: sticky;
+  top: 80px;
+  height: calc(100vh - 100px);
+  overflow-y: auto;
+  padding-right: 12px;
+}
+
+.side-group{
+  margin-bottom: 24px;
+}
+
+.side-title{
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+  margin-bottom: 10px;
+  padding-left: 8px;
+}
+
+.side-list{
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.side-item a{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted);
+  transition: all 0.15s ease;
+}
+
+.side-item a:hover,
+.side-item a.active{
+  background: var(--bg-card);
+  color: #fff;
+  border-left: 2px solid var(--accent);
+}
+
+.method-tag{
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 5px;
+  border-radius: 4px;
+  line-height: 1;
+}
+
+.method-post{ background: rgba(56, 189, 248, 0.15); color: var(--blue); }
+.method-get{ background: rgba(74, 222, 128, 0.15); color: var(--green); }
+
+.content{
+  min-width: 0;
+}
+
+.hero-section{
+  margin-bottom: 40px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.hero-title{
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: #fff;
+  margin-bottom: 12px;
+}
+
+.hero-desc{
+  font-size: 15px;
+  color: var(--text-muted);
+  max-width: 720px;
+  line-height: 1.6;
+}
+
+.base-url-card{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 18px;
+  margin-top: 20px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+}
+
+.base-url-label{
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.base-url-val{
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.copy-mini-btn{
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.copy-mini-btn:hover{
+  background: #fff;
+  color: #000;
+  border-color: #fff;
+}
+
+.playground-card{
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 48px;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.35);
+}
+
+.pg-head{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.pg-title{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 18px;
+  font-weight: 800;
+  color: #fff;
+}
+
+.pg-presets{
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.preset-chip{
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 5px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.preset-chip:hover{
+  background: var(--bg-card-hover);
+  color: #fff;
+  border-color: var(--blue);
+}
+
+.pg-request-bar{
+  display: grid;
+  grid-template-columns: 110px 1fr 120px;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.pg-select,
+.pg-input,
+.pg-textarea{
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 0.15s ease;
+  width: 100%;
+}
+
+.pg-select:focus,
+.pg-input:focus,
+.pg-textarea:focus{
+  border-color: var(--accent);
+}
+
+.pg-btn{
+  background: var(--accent);
+  color: var(--accent-text);
+  border: 0;
+  border-radius: 8px;
+  font-weight: 800;
+  font-size: 13px;
+  cursor: pointer;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.pg-btn:hover{
+  opacity: 0.92;
+}
+
+.pg-btn:disabled{
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pg-body-wrap{
+  margin-bottom: 20px;
+}
+
+.pg-body-label{
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.pg-textarea{
+  min-height: 80px;
+  resize: vertical;
+}
+
+.pg-response-section{
+  margin-top: 20px;
+  border-top: 1px solid var(--border);
+  padding-top: 18px;
+}
+
+.pg-res-header{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.pg-res-stats{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+
+.status-badge{
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+}
+
+.status-200{ background: rgba(74, 222, 128, 0.15); color: var(--green); border: 1px solid rgba(74, 222, 128, 0.3); }
+.status-err{ background: rgba(248, 113, 113, 0.15); color: var(--red); border: 1px solid rgba(248, 113, 113, 0.3); }
+
+.time-badge{
+  color: var(--text-muted);
+}
+
+.code-block{
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.5;
+  color: #e2e8f0;
+  max-height: 380px;
+  position: relative;
+}
+
+.doc-section{
+  margin-bottom: 48px;
+  scroll-margin-top: 90px;
+}
+
+.doc-endpoint-card{
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.ep-header{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.ep-path{
+  font-family: var(--font-mono);
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.ep-desc{
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-bottom: 18px;
+}
+
+.ep-table{
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 18px;
+  font-size: 13px;
+}
+
+.ep-table th,
+.ep-table td{
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.ep-table th{
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.ep-param{
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: var(--blue);
+}
+
+.ep-type{
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--purple);
+}
+
+.ep-required{
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--red);
+  background: rgba(248, 113, 113, 0.12);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.ep-optional{
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.tabs-nav{
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.tab-btn{
+  background: transparent;
+  border: 0;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.tab-btn.active{
+  background: var(--bg-input);
+  color: #fff;
+  border: 1px solid var(--border);
+}
+
+.toast{
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: #fff;
+  color: #000;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 10px 18px;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.2s ease;
+  pointer-events: none;
+  z-index: 100;
+}
+
+.toast.show{
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media(max-width: 860px){
+  .layout{
+    grid-template-columns: 1fr;
+  }
+  .sidebar{
+    display: none;
+  }
+  .pg-request-bar{
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-content">
+    <div class="brand">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+      <span>Denji API</span>
+      <span class="brand-badge">v1.0.0</span>
+    </div>
+    <nav class="nav-links">
+      <a href="#playground" class="nav-link">Playground</a>
+      <a href="#endpoints" class="nav-link">Endpoints</a>
+      <a href="/dl" class="nav-btn">Downloader UI</a>
+    </nav>
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="side-group">
+      <div class="side-title">Getting Started</div>
+      <ul class="side-list">
+        <li class="side-item"><a href="#overview" class="active">Overview</a></li>
+        <li class="side-item"><a href="#authentication">Authentication</a></li>
+        <li class="side-item"><a href="#playground">Live Playground</a></li>
+      </ul>
+    </div>
+    <div class="side-group">
+      <div class="side-title">Endpoints</div>
+      <ul class="side-list">
+        <li class="side-item"><a href="#ep-dl"><span class="method-tag method-post">POST</span> /api/dl</a></li>
+        <li class="side-item"><a href="#ep-stream"><span class="method-tag method-get">GET</span> /api/stream</a></li>
+        <li class="side-item"><a href="#ep-profile"><span class="method-tag method-get">GET</span> /api/profile</a></li>
+        <li class="side-item"><a href="#ep-health"><span class="method-tag method-get">GET</span> /api/health</a></li>
+      </ul>
+    </div>
+    <div class="side-group">
+      <div class="side-title">Reference</div>
+      <ul class="side-list">
+        <li class="side-item"><a href="#errors">Error Codes</a></li>
+        <li class="side-item"><a href="#rate-limits">Rate Limits</a></li>
+      </ul>
+    </div>
+  </aside>
+
+  <main class="content">
+    <section class="hero-section" id="overview">
+      <h1 class="hero-title">Denji REST API Documentation</h1>
+      <p class="hero-desc">
+        API universal berkecepatan tinggi untuk mengekstrak dan mengunduh media dari TikTok (Video HD, Slide Foto 2K, Foto Live, Audio Musik), Instagram (Reels, Story, Carousel), serta Aliran Video Universal (MP4, HLS M3U8, Video Folder).
+      </p>
+
+      <div class="base-url-card">
+        <div>
+          <div class="base-url-label">Base API URL</div>
+          <div class="base-url-val" id="baseUrlDisplay">https://your-domain.com/api</div>
+        </div>
+        <button type="button" class="copy-mini-btn" id="copyBaseUrlBtn">Copy Base URL</button>
+      </div>
+    </section>
+
+    <section class="doc-section" id="playground">
+      <div class="playground-card">
+        <div class="pg-head">
+          <div class="pg-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <span>Interactive API Playground</span>
+          </div>
+          <div class="pg-presets">
+            <button type="button" class="preset-chip" data-preset="tiktok-vid">TikTok Video</button>
+            <button type="button" class="preset-chip" data-preset="tiktok-live">TikTok Foto Live</button>
+            <button type="button" class="preset-chip" data-preset="instagram">Instagram</button>
+            <button type="button" class="preset-chip" data-preset="video">Video HD</button>
+            <button type="button" class="preset-chip" data-preset="health">Health Check</button>
+          </div>
+        </div>
+
+        <div class="pg-request-bar">
+          <select class="pg-select" id="pgEndpoint">
+            <option value="POST /api/dl">POST /api/dl</option>
+            <option value="GET /api/stream">GET /api/stream</option>
+            <option value="GET /api/profile">GET /api/profile</option>
+            <option value="GET /api/health">GET /api/health</option>
+          </select>
+          <input type="text" class="pg-input" id="pgUrlInput" placeholder="https://vt.tiktok.com/ZSbSH1Myk/" value="https://vt.tiktok.com/ZSbSH1Myk/">
+          <button type="button" class="pg-btn" id="pgSendBtn">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+            <span>Send</span>
+          </button>
+        </div>
+
+        <div class="pg-body-wrap" id="pgBodyWrap">
+          <div class="pg-body-label">
+            <span>Request Body (JSON)</span>
+            <span style="font-family:var(--font-mono); font-size:11px; color:var(--text-muted);">application/json</span>
+          </div>
+          <textarea class="pg-textarea" id="pgBodyJson" spellcheck="false">{
+  "url": "https://vt.tiktok.com/ZSbSH1Myk/"
+}</textarea>
+        </div>
+
+        <div class="pg-response-section" id="pgResSection" style="display:none;">
+          <div class="pg-res-header">
+            <div class="pg-res-stats">
+              <span class="status-badge" id="pgResStatus">200 OK</span>
+              <span class="time-badge" id="pgResTime">124 ms</span>
+            </div>
+            <button type="button" class="copy-mini-btn" id="pgCopyResBtn">Copy Response</button>
+          </div>
+          <pre class="code-block" id="pgResJson">{}</pre>
+        </div>
+      </div>
+    </section>
+
+    <section class="doc-section" id="authentication">
+      <h2 style="font-size:20px; font-weight:800; color:#fff; margin-bottom:12px;">Authentication</h2>
+      <p style="font-size:14px; color:var(--text-muted); margin-bottom:16px;">
+        API ini bersifat <strong>Public & Open</strong>. Anda tidak memerlukan API key atau autentikasi khusus untuk melakukan permintaan unduhan maupun streaming. Header CORS diaktifkan secara global (<code style="font-family:var(--font-mono); color:var(--accent);">Access-Control-Allow-Origin: *</code>).
+      </p>
+    </section>
+
+    <section class="doc-section" id="endpoints">
+      <h2 style="font-size:22px; font-weight:800; color:#fff; margin-bottom:24px;">Endpoints Reference</h2>
+
+      <div class="doc-endpoint-card" id="ep-dl">
+        <div class="ep-header">
+          <span class="method-tag method-post">POST</span>
+          <span class="ep-path">/api/dl</span>
+        </div>
+        <p class="ep-desc">Mengekstrak metadata lengkap, cover, avatar, audio musik MP3, serta daftar tautan unduhan HD langsung dari TikTok, Instagram, Foto Live, atau Aliran Video Universal.</p>
+
+        <table class="ep-table">
+          <thead>
+            <tr>
+              <th>Parameter</th>
+              <th>Type</th>
+              <th>Position</th>
+              <th>Keterangan</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="ep-param">url</span></td>
+              <td><span class="ep-type">string</span></td>
+              <td><span class="ep-required">REQUIRED</span> Body / Query</td>
+              <td>Tautan media publik (TikTok, Instagram, atau video langsung).</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="tabs-nav">
+          <button type="button" class="tab-btn active" data-tab="curl-dl">cURL</button>
+          <button type="button" class="tab-btn" data-tab="js-dl">JavaScript (Fetch)</button>
+          <button type="button" class="tab-btn" data-tab="py-dl">Python</button>
+        </div>
+
+        <pre class="code-block tab-pane" id="curl-dl">curl -X POST https://your-domain.com/api/dl \
+  -H "Content-Type: application/json" \
+  -d '{"url": "https://vt.tiktok.com/ZSbSH1Myk/"}'</pre>
+
+        <pre class="code-block tab-pane" id="js-dl" style="display:none;">const res = await fetch('https://your-domain.com/api/dl', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ url: 'https://vt.tiktok.com/ZSbSH1Myk/' })
+});
+const data = await res.json();
+console.log(data);</pre>
+
+        <pre class="code-block tab-pane" id="py-dl" style="display:none;">import requests
+
+url = "https://your-domain.com/api/dl"
+payload = {"url": "https://vt.tiktok.com/ZSbSH1Myk/"}
+response = requests.post(url, json=payload)
+data = response.json()
+print(data)</pre>
+      </div>
+
+      <div class="doc-endpoint-card" id="ep-stream">
+        <div class="ep-header">
+          <span class="method-tag method-get">GET</span>
+          <span class="ep-path">/api/stream</span>
+        </div>
+        <p class="ep-desc">Streaming proxy berkecepatan tinggi dengan dukungan HTTP Range (206 Partial Content) untuk video seeking instan dan bypass hotlink protection.</p>
+
+        <table class="ep-table">
+          <thead>
+            <tr>
+              <th>Parameter</th>
+              <th>Type</th>
+              <th>Position</th>
+              <th>Keterangan</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="ep-param">url</span></td>
+              <td><span class="ep-type">string</span></td>
+              <td><span class="ep-required">REQUIRED</span> Query</td>
+              <td>URL aliran video langsung yang akan di-stream.</td>
+            </tr>
+            <tr>
+              <td><span class="ep-param">ref</span></td>
+              <td><span class="ep-type">string</span></td>
+              <td><span class="ep-optional">OPTIONAL</span> Query</td>
+              <td>Domain referer yang dibutuhkan oleh upstream CDN.</td>
+            </tr>
+            <tr>
+              <td><span class="ep-param">dl</span></td>
+              <td><span class="ep-type">string</span></td>
+              <td><span class="ep-optional">OPTIONAL</span> Query</td>
+              <td>Kirim nilai <code style="font-family:var(--font-mono); color:var(--accent);">1</code> untuk memaksa browser mengunduh sebagai file lampiran.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <pre class="code-block">curl -I "https://your-domain.com/api/stream?url=https%3A%2F%2Fexample.com%2Fvideo.mp4&dl=1"</pre>
+      </div>
+
+      <div class="doc-endpoint-card" id="ep-profile">
+        <div class="ep-header">
+          <span class="method-tag method-get">GET</span>
+          <span class="ep-path">/api/profile</span>
+        </div>
+        <p class="ep-desc">Mengambil informasi profil, tautan bio, serta akun sosial media.</p>
+
+        <pre class="code-block">curl https://your-domain.com/api/profile</pre>
+      </div>
+
+      <div class="doc-endpoint-card" id="ep-health">
+        <div class="ep-header">
+          <span class="method-tag method-get">GET</span>
+          <span class="ep-path">/api/health</span>
+        </div>
+        <p class="ep-desc">Cek status kesehatan server, uptime, dan timestamp saat ini.</p>
+
+        <pre class="code-block">curl https://your-domain.com/api/health</pre>
+      </div>
+    </section>
+
+    <section class="doc-section" id="errors">
+      <h2 style="font-size:20px; font-weight:800; color:#fff; margin-bottom:14px;">Error Handling & Status Codes</h2>
+      <table class="ep-table">
+        <thead>
+          <tr>
+            <th>Status Code</th>
+            <th>Status</th>
+            <th>Deskripsi</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code style="font-family:var(--font-mono); color:var(--green);">200 OK</code></td>
+            <td>success</td>
+            <td>Permintaan berhasil diproses dan data media berhasil diekstrak.</td>
+          </tr>
+          <tr>
+            <td><code style="font-family:var(--font-mono); color:var(--yellow);">400 Bad Request</code></td>
+            <td>error</td>
+            <td>Parameter URL tidak disertakan atau format JSON tidak valid.</td>
+          </tr>
+          <tr>
+            <td><code style="font-family:var(--font-mono); color:var(--red);">500 Internal Error</code></td>
+            <td>error</td>
+            <td>Gagal memproses tautan media (konten privat, dihapus, atau tidak ditemukan).</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+</div>
+
+<div class="toast" id="toast">Tautan berhasil disalin</div>
+
+<script>
+(function(){
+  'use strict';
+
+  var currentHost = window.location.origin;
+  var baseUrlDisplay = document.getElementById('baseUrlDisplay');
+  if (baseUrlDisplay){
+    baseUrlDisplay.textContent = currentHost + '/api';
+  }
+
+  var toast = document.getElementById('toast');
+  var toastTimer = null;
+  function showToast(msg){
+    if (!toast) return;
+    toast.textContent = msg || '';
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){
+      toast.classList.remove('show');
+    }, 2200);
+  }
+
+  var copyBaseBtn = document.getElementById('copyBaseUrlBtn');
+  if (copyBaseBtn){
+    copyBaseBtn.addEventListener('click', function(){
+      if (navigator.clipboard){
+        navigator.clipboard.writeText(currentHost + '/api').then(function(){
+          showToast('Base URL disalin');
+        });
+      }
+    });
+  }
+
+  var pgEndpoint = document.getElementById('pgEndpoint');
+  var pgUrlInput = document.getElementById('pgUrlInput');
+  var pgBodyWrap = document.getElementById('pgBodyWrap');
+  var pgBodyJson = document.getElementById('pgBodyJson');
+  var pgSendBtn = document.getElementById('pgSendBtn');
+  var pgResSection = document.getElementById('pgResSection');
+  var pgResStatus = document.getElementById('pgResStatus');
+  var pgResTime = document.getElementById('pgResTime');
+  var pgResJson = document.getElementById('pgResJson');
+  var pgCopyResBtn = document.getElementById('pgCopyResBtn');
+
+  if (pgEndpoint){
+    pgEndpoint.addEventListener('change', function(){
+      var val = pgEndpoint.value;
+      if (val.startsWith('POST')){
+        pgBodyWrap.style.display = 'block';
+        pgUrlInput.style.display = 'none';
+      } else {
+        pgBodyWrap.style.display = 'none';
+        pgUrlInput.style.display = 'block';
+      }
+    });
+  }
+
+  var presets = {
+    'tiktok-vid': { endpoint: 'POST /api/dl', url: 'https://www.tiktok.com/@inidenjiww/video/7347313388701043973' },
+    'tiktok-live': { endpoint: 'POST /api/dl', url: 'https://vt.tiktok.com/ZSbSH1Myk/' },
+    'instagram': { endpoint: 'POST /api/dl', url: 'https://www.instagram.com/p/C64f-4_r96V/' },
+    'video': { endpoint: 'POST /api/dl', url: 'https://vidmonstr.com/f/3j6wtp84rrc' },
+    'health': { endpoint: 'GET /api/health', url: '' }
+  };
+
+  document.querySelectorAll('.preset-chip').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var p = presets[btn.getAttribute('data-preset')];
+      if (!p) return;
+      pgEndpoint.value = p.endpoint;
+      if (p.endpoint.startsWith('POST')){
+        pgBodyWrap.style.display = 'block';
+        pgUrlInput.style.display = 'none';
+        pgBodyJson.value = JSON.stringify({ url: p.url }, null, 2);
+      } else {
+        pgBodyWrap.style.display = 'none';
+        pgUrlInput.style.display = 'block';
+        pgUrlInput.value = p.url;
+      }
+      sendRequest();
+    });
+  });
+
+  if (pgSendBtn){
+    pgSendBtn.addEventListener('click', sendRequest);
+  }
+
+  async function sendRequest(){
+    var epVal = pgEndpoint.value;
+    var parts = epVal.split(' ');
+    var method = parts[0];
+    var path = parts[1];
+
+    var reqUrl = path;
+    var options = { method: method, headers: { 'Accept': 'application/json' } };
+
+    if (method === 'POST'){
+      try {
+        var parsed = JSON.parse(pgBodyJson.value);
+        options.headers['Content-Type'] = 'application/json';
+        options.body = JSON.stringify(parsed);
+      } catch(e){
+        alert('Format Request Body JSON tidak valid!');
+        return;
+      }
+    } else if (method === 'GET' && path === '/api/stream'){
+      var streamTarget = pgUrlInput.value || '';
+      reqUrl = path + '?url=' + encodeURIComponent(streamTarget);
+    }
+
+    pgSendBtn.disabled = true;
+    var t0 = performance.now();
+
+    try {
+      var res = await fetch(reqUrl, options);
+      var t1 = performance.now();
+      var duration = Math.round(t1 - t0);
+
+      var resData;
+      var contentType = res.headers.get('content-type') || '';
+      if (contentType.includes('application/json')){
+        resData = await res.json();
+      } else {
+        resData = { message: await res.text(), status: res.status };
+      }
+
+      pgResStatus.textContent = res.status + ' ' + (res.statusText || (res.ok ? 'OK' : 'Error'));
+      pgResStatus.className = 'status-badge ' + (res.ok ? 'status-200' : 'status-err');
+      pgResTime.textContent = duration + ' ms';
+      pgResJson.textContent = JSON.stringify(resData, null, 2);
+      pgResSection.style.display = 'block';
+      pgResSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    } catch(err){
+      pgResStatus.textContent = 'Error';
+      pgResStatus.className = 'status-badge status-err';
+      pgResTime.textContent = '-';
+      pgResJson.textContent = JSON.stringify({ error: err.message }, null, 2);
+      pgResSection.style.display = 'block';
+    } finally {
+      pgSendBtn.disabled = false;
+    }
+  }
+
+  if (pgCopyResBtn){
+    pgCopyResBtn.addEventListener('click', function(){
+      if (navigator.clipboard){
+        navigator.clipboard.writeText(pgResJson.textContent).then(function(){
+          showToast('Response disalin ke clipboard');
+        });
+      }
+    });
+  }
+
+  document.querySelectorAll('.tab-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var card = btn.closest('.doc-endpoint-card');
+      if (!card) return;
+      var targetId = btn.getAttribute('data-tab');
+      card.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+      card.querySelectorAll('.tab-pane').forEach(function(p){ p.style.display = 'none'; });
+      btn.classList.add('active');
+      var targetEl = document.getElementById(targetId);
+      if (targetEl) targetEl.style.display = 'block';
+    });
+  });
+
+  if (window.location.hash === '#playground'){
+    document.getElementById('playground')?.scrollIntoView({ behavior: 'smooth' });
+  }
+})();
+</script>
+</body>
+</html>
