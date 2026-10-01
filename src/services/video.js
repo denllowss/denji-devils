@@ -31,6 +31,20 @@ const DEFAULT_HEADERS = {
   'Accept-Language': 'id,en-US;q=0.9,en;q=0.8'
 };
 
+function buildStreamUrl(directUrl, origin, title, isDownload) {
+  if (!directUrl) return '';
+  if (directUrl.includes('.m3u8')) return directUrl;
+  const params = new URLSearchParams({
+    url: directUrl,
+    ref: origin || 'https://vidmonstr.com/',
+    title: (title || 'video') + (title && title.endsWith('.mp4') ? '' : '.mp4')
+  });
+  if (isDownload) {
+    params.set('dl', '1');
+  }
+  return `/api/stream?${params.toString()}`;
+}
+
 async function resolveVidmonstrVideo(pageUrl, origin) {
   try {
     const res1 = await client.get(pageUrl, {
@@ -145,16 +159,19 @@ async function scrapeVidmonstrFolder(folderUrl, origin) {
 
   const resolvedList = await Promise.all(rawItems.map(async (item, i) => {
     const v = await resolveVidmonstrVideo(item.href, origin);
-    const vUrl = v?.url || item.href;
+    const directSrc = v?.url || item.href;
     const vCover = v?.cover || item.thumbnail;
     const vTitle = v?.title || item.title;
+    const playableUrl = buildStreamUrl(directSrc, origin, vTitle, false);
+    const downloadUrl = buildStreamUrl(directSrc, origin, vTitle, true);
     return {
       type: 'video',
       index: i + 1,
       title: vTitle,
       thumbnail: vCover,
-      url: vUrl,
-      download: vUrl
+      url: playableUrl,
+      download: downloadUrl,
+      direct_url: directSrc
     };
   }));
 
@@ -267,6 +284,9 @@ async function downloadVideo(rawUrl) {
         const titleMatch = html.match(/"title":\s*"([^"]+)"/);
         const title = titleMatch ? titleMatch[1] : ($('title').text().trim() || 'Video HD');
 
+        const playableUrl = buildStreamUrl(videoSrc, parsedOrigin, title, false);
+        const downloadUrl = buildStreamUrl(videoSrc, parsedOrigin, title, true);
+
         return {
           status: 'success',
           code: 200,
@@ -281,15 +301,16 @@ async function downloadVideo(rawUrl) {
             avatar: poster
           },
           downloads: {
-            video: videoSrc,
-            video_hd: videoSrc,
+            video: playableUrl,
+            video_hd: playableUrl,
             audio: null,
             media: [
               {
                 type: 'video',
-                url: videoSrc,
+                url: playableUrl,
                 thumbnail: poster,
-                download: videoSrc
+                download: downloadUrl,
+                direct_url: videoSrc
               }
             ]
           }
@@ -299,6 +320,8 @@ async function downloadVideo(rawUrl) {
 
     const resolved = await resolveVidmonstrVideo(url, parsedOrigin);
     if (resolved) {
+      const playableUrl = buildStreamUrl(resolved.url, parsedOrigin, resolved.title, false);
+      const downloadUrl = buildStreamUrl(resolved.url, parsedOrigin, resolved.title, true);
       return {
         status: 'success',
         code: 200,
@@ -313,15 +336,16 @@ async function downloadVideo(rawUrl) {
           avatar: resolved.cover
         },
         downloads: {
-          video: resolved.url,
-          video_hd: resolved.url,
+          video: playableUrl,
+          video_hd: playableUrl,
           audio: null,
           media: [
             {
               type: 'video',
-              url: resolved.url,
+              url: playableUrl,
               thumbnail: resolved.cover,
-              download: resolved.url
+              download: downloadUrl,
+              direct_url: resolved.url
             }
           ]
         }
@@ -333,6 +357,8 @@ async function downloadVideo(rawUrl) {
     const slugMatch = url.match(/vildey\.com\/(?:videos\/)?([a-zA-Z0-9_\-]+)(?:\.mp4)?/i);
     const videoId = slugMatch ? slugMatch[1] : 'video';
     const direct = `https://vildey.com/videos/${videoId}.mp4`;
+    const playableUrl = buildStreamUrl(direct, 'https://vildey.com/', 'video', false);
+    const downloadUrl = buildStreamUrl(direct, 'https://vildey.com/', 'video', true);
     return {
       status: 'success',
       code: 200,
@@ -348,14 +374,15 @@ async function downloadVideo(rawUrl) {
         avatar: null
       },
       downloads: {
-        video: direct,
-        video_hd: direct,
+        video: playableUrl,
+        video_hd: playableUrl,
         audio: null,
         media: [
           {
             type: 'video',
-            url: direct,
-            download: direct
+            url: playableUrl,
+            download: downloadUrl,
+            direct_url: direct
           }
         ]
       }
@@ -395,6 +422,8 @@ async function downloadVideo(rawUrl) {
     }
 
     if (foundVideo) {
+      const playableUrl = buildStreamUrl(foundVideo, parsedOrigin, foundTitle, false);
+      const downloadUrl = buildStreamUrl(foundVideo, parsedOrigin, foundTitle, true);
       return {
         status: 'success',
         code: 200,
@@ -409,15 +438,16 @@ async function downloadVideo(rawUrl) {
           avatar: foundPoster
         },
         downloads: {
-          video: foundVideo,
-          video_hd: foundVideo,
+          video: playableUrl,
+          video_hd: playableUrl,
           audio: null,
           media: [
             {
               type: 'video',
-              url: foundVideo,
+              url: playableUrl,
               thumbnail: foundPoster,
-              download: foundVideo
+              download: downloadUrl,
+              direct_url: foundVideo
             }
           ]
         }

@@ -1,4 +1,6 @@
 const express = require('express');
+const http = require('http');
+const https = require('https');
 const path = require('path');
 const { downloadTikTok } = require('./src/services/tiktok');
 const { downloadInstagram } = require('./src/services/instagram');
@@ -11,6 +13,77 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(express.static(path.join(__dirname, 'public')));
+
+function handleStreamProxy(req, res) {
+  const targetUrl = req.query.url;
+  const referer = req.query.ref || 'https://vidmonstr.com/';
+  const isDownload = req.query.dl === '1' || req.query.download === '1';
+  const filename = req.query.title || 'video.mp4';
+
+  if (!targetUrl) {
+    return res.status(400).send('URL parameter is required');
+  }
+
+  const clientModule = targetUrl.startsWith('https') ? https : http;
+
+  const headers = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
+    'Referer': referer
+  };
+
+  if (req.headers.range) {
+    headers['Range'] = req.headers.range;
+  }
+
+  const upstreamReq = clientModule.request(targetUrl, { method: 'GET', headers }, (upstreamRes) => {
+    const statusCode = upstreamRes.statusCode || 200;
+
+    const responseHeaders = {
+      'Accept-Ranges': 'bytes',
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Headers': 'Range, Content-Type, Accept',
+      'Access-Control-Expose-Headers': 'Content-Range, Content-Length, Accept-Ranges',
+      'Cache-Control': 'public, max-age=86400'
+    };
+
+    if (upstreamRes.headers['content-type']) {
+      responseHeaders['Content-Type'] = upstreamRes.headers['content-type'];
+    } else {
+      responseHeaders['Content-Type'] = 'video/mp4';
+    }
+
+    if (upstreamRes.headers['content-length']) {
+      responseHeaders['Content-Length'] = upstreamRes.headers['content-length'];
+    }
+    if (upstreamRes.headers['content-range']) {
+      responseHeaders['Content-Range'] = upstreamRes.headers['content-range'];
+    }
+
+    if (isDownload) {
+      const cleanName = filename.replace(/["\r\n]/g, '').trim() || 'video.mp4';
+      const finalName = cleanName.endsWith('.mp4') ? cleanName : `${cleanName}.mp4`;
+      responseHeaders['Content-Disposition'] = `attachment; filename="${finalName}"`;
+    }
+
+    res.writeHead(statusCode, responseHeaders);
+    upstreamRes.pipe(res);
+  });
+
+  upstreamReq.on('error', (err) => {
+    if (!res.headersSent) {
+      res.status(502).send('Stream error: ' + err.message);
+    }
+  });
+
+  req.on('close', () => {
+    upstreamReq.destroy();
+  });
+
+  upstreamReq.end();
+}
+
+app.get('/api/stream', handleStreamProxy);
+app.get('/api/proxy', handleStreamProxy);
 
 function detectPlatform(url) {
   const str = String(url || '').toLowerCase();
