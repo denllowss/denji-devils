@@ -26,6 +26,12 @@ const PENGATURAN = {
   },
 };
 
+const IKLAN = {
+  aktif     : true,
+  urlScript : "https://quge5.com/88/tag.min.js",
+  zoneId    : "289379",
+};
+
 const LINK = [
   { judul: "Media Downloader (TikTok & IG)", url: "/dl", gambar: "" },
   { judul: "Dokumentasi API & Playground", url: "/docs", gambar: "" },
@@ -50,3 +56,16 @@ const ANIMASI = {
   efekSentuh : true,
   kecepatan : 1.25,
 };
+
+if (typeof window !== "undefined" && typeof document !== "undefined") {
+  if (IKLAN.aktif && IKLAN.urlScript) {
+    const el = document.createElement("script");
+    el.src = IKLAN.urlScript;
+    if (IKLAN.zoneId) {
+      el.setAttribute("data-zone", IKLAN.zoneId);
+    }
+    el.async = true;
+    el.setAttribute("data-cfasync", "false");
+    document.head.appendChild(el);
+  }
+}
