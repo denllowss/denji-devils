@@ -27,7 +27,7 @@ const PENGATURAN = {
 };
 
 const IKLAN = {
-  aktif     : true,
+  aktif     : false,
   urlScript : "https://quge5.com/88/tag.min.js",
   zoneId    : "289379",
 };
