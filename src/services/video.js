@@ -123,7 +123,7 @@ async function scrapeVidmonstrFolder(folderUrl, origin) {
   const html = typeof res.data === 'string' ? res.data : '';
   const $ = cheerio.load(html);
 
-  const folderTitle = ($('h1.drive-title').text().trim() || $('title').text().trim() || 'Folder Video').replace(/^[📂📁\s]+/, '').trim();
+  const folderTitle = ($('h1.drive-title').text().trim() || $('title').text().trim() || 'Folder Video').replace(/^[^\w\s\d\-]+/, '').trim();
 
   const rawItems = [];
   $('article.drive-file-card').each((_, el) => {

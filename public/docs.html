@@ -4,19 +4,19 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>Denji API Docs & Interactive Playground</title>
-<meta name="description" content="Dokumentasi resmi API Denji Downloader & Media Extractor. Lengkap dengan Playground interaktif, SDK cURL, Fetch, Python, PHP, dan Go untuk seluruh platform.">
+<title>Denji API Documentation & Interactive Playground</title>
+<meta name="description" content="Dokumentasi resmi Denji API Media Extractor & Downloader. Realtime Playground, SDK cURL, Fetch, Python, PHP, dan Go untuk seluruh platform.">
 <meta name="robots" content="index, follow">
 <meta name="theme-color" content="#c8d97c">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Denji API Documentation">
-<meta property="og:title" content="Denji API Docs & Interactive Playground">
+<meta property="og:title" content="Denji API Documentation & Interactive Playground">
 <meta property="og:description" content="REST API Ekstraksi Video HD, Audio MP3, Playlist HLS (.m3u8), dan Relay Stream. Dukungan cURL, Fetch, Python, PHP, dan Go.">
 <meta property="og:image" content="https://i.imgur.com/THE7Eb7.jpeg">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Denji API Docs & Interactive Playground">
+<meta name="twitter:title" content="Denji API Documentation & Interactive Playground">
 <meta name="twitter:description" content="REST API Ekstraksi Video HD, Audio MP3, Playlist HLS (.m3u8), dan Relay Stream.">
 <meta name="twitter:image" content="https://i.imgur.com/THE7Eb7.jpeg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -37,9 +37,9 @@
   --button-style-radius: 20px;
   --card-bg: #f1fcbd;
   --card-inner: #ffffff;
-  --code-bg: #182212;
-  --code-header-bg: #11180c;
-  --code-border: #2c3b20;
+  --code-bg: #151e10;
+  --code-header-bg: #0e140a;
+  --code-border: #28371d;
   --code-text: #ecf8be;
   --code-muted: #8fa673;
   --safe-top: env(safe-area-inset-top, 0px);
@@ -109,7 +109,7 @@ svg{
   top: 0;
   z-index: 100;
   width: 100%;
-  background: rgba(200, 217, 124, 0.92);
+  background: rgba(200, 217, 124, 0.94);
   border-bottom: 2px solid var(--button-style-border-color);
   -webkit-backdrop-filter: blur(14px) saturate(160%);
   backdrop-filter: blur(14px) saturate(160%);
@@ -384,6 +384,7 @@ svg{
   display: grid;
   place-items: center;
   flex-shrink: 0;
+  color: #1e2330;
 }
 
 .main-layout{
@@ -412,6 +413,38 @@ svg{
   .sidebar{
     position: static;
   }
+}
+
+.search-box{
+  position: relative;
+  width: 100%;
+}
+
+.search-input{
+  width: 100%;
+  padding: 10px 14px 10px 36px;
+  background: #ffffff;
+  border: 2px solid var(--button-style-border-color);
+  border-radius: 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #1e2330;
+  box-shadow: 2px 2px 0 var(--button-style-shadow-color);
+  outline: none;
+}
+
+.search-input:focus{
+  border-color: #1e2330;
+  box-shadow: 0 0 0 3px rgba(50, 60, 31, 0.15);
+}
+
+.search-icon{
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #57653d;
+  pointer-events: none;
 }
 
 .toc-card{
@@ -549,6 +582,26 @@ svg{
   border: 1.5px solid var(--button-style-border-color);
   box-shadow: 1.5px 1.5px 0 var(--button-style-shadow-color);
   color: #1e2330;
+}
+
+.btn-try-ep{
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  background: #ffffff;
+  border: 1.5px solid var(--button-style-border-color);
+  border-radius: 10px;
+  font-size: 11.5px;
+  font-weight: 800;
+  color: #1e2330;
+  box-shadow: 1.5px 1.5px 0 var(--button-style-shadow-color);
+  transition: transform .15s var(--ease-pop), background .15s var(--ease);
+}
+
+.btn-try-ep:hover{
+  background: #f1fcbd;
+  transform: translateY(-1px);
 }
 
 .section-desc{
@@ -770,6 +823,7 @@ svg{
   display: flex;
   align-items: center;
   gap: 8px;
+  flex-wrap: wrap;
 }
 
 .response-title{
@@ -817,6 +871,7 @@ svg{
   display: flex;
   align-items: center;
   gap: 6px;
+  flex-wrap: wrap;
 }
 
 .btn-res-action{
@@ -843,7 +898,7 @@ svg{
   border: 2px solid var(--button-style-border-color);
   border-radius: 14px;
   padding: 14px;
-  max-height: 380px;
+  max-height: 400px;
   overflow: auto;
   box-shadow: inset 0 2px 6px rgba(0,0,0,0.3);
 }
@@ -852,7 +907,7 @@ svg{
   margin: 0;
   font-family: var(--font-mono);
   font-size: 12.5px;
-  line-height: 1.5;
+  line-height: 1.55;
   color: var(--code-text);
   white-space: pre-wrap;
   word-break: break-all;
@@ -1212,19 +1267,27 @@ svg{
 
     <div class="features-grid">
       <div class="feature-pill">
-        <div class="feature-icon">⚡</div>
+        <div class="feature-icon">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+        </div>
         <span>Tanpa API Key (Gratis & Publik)</span>
       </div>
       <div class="feature-pill">
-        <div class="feature-icon">📦</div>
+        <div class="feature-icon">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="21 8 21 21 3 21 3 8"></polyline><rect x="1" y="3" width="22" height="5"></rect><line x1="10" y1="12" x2="14" y2="12"></line></svg>
+        </div>
         <span>Format Standar JSON Terstruktur</span>
       </div>
       <div class="feature-pill">
-        <div class="feature-icon">🌐</div>
+        <div class="feature-icon">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+        </div>
         <span>Dukungan Penuh CORS (Cross-Origin)</span>
       </div>
       <div class="feature-pill">
-        <div class="feature-icon">🚀</div>
+        <div class="feature-icon">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"></path><path d="M12 5l7 7-7 7"></path></svg>
+        </div>
         <span>Proxy Stream Relay Berkecepatan Tinggi</span>
       </div>
     </div>
@@ -1233,33 +1296,38 @@ svg{
   <main class="main-layout">
 
     <aside class="sidebar">
+      <div class="search-box">
+        <svg class="search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="text" id="endpointSearch" class="search-input" placeholder="Cari endpoint..." oninput="filterEndpoints(this.value)">
+      </div>
+
       <div class="toc-card">
         <div class="toc-header">
           <span>Daftar Endpoint</span>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
         </div>
-        <nav class="toc-links">
-          <a href="#playground" class="toc-link active">
+        <nav class="toc-links" id="tocLinks">
+          <a href="#playground" class="toc-link active" data-title="playground">
             <span>Playground Interaktif</span>
             <span class="method-tag method-post">TEST</span>
           </a>
-          <a href="#ep-dl" class="toc-link">
+          <a href="#ep-dl" class="toc-link" data-title="/api/dl extractor">
             <span>/api/dl (Extractor)</span>
             <span class="method-tag method-post">POST</span>
           </a>
-          <a href="#ep-stream" class="toc-link">
+          <a href="#ep-stream" class="toc-link" data-title="/api/stream relay">
             <span>/api/stream (Relay)</span>
             <span class="method-tag method-get">GET</span>
           </a>
-          <a href="#ep-health" class="toc-link">
+          <a href="#ep-health" class="toc-link" data-title="/api/health status">
             <span>/api/health (Status)</span>
             <span class="method-tag method-get">GET</span>
           </a>
-          <a href="#ep-profile" class="toc-link">
+          <a href="#ep-profile" class="toc-link" data-title="/api/profile links">
             <span>/api/profile (Links)</span>
             <span class="method-tag method-get">GET</span>
           </a>
-          <a href="#ep-status-codes" class="toc-link">
+          <a href="#ep-status-codes" class="toc-link" data-title="status codes reference">
             <span>Status Codes Reference</span>
             <span class="method-tag method-get">REF</span>
           </a>
@@ -1296,19 +1364,24 @@ svg{
             <span class="preset-title">Pilih Contoh Preset Cepat:</span>
             <div class="preset-chips">
               <button type="button" class="preset-btn" onclick="applyPreset('video')">
-                🎬 Video HD
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
+                <span>Video HD</span>
               </button>
               <button type="button" class="preset-btn" onclick="applyPreset('folder')">
-                📁 Folder / Multi-file
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+                <span>Folder / Multi-file</span>
               </button>
               <button type="button" class="preset-btn" onclick="applyPreset('story')">
-                📸 Instagram Story
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                <span>Instagram Story</span>
               </button>
               <button type="button" class="preset-btn" onclick="applyPreset('health')">
-                🩺 Health Check
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
+                <span>Health Check</span>
               </button>
               <button type="button" class="preset-btn" onclick="applyPreset('profile')">
-                👤 Profile Meta
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                <span>Profile Meta</span>
               </button>
             </div>
           </div>
@@ -1371,7 +1444,13 @@ svg{
             <span class="method-tag method-post">POST</span>
             <h2 class="section-title">/api/dl</h2>
           </div>
-          <span class="endpoint-badge">Media Extractor Endpoint</span>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <button type="button" class="btn-try-ep" onclick="setupPlayground('POST', '/api/dl', { url: 'https://vidovr.com/e/zutja1gn1zeu' })">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+              <span>Uji di Playground</span>
+            </button>
+            <span class="endpoint-badge">Media Extractor</span>
+          </div>
         </div>
 
         <p class="section-desc">
@@ -1434,7 +1513,13 @@ svg{
             <span class="method-tag method-get">GET</span>
             <h2 class="section-title">/api/stream</h2>
           </div>
-          <span class="endpoint-badge">High-Speed Proxy Stream Relay</span>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <button type="button" class="btn-try-ep" onclick="setupPlayground('GET', '/api/stream?url=https%3A%2F%2Fmp4-06.overfetch.video%2FvMVlX9VsHp%2Fmaster.mp4')">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+              <span>Uji di Playground</span>
+            </button>
+            <span class="endpoint-badge">Proxy Stream Relay</span>
+          </div>
         </div>
 
         <p class="section-desc">
@@ -1502,7 +1587,13 @@ svg{
             <span class="method-tag method-get">GET</span>
             <h2 class="section-title">/api/health</h2>
           </div>
-          <span class="endpoint-badge">System Status Check</span>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <button type="button" class="btn-try-ep" onclick="setupPlayground('GET', '/api/health')">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+              <span>Uji di Playground</span>
+            </button>
+            <span class="endpoint-badge">System Status</span>
+          </div>
         </div>
 
         <p class="section-desc">
@@ -1536,7 +1627,13 @@ svg{
             <span class="method-tag method-get">GET</span>
             <h2 class="section-title">/api/profile</h2>
           </div>
-          <span class="endpoint-badge">Metadata & Social Links</span>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <button type="button" class="btn-try-ep" onclick="setupPlayground('GET', '/api/profile')">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+              <span>Uji di Playground</span>
+            </button>
+            <span class="endpoint-badge">Metadata & Links</span>
+          </div>
         </div>
 
         <p class="section-desc">
@@ -1790,6 +1887,22 @@ function applyPreset(type){
   showToast("Preset '" + type + "' diterapkan");
 }
 
+function setupPlayground(method, endpoint, bodyObj){
+  document.getElementById('pgMethod').value = method;
+  document.getElementById('pgEndpoint').value = endpoint;
+  if(bodyObj){
+    document.getElementById('pgBody').value = JSON.stringify(bodyObj, null, 2);
+  } else {
+    document.getElementById('pgBody').value = "";
+  }
+  handleMethodChange();
+  const pg = document.getElementById('playground');
+  if(pg){
+    pg.scrollIntoView({ behavior: 'smooth' });
+  }
+  showToast("Endpoint dimuat ke Playground");
+}
+
 function handleMethodChange(){
   const method = document.getElementById('pgMethod').value;
   const bodyWrap = document.getElementById('pgBodyWrap');
@@ -1798,6 +1911,19 @@ function handleMethodChange(){
   } else {
     bodyWrap.style.display = 'flex';
   }
+}
+
+function filterEndpoints(query){
+  const q = String(query || '').toLowerCase().trim();
+  const links = document.querySelectorAll('#tocLinks .toc-link');
+  links.forEach(link => {
+    const title = link.getAttribute('data-title') || link.textContent.toLowerCase();
+    if(!q || title.includes(q)){
+      link.style.display = 'flex';
+    } else {
+      link.style.display = 'none';
+    }
+  });
 }
 
 function switchCodeTab(section, lang, btn){
