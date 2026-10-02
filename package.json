@@ -9,7 +9,8 @@
     "test:iqc:runtime": "node scripts/run-node.js scripts/verify-iqc-runtime.js",
     "test:iqc3": "node scripts/run-node.js scripts/verify-iqc3.js",
     "test:lowquality": "node scripts/run-node.js scripts/verify-lowquality.js",
-    "test:iqc4": "node scripts/run-node.js scripts/verify-iqc4.js"
+    "test:iqc4": "node scripts/run-node.js scripts/verify-iqc4.js",
+    "test:iqc4:emoji": "node scripts/run-node.js scripts/verify-iqc4-emoji.js"
   },
   "dependencies": {
     "@raihan07/vidly": "^13.0.2",

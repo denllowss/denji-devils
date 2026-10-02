@@ -238,3 +238,9 @@ Format pesan mengikuti IQC/IQC2: Enter, *tebal*, _miring_, ~coret~, kode, daftar
 Template/font/ikon tersimpan sebagai data URI, tanpa mengambil asset saat request. Bootstrap Chromium153 + Node24 sama dengan renderer lama; tidak menggunakan Chromium lain. `X-IQC-Variant: 4`, `X-IQC-Source: reference-photo/dynamic-render`, serta `X-IQC-Width/Height` memberi metadata. Error aman berupa JSON 405/500 dengan `X-IQC-Error-Code`. GET, HEAD dan CORS OPTIONS didukung.
 
 Uji: jalankan server, lalu `npm run test:iqc4`. Deployment: `BASE_URL=https://domain-anda.vercel.app npm run test:iqc4`.
+
+### Perbaikan alpha emoji IQC4
+
+Bar reaksi dan badge memakai PNG RGBA asli dengan tepi anti-alias transparan, bukan potongan JPEG berlatar putih. Keenam glyph dinormalisasi agar rata dan memakai sumber yang sama pada light/dark, editor, template HTML, dan JPEG API. Foto default tetap byte-identik.
+
+Uji regresi semua 6 reaksi × 2 tema: `npm run test:iqc4:emoji`. Untuk membuat ulang asset/template secara offline (Pillow): `python3 scripts/build-iqc4-emoji-assets.py`. Jangan threshold/salin ulang emoji dari JPEG referensi karena akan menimbulkan halo putih.
