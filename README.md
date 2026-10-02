@@ -1,6 +1,6 @@
 # Denji API
 
-Linktree, media downloader, dokumentasi API, dan generator IQC dalam satu project Express + HTML statis. Runtime deployment: Node.js 24.x.
+Linktree, media downloader, dokumentasi API, dan generator IQC dalam satu project Express + HTML statis. Runtime deployment: Node.js 24.x. Gunakan Node 24 juga untuk instalasi/pengujian lokal.
 
 ## Jalankan lokal
 
@@ -13,6 +13,8 @@ Uji render nyata (server harus sedang berjalan):
 
 ```bash
 npm run test:iqc
+# Regression test Node 24/Vercel tanpa server dan tanpa flag AWS:
+npm run test:iqc:runtime
 # Untuk memeriksa deployment:
 # BASE_URL=https://domain-anda.vercel.app npm run test:iqc
 ```
@@ -67,7 +69,8 @@ Di `/docs`, gunakan preset **IQC · IG** atau **IQC · WhatsApp**. Playground me
 
 ### Berkas IQC
 
-- `api/iqc.js`: handler serverless + renderer, memakai `puppeteer-core` dan `@sparticuz/chromium`.
+- `api/iqc.js`: handler v1 + renderer bersama; `api/iqc2.js`: handler v2 tersendiri, memaksa versi WhatsApp tanpa bergantung pada parameter rewrite.
+- `src/services/iqc-runtime.js`: bootstrap bersama Chromium 153 + Puppeteer 25, ekstraksi library NSS/NSPR AL2023, pemulihan cache `/tmp`, dan path library sebelum browser diluncurkan.
 - `api/_template.html` dan `api/_template2.html`: template asli dengan font/emoji tertanam.
 - `server.js`: adapter route Express untuk pengujian lokal.
 - `app.html` dan `public/app.html`: halaman editor yang sama, ditambah navigasi Denji dan tombol unduh API.
@@ -77,13 +80,19 @@ Di `/docs`, gunakan preset **IQC · IG** atau **IQC · WhatsApp**. Playground me
 
 Gunakan project Vercel Denji yang sudah ada; tidak perlu membuat deployment terpisah untuk IQC.
 
-- `api/iqc.js` menjadi fungsi tersendiri, dengan batas durasi 60 detik dan konfigurasi memori 2048 MB.
-- `includeFiles: "api/_template*.html"` memasukkan kedua template dari root project.
+- `api/iqc.js` dan `api/iqc2.js` masing-masing menjadi fungsi tersendiri, dengan batas durasi 60 detik dan konfigurasi memori 2048 MB.
+- `includeFiles: "{api/_template*.html,node_modules/@sparticuz/chromium/bin/*.br}"` memasukkan kedua template dan arsip binari/library Chromium dari root project.
 - Route API lama diarahkan ke `api/index.js` secara eksplisit. Catch-all `/api/(.*)` tidak dipakai agar tidak mengambil alih `/api/iqc`.
 - Bundle `api/index.js` mengecualikan renderer/template/dependensi Chromium IQC; endpoint downloader/health/profile tidak perlu memuat browser.
 - Root `app.html` disertakan karena static deployment project ini memakai berkas HTML di root; Express menyajikan salinannya dari `public/`.
 
-Cold start Chromium lebih lambat daripada request hangat. Render pertama lokal sudah diverifikasi menghasilkan JPG; deployment Vercel tetap perlu diuji setelah perubahan di-push/deploy. Untuk Linux lokal yang bukan runtime Vercel, library sistem Chromium mungkin perlu dipasang (misalnya NSS, NSPR, ATK, GBM, Pango, Cairo, dan ALSA).
+Cold start Chromium lebih lambat daripada request hangat. Bootstrap dieksekusi/ditunggu oleh request, bukan warm-up di latar saat import. Library NSS/NSPR diekstrak eksplisit dari paket, termasuk bila Vercel tidak mengisi flag AWS; tidak perlu mengubah `AWS_LAMBDA_JS_RUNTIME` menjadi Node 20/22. Cache parsial atau binari `/tmp` dari versi lama dipulihkan sebelum launch.
+
+`npm run test:iqc:runtime` memverifikasi render IG/WhatsApp light/dark dalam tiga lingkungan Node 24 dengan TMPDIR baru: Vercel tanpa flag AWS, Vercel/AWS Node 24, dan Linux lokal. Gunakan `BASE_URL=... npm run test:iqc` untuk menguji deployment yang sudah live.
+
+Header `X-IQC-Renderer`, `X-IQC-Variant` dan `X-IQC-Cache` membantu verifikasi deployment. Jika status 500, `X-IQC-Error-Code` berisi kode aman (misalnya `CHROMIUM_LIBRARY_MISSING`, `CHROMIUM_ASSETS_MISSING`, atau `TEMPLATE_NOT_FOUND`); detail/stack hanya masuk log server, bukan respons publik.
+
+Script npm memakai `scripts/run-node.js` agar Node project tidak dibayangi `node_modules/.bin/node` yang terpasang sebagai peer dependency downloader.
 
 ## Analytics dan Speed Insights
 

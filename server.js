@@ -2,7 +2,6 @@ const express = require('express');
 const http = require('http');
 const https = require('https');
 const path = require('path');
-const fs = require('fs');
 const { downloadTikTok } = require('./src/services/tiktok');
 const { downloadInstagram } = require('./src/services/instagram');
 const { downloadVideo } = require('./src/services/video');
@@ -20,14 +19,6 @@ let iqcHandler = null;
 
 function loadIqc() {
   if (iqcHandler) return iqcHandler;
-  // tiru runtime Vercel agar @sparticuz/chromium mengekstrak librarynya
-  if (!process.env.AWS_LAMBDA_JS_RUNTIME) process.env.AWS_LAMBDA_JS_RUNTIME = 'nodejs20.x';
-  // bersihkan sisa ekstraksi chromium yang tidak lengkap
-  try {
-    if (fs.existsSync('/tmp/chromium') && !fs.existsSync('/tmp/al2023/lib')) {
-      fs.rmSync('/tmp/chromium', { recursive: true, force: true });
-    }
-  } catch (e) { /* abaikan */ }
   iqcHandler = require(IQC_PATH);
   return iqcHandler;
 }

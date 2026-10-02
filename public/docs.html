@@ -1974,6 +1974,7 @@ svg{ display: block; flex-shrink: 0; }
                 <li>Tanpa <code>seed</code>, wallpaper &amp; baterai diacak. Dengan seed, server memakai cache memori per menit WIB; header tetap <code>no-store</code>.</li>
                 <li>Emoji umum (❤ 😂 🔥 💯 🙏) tertanam di template; emoji langka diunduh dari CDN saat render dengan fallback ke teks.</li>
                 <li>Bila render gagal total, endpoint <strong>tetap</strong> membalas gambar — foto "gagal membuat gambar" dengan status <code>500</code>.</li>
+                <li>Jika gagal, periksa header <code>X-IQC-Error-Code</code>. Renderer memakai Chromium yang kompatibel dengan Node 24/Vercel dan mengekstrak library NSS sebelum launch.</li>
                 <li>Alias API: <code>/api/iqc</code> dan <code>/api/iqc2</code>. Buka <a href="/app">editor IQC</a> untuk mengubah teks dan mengunduh JPG.</li>
               </ul>
             </div>
@@ -2100,7 +2101,7 @@ svg{ display: block; flex-shrink: 0; }
               </div>
               <ul class="note-list">
                 <li>Ukuran &amp; format keluaran sama dengan <code>/iqc</code>: JPG <code>1350&times;2400</code>, kualitas 90.</li>
-                <li>Nama dikirim lewat parameter <code>name</code> (bukan <code>nama</code>).</li>
+                <li>Nama dikirim lewat parameter <code>name</code> (bukan <code>nama</code>). Handler v2 berjalan terpisah dan selalu memakai template WhatsApp.</li>
                 <li>Sertakan <code>&amp;seed=</code> untuk mengunci baterai. Gambar dapat berubah ketika menit WIB berganti; cache hanya ada di memori server.</li>
               </ul>
             </div>

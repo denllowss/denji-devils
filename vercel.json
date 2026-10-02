@@ -1,33 +1,94 @@
 {
   "version": 2,
   "rewrites": [
-    {"source": "/iqc", "destination": "/api/iqc"},
-    {"source": "/iqc/", "destination": "/api/iqc"},
-    {"source": "/iqc2", "destination": "/api/iqc?v2=1"},
-    {"source": "/iqc2/", "destination": "/api/iqc?v2=1"},
-    {"source": "/api/iqc/", "destination": "/api/iqc"},
-    {"source": "/api/iqc2", "destination": "/api/iqc?v2=1"},
-    {"source": "/api/iqc2/", "destination": "/api/iqc?v2=1"},
-    {"source": "/app", "destination": "/app.html"},
-    {"source": "/api/dl", "destination": "/api/index.js"},
-    {"source": "/api/dl/", "destination": "/api/index.js"},
-    {"source": "/api/stream", "destination": "/api/index.js"},
-    {"source": "/api/stream/", "destination": "/api/index.js"},
-    {"source": "/api/proxy", "destination": "/api/index.js"},
-    {"source": "/api/proxy/", "destination": "/api/index.js"},
-    {"source": "/api/health", "destination": "/api/index.js"},
-    {"source": "/api/health/", "destination": "/api/index.js"},
-    {"source": "/api/profile", "destination": "/api/index.js"},
-    {"source": "/api/profile/", "destination": "/api/index.js"},
-    {"source": "/docs", "destination": "/docs.html"},
-    {"source": "/dl", "destination": "/dl.html"}
+    {
+      "source": "/iqc",
+      "destination": "/api/iqc"
+    },
+    {
+      "source": "/iqc/",
+      "destination": "/api/iqc"
+    },
+    {
+      "source": "/iqc2",
+      "destination": "/api/iqc2"
+    },
+    {
+      "source": "/iqc2/",
+      "destination": "/api/iqc2"
+    },
+    {
+      "source": "/api/iqc/",
+      "destination": "/api/iqc"
+    },
+    {
+      "source": "/api/iqc2/",
+      "destination": "/api/iqc2"
+    },
+    {
+      "source": "/app",
+      "destination": "/app.html"
+    },
+    {
+      "source": "/api/dl",
+      "destination": "/api/index.js"
+    },
+    {
+      "source": "/api/dl/",
+      "destination": "/api/index.js"
+    },
+    {
+      "source": "/api/stream",
+      "destination": "/api/index.js"
+    },
+    {
+      "source": "/api/stream/",
+      "destination": "/api/index.js"
+    },
+    {
+      "source": "/api/proxy",
+      "destination": "/api/index.js"
+    },
+    {
+      "source": "/api/proxy/",
+      "destination": "/api/index.js"
+    },
+    {
+      "source": "/api/health",
+      "destination": "/api/index.js"
+    },
+    {
+      "source": "/api/health/",
+      "destination": "/api/index.js"
+    },
+    {
+      "source": "/api/profile",
+      "destination": "/api/index.js"
+    },
+    {
+      "source": "/api/profile/",
+      "destination": "/api/index.js"
+    },
+    {
+      "source": "/docs",
+      "destination": "/docs.html"
+    },
+    {
+      "source": "/dl",
+      "destination": "/dl.html"
+    }
   ],
   "functions": {
     "api/index.js": {
-      "excludeFiles": "{api/iqc.js,api/_template*.html,node_modules/@sparticuz/chromium/**,node_modules/puppeteer-core/**,node_modules/@puppeteer/browsers/**}"
+      "excludeFiles": "{api/iqc*.js,api/_template*.html,src/services/iqc-runtime.js,node_modules/@sparticuz/chromium/**,node_modules/puppeteer-core/**,node_modules/@puppeteer/browsers/**}"
     },
     "api/iqc.js": {
-      "includeFiles": "api/_template*.html",
+      "includeFiles": "{api/_template*.html,node_modules/@sparticuz/chromium/bin/*.br}",
+      "memory": 2048,
+      "maxDuration": 60
+    },
+    "api/iqc2.js": {
+      "includeFiles": "{api/_template*.html,node_modules/@sparticuz/chromium/bin/*.br}",
       "memory": 2048,
       "maxDuration": 60
     }

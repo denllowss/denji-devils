@@ -2,7 +2,7 @@
 //  IQC — Instagram Quote Card API (Vercel Serverless Function)
 //
 //  GET /iqc?pesan=halo❤          ->  FOTO JPG (render headless Chromium)
-//  GET /iqc?pesan=halo❤&html=1   ->  halaman interaktif (HTML)
+//  Editor interaktif: GET /app (API IQC selalu membalas JPG)
 //  GET /iqc?pesan=...&seed=42    ->  wallpaper terkunci sesuai seed
 //  GET /iqc                      ->  pesan default
 //
@@ -10,27 +10,34 @@
 // ============================================================
 const fs = require('fs');
 const path = require('path');
+const { prepareChromium, errorCode } = require('../src/services/iqc-runtime');
 
 const DEFAULT_MSG = 'see u, hopefully we will meet in the next life.';
 const MAX_LEN = 1000;
 const W = 675, H = 1200, SCALE = 2; // hasil akhir 1350 x 2400 px (9:16)
 
-let cache = null;
-function getTemplate() {
-  if (cache) return cache;
+const templateCache = new Map();
+function readTemplate(filename) {
+  if (templateCache.has(filename)) return templateCache.get(filename);
   const candidates = [
-    path.join(__dirname, '_template.html'),
-    path.join(process.cwd(), 'api', '_template.html'),
-    path.join(process.cwd(), '_template.html'),
+    path.join(__dirname, filename),
+    path.join(process.cwd(), 'api', filename),
+    path.join(process.cwd(), filename)
   ];
-  for (const p of candidates) {
+  for (const candidate of candidates) {
     try {
-      cache = fs.readFileSync(p, 'utf8');
-      return cache;
-    } catch (e) { /* kandidat berikutnya */ }
+      const html = fs.readFileSync(candidate, 'utf8');
+      templateCache.set(filename, html);
+      return html;
+    } catch (error) {
+      if (error.code !== 'ENOENT') throw error;
+    }
   }
-  throw new Error('template _template.html tidak ditemukan');
+  const error = new Error('Template IQC tidak ditemukan di bundle deployment.');
+  error.code = 'TEMPLATE_NOT_FOUND';
+  throw error;
 }
+function getTemplate() { return readTemplate('_template.html'); }
 
 /* Gabung template dalam SATU lintas: template dipecah sekali (cache),
    lalu tiap request hanya menjahit nilai — hemat ~200ms di template v2. */
@@ -156,11 +163,7 @@ function waToHtml(raw) {
   return html.replace(/\u0002(\d+)\u0002/g, function (m, i) { return codeBlocks[+i]; });
 }
 
-let tpl2Cache = null;
-function getTemplate2() {
-  if (!tpl2Cache) tpl2Cache = fs.readFileSync(path.join(__dirname, '_template2.html'), 'utf8');
-  return tpl2Cache;
-}
+function getTemplate2() { return readTemplate('_template2.html'); }
 
 function bacaParams(req) {
   const url = new URL(req.url, 'http://x'); // host diabaikan; path+query saja
@@ -218,25 +221,30 @@ function buildHtml2(pesan, nama, seed, mode) {
 /* ---------- render JPG via headless Chromium ----------
    Cepat: 1 browser hangat dipakai ulang antar request (launch hanya saat
    cold start / crash), tunggu 'load' + sinyal eksplisit, tanpa tidur panjang. */
-let chromiumMod = null, puppeteerMod = null;
-let browserPromise = null;   // promise browser yang dipakai bersama
-
+let browserPromise = null;
 function getBrowser() {
   if (!browserPromise) {
-    browserPromise = (async () => {
-      if (!chromiumMod) chromiumMod = require('@sparticuz/chromium');
-      if (!puppeteerMod) puppeteerMod = require('puppeteer-core');
-      const chromium = chromiumMod;
-      const puppeteer = puppeteerMod;
-      return puppeteer.launch({
+    const pending = (async () => {
+      const { chromium, puppeteer, executablePath, env } = await prepareChromium();
+      const browser = await puppeteer.launch({
         args: [...chromium.args, '--force-device-scale-factor=' + SCALE,
-               '--disable-component-update', '--disable-sync',
-               '--disable-features=Translate'],
-        executablePath: await chromium.executablePath(),
-        headless: chromium.headless,
-        defaultViewport: { width: W, height: H, deviceScaleFactor: SCALE },
+               '--disable-component-update', '--disable-sync'],
+        executablePath,
+        env,
+        headless: 'shell',
+        timeout: 20000,
+        protocolTimeout: 20000,
+        defaultViewport: { width: W, height: H, deviceScaleFactor: SCALE }
       });
-    })().catch((e) => { browserPromise = null; throw e; });
+      browser.once('disconnected', () => {
+        if (browserPromise === pending) browserPromise = null;
+      });
+      return browser;
+    })().catch(error => {
+      if (browserPromise === pending) browserPromise = null;
+      throw error;
+    });
+    browserPromise = pending;
   }
   return browserPromise;
 }
@@ -248,8 +256,7 @@ async function renderJpg(html) {
     page = await browser.newPage();
 
     // muat dokumen; emoji CDN ditunggu lewat waitForFunction di bawah
-    await page.setContent(html, { waitUntil: 'load', timeout: 30000 })
-      .catch(() => {});
+    await page.setContent(html, { waitUntil: 'domcontentloaded', timeout: 10000 });
     // pastikan wallpaper final (render ulang setelah emoji termuat) & emoji bubble siap
     await page.waitForFunction(() => {
       const bg = document.querySelector('.bg');
@@ -257,19 +264,27 @@ async function renderJpg(html) {
       return window.__wpDone === true &&
              !!bg && bg.style.backgroundImage.length > 60 &&
              Array.prototype.every.call(imgs, function (i) { return i.complete; });
-    }, { polling: 120, timeout: 20000 }).catch(() => {});
+    }, { polling: 100, timeout: 7000 }).catch(async () => {
+      // CDN emoji yang lambat tidak boleh menghabiskan durasi fungsi 60 s.
+      await page.evaluate(() => {
+        document.querySelectorAll('#msg img.apple-emoji').forEach(img => {
+          if (!img.complete || !img.naturalWidth) img.replaceWith(document.createTextNode(img.alt || ''));
+        });
+        if (typeof window.__renderWallpaper === 'function') window.__renderWallpaper();
+      });
+    });
     // font kustom (fraktur/CJK/dll) — dibatasi 4 dtk agar tak menggantung
     await Promise.race([
       page.evaluate(() => document.fonts.ready),
       new Promise((r) => setTimeout(r, 4000)),
     ]).catch(() => {});
-    await new Promise((r) => setTimeout(r, 250)); // buffer singkat paint akhir
+    await new Promise((r) => setTimeout(r, 120)); // buffer singkat paint akhir
 
     return await page.screenshot({ type: 'jpeg', quality: 90, fullPage: false });
   } catch (e) {
     // browser/tab mati (crash, OOM) -> buang instance hangat, request berikutnya launch baru
     const msg = String((e && e.message) || e);
-    if (/Target closed|Session closed|Browser has been closed|detached|Disconnect/i.test(msg)) {
+    if (/Target closed|Session closed|Browser has been closed|detached|Disconnect|Connection closed|Protocol error/i.test(msg)) {
       browserPromise = null;
       try { await browser.close(); } catch (_) {}
     }
@@ -279,8 +294,8 @@ async function renderJpg(html) {
   }
 }
 
-// pemanasan: saat cold start, browser langsung disiapkan di latar belakang
-getBrowser().catch(() => {});
+// Bootstrap ditunggu oleh request, bukan pekerjaan latar saat import fungsi.
+// Browser hangat tetap dipakai ulang setelah request pertama.
 
 /* Foto "gagal membuat gambar" — dikirim bila render gagal total,
    supaya hasil endpoint SELALU berbentuk foto. */
@@ -306,12 +321,13 @@ function wibMenit() {
   return new Date(Date.now() + 7 * 3600e3).toISOString().slice(0, 16); // YYYY-MM-DDTHH:MM
 }
 
-async function renderSelaluFoto(req, res) {
-  const { pesan, seed, mode, nama, isV2, seedFix } = bacaParams(req);
+async function renderSelaluFoto(req, res, params) {
+  const { pesan, seed, mode, nama, isV2, seedFix } = params;
   if (seedFix) {
-    const key = [isV2 ? 2 : 1, pesan, nama, seed, mode || '', wibMenit()].join('|');
+    const key = JSON.stringify([isV2 ? 2 : 1, pesan, nama, seed, mode || '', wibMenit()]);
     const hit = jpgCache.get(key);
-    if (hit) { kirimJpg(res, hit, 200); return; }
+    if (hit) { res.setHeader('X-IQC-Cache', 'HIT'); kirimJpg(res, hit, 200); return; }
+    res.setHeader('X-IQC-Cache', 'MISS');
     const html = isV2 ? buildHtml2(pesan, nama, seed, mode)
                       : buildHtml(pesan, seed, mode);
     const jpg = await renderJpg(html);
@@ -322,6 +338,7 @@ async function renderSelaluFoto(req, res) {
     kirimJpg(res, jpg, 200);
     return;
   }
+  res.setHeader('X-IQC-Cache', 'MISS');
   const html = isV2 ? buildHtml2(pesan, nama, seed, mode)
                     : buildHtml(pesan, seed, mode);
   const jpg = await renderJpg(html);
@@ -329,19 +346,31 @@ async function renderSelaluFoto(req, res) {
 }
 
 module.exports = async (req, res) => {
-  // API JPG publik: GET dapat dipakai lewat fetch() dari situs lain.
   res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, HEAD, OPTIONS');
+  res.setHeader('Access-Control-Expose-Headers', 'X-IQC-Renderer, X-IQC-Variant, X-IQC-Cache, X-IQC-Error-Code');
+  res.setHeader('X-IQC-Renderer', 'chromium-153-node24');
+  if (req.method === 'OPTIONS') { res.statusCode = 204; res.end(); return; }
+  if (req.method && req.method !== 'GET' && req.method !== 'HEAD') {
+    res.setHeader('Allow', 'GET, HEAD, OPTIONS');
+    res.setHeader('X-IQC-Error-Code', 'METHOD_NOT_ALLOWED');
+    kirimJpg(res, ERROR_JPG, 405);
+    return;
+  }
+  const params = bacaParams(req);
+  res.setHeader('X-IQC-Variant', params.isV2 ? '2' : '1');
   try {
-    await renderSelaluFoto(req, res);
-  } catch (e) {
-    console.error('[iqc] render JPG gagal (coba ulang):', e && e.message);
-    // percobaan kedua sebelum menyerah
+    await renderSelaluFoto(req, res, params);
+  } catch (error) {
+    console.error('[iqc] render gagal (coba ulang):', errorCode(error), error && error.stack);
     try {
-      await new Promise((r) => setTimeout(r, 300));
-      await renderSelaluFoto(req, res);
-    } catch (e2) {
-      console.error('[iqc] render JPG gagal total:', e2 && e2.message);
-      // tetap berbentuk foto: gambar "gagal membuat gambar"
+      await new Promise(resolve => setTimeout(resolve, 150));
+      await renderSelaluFoto(req, res, params);
+    } catch (retryError) {
+      const code = errorCode(retryError);
+      console.error('[iqc] render gagal total:', code, retryError && retryError.stack);
+      // Publik hanya menerima kode aman, bukan stack/path/environment rahasia.
+      res.setHeader('X-IQC-Error-Code', code);
       kirimJpg(res, ERROR_JPG, 500);
     }
   }

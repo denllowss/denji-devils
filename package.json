@@ -3,14 +3,15 @@
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "node server.js",
-    "test:iqc": "node scripts/verify-iqc.js"
+    "start": "node scripts/run-node.js server.js",
+    "dev": "node scripts/run-node.js server.js",
+    "test:iqc": "node scripts/run-node.js scripts/verify-iqc.js",
+    "test:iqc:runtime": "node scripts/run-node.js scripts/verify-iqc-runtime.js"
   },
   "dependencies": {
     "@raihan07/vidly": "^13.0.2",
     "@sasmeee/igdl": "^0.0.1-security",
-    "@sparticuz/chromium": "^132.0.0",
+    "@sparticuz/chromium": "153.0.0",
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",
     "ab-downloader": "^2.0.0",
@@ -21,7 +22,7 @@
     "express": "^4.19.2",
     "insta-fetcher": "^1.4.0",
     "instagram-url-direct": "^2.0.7",
-    "puppeteer-core": "^23.11.1",
+    "puppeteer-core": "25.12.0",
     "ruhend-scraper": "^10.0.3",
     "snapsave-media-downloader": "^2.5.1",
     "socket.io-client": "^4.8.4"
