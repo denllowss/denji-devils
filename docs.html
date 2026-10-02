@@ -1305,7 +1305,7 @@ svg{ display: block; flex-shrink: 0; }
       <div class="toc-card">
         <div class="toc-header">
           <span>Daftar Endpoint</span>
-          <span class="toc-count">7</span>
+          <span class="toc-count">8</span>
         </div>
         <nav class="toc-links" id="tocLinks">
           <span class="toc-group-title">Playground</span>
@@ -1344,6 +1344,8 @@ svg{ display: block; flex-shrink: 0; }
           <a href="#ep-iqc3" class="toc-link" data-title="/iqc3 imessage music lirik gradient solid artist warna">
             <span class="toc-link-label">/iqc3</span><span class="method-tag method-get">GET</span>
           </a>
+
+          <a href="#ep-lowquality" class="toc-link" data-title="/lowquality jpeg gambar low quality deep fried kompresi upload"><span class="toc-link-label">/lowquality</span><span class="method-tag method-get">GET</span></a>
 
           <span class="toc-group-title">Referensi</span>
           <a href="#ep-status-codes" class="toc-link" data-title="status codes error handling referensi">
@@ -1420,6 +1422,7 @@ svg{ display: block; flex-shrink: 0; }
                   <span>IQC · WhatsApp</span>
                 </button>
                 <button type="button" class="preset-btn" onclick="applyPreset('iqc3')"><span>IQC3 · Music</span></button>
+                <button type="button" class="preset-btn" onclick="applyPreset('lowquality')"><span>Lowquality · JPEG</span></button>
               </div>
             </div>
 
@@ -2309,6 +2312,111 @@ svg{ display: block; flex-shrink: 0; }
         </div>
       </section>
 
+      <!-- ============ /lowquality ============ -->
+      <section class="section-card endpoint" id="ep-lowquality" data-keywords="/lowquality jpeg gambar kompresi deep fried image url upload iterations quality resolution">
+        <div class="section-head">
+          <div class="section-title-wrap">
+            <span class="method-tag method-get">GET</span><span class="method-tag method-post">POST</span>
+            <h2 class="section-title">/lowquality</h2>
+            <button class="btn-icon-copy" type="button" title="Salin path endpoint" aria-label="Salin path endpoint" onclick="copyText('/lowquality', 'Path endpoint disalin')">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            </button>
+          </div>
+          <div class="section-actions">
+            <button type="button" class="btn-try-ep" onclick="applyPreset('lowquality'); smoothScrollTo('playground')">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+              <span>Uji di Playground</span>
+            </button>
+            <span class="endpoint-badge">JPEG Deep Fry</span>
+          </div>
+        </div>
+
+        <p class="section-desc">Membuat gambar menjadi <strong>low quality / deep-fried JPEG</strong> dengan kompresi berulang, variasi kualitas per langkah, dan batas megapiksel. Diadaptasi dari <a href="https://jpeg.wavebeem.com/" target="_blank" rel="noopener">THE JPEG ZONE</a>; pemrosesan dilakukan di server Denji, bukan proxy ke situs sumber. <a href="/lowquality-app"><strong>Buka Playground lengkap: upload, URL, sebelum/sesudah &amp; goreng lagi →</strong></a></p>
+
+        <div class="ep-grid">
+          <div class="ep-col">
+            <div class="ep-block">
+              <h3 class="block-title">Query / Body Parameters</h3>
+              <div class="table-wrap scroller">
+                <table class="doc-table">
+                  <thead>
+                    <tr><th>Parameter</th><th>Tipe</th><th>Keterangan</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr><td><span class="param-name">url</span><span class="param-badge param-opt">Input</span></td><td><span class="param-type">string</span></td><td>URL gambar HTTP/HTTPS publik untuk GET/POST JSON. Alamat private, localhost, metadata server dan port nonstandar ditolak. Maks. 8 MB.</td></tr>
+                    <tr><td><span class="param-name">image</span><span class="param-badge param-opt">Input</span></td><td><span class="param-type">file / base64</span></td><td>Alternatif url: POST multipart field <code>image</code>, JSON base64/data URI, atau raw <code>image/*</code>. Upload maks. 3 MB. Jangan gabungkan dengan url.</td></tr>
+                    <tr><td><span class="param-name">iterations</span><span class="param-badge param-opt">Input</span></td><td><span class="param-type">integer</span></td><td>Jumlah putaran 0–100, default <code>25</code>. Alias <code>count</code> / <code>times</code>. 0 mengembalikan file asli tanpa resize/konversi.</td></tr>
+                    <tr><td><span class="param-name">quality</span><span class="param-badge param-opt">Input</span></td><td><span class="param-type">integer</span></td><td>Basis kualitas 1–100%, default <code>30</code>. Tiap langkah mengikuti formula situs: quality + ((i × 7) % 10). Nilai kecil lebih rusak.</td></tr>
+                    <tr><td><span class="param-name">resolution</span><span class="param-badge param-opt">Input</span></td><td><span class="param-type">number / string</span></td><td>Batas megapiksel 0.0625–4 atau <code>original</code>, default <code>0.125</code> (1/8 MP). Rasio dipertahankan; tidak diperbesar. Alias <code>size</code>.</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="chip-row"><span class="chip">GET / POST</span><span class="chip">JPEG generational loss</span><span class="chip">URL / upload</span><span class="chip">Canvas Chromium</span></div>
+            </div>
+
+            <div class="ep-block">
+              <h3 class="block-title">Respons</h3>
+              <p class="block-note">Sukses dengan iterations &gt; 0 membalas <code>image/jpeg</code>. iterations=0 mempertahankan format dan byte asli. Error berupa JSON dengan status 400/413/415/422/502/504/500 dan header <code>X-Lowquality-Error-Code</code>.</p>
+              <div class="table-wrap scroller">
+                <table class="doc-table">
+                  <thead>
+                    <tr><th>Header</th><th>Nilai</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr><td><span class="param-name">Content-Type</span></td><td><span class="param-type">image/jpeg (iterations &gt; 0)</span></td></tr>
+                    <tr><td><span class="param-name">Cache-Control</span></td><td><span class="param-type">no-store</span> — browser/CDN tidak menyimpan respons, termasuk saat memakai <code>seed</code></td></tr>
+                    <tr><td><span class="param-name">X-Content-Type-Options</span></td><td><span class="param-type">nosniff</span></td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <ul class="note-list">
+                <li>Input: JPEG, PNG, WebP, GIF, AVIF, BMP; SVG tidak didukung. Maks. 16 MP dan 32767 px/sisi. Transparansi diratakan putih; animasi tidak dipertahankan saat digoreng.</li>
+                <li>Default situs sumber: 25 putaran, kualitas 30%, resolusi 1/8 MP. Kualitas tiap langkah bersifat perkiraan dan hasil dapat berbeda antarbrowser.</li>
+                <li>Batas kerja: 100 megapiksel-putaran/request, hasil maks. 4 MB. Turunkan iterations/resolution bila mendapat WORKLOAD_TOO_LARGE.</li>
+                <li>Upload/base64 maks. 3 MB; URL maks. 8 MB. Query mengoverride pengaturan body. Gambar tidak disimpan atau dikirim ke situs sumber.</li>
+                <li>Alias <code>/api/lowquality</code>. <a href="/lowquality-app">Playground</a> mendukung drag/drop, paste gambar, contoh, perbandingan, unduh dan goreng lagi.</li>
+                <li>Algoritme diadaptasi dari <a href="https://github.com/wavebeem/the-jpeg-zone" target="_blank" rel="noopener">wavebeem/the-jpeg-zone</a> (MIT), © 2016 Sage Fennel; lisensi dipertahankan di repository.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="ep-col ep-col-code scroller">
+            <div class="code-card">
+              <div class="code-tabs-head">
+                <div class="code-tab-buttons">
+                  <span class="code-tab-label">Request</span>
+                  <button type="button" class="code-tab-btn active" onclick="switchTab('lowquality','code','curl',this)">cURL</button>
+                  <button type="button" class="code-tab-btn" onclick="switchTab('lowquality','code','javascript',this)">JavaScript</button>
+                  <button type="button" class="code-tab-btn" onclick="switchTab('lowquality','code','python',this)">Python</button>
+                  <button type="button" class="code-tab-btn" onclick="switchTab('lowquality','code','php',this)">PHP</button>
+                  <button type="button" class="code-tab-btn" onclick="switchTab('lowquality','code','go',this)">Go</button>
+                </div>
+                <button type="button" class="btn-copy-code" onclick="copySnippet('lowqualityCodeBox')">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                  <span>Salin</span>
+                </button>
+              </div>
+              <div class="code-snippet-box scroller"><pre id="lowqualityCodeBox"></pre></div>
+            </div>
+
+            <div class="code-card code-card-response">
+              <div class="code-tabs-head">
+                <div class="code-tab-buttons">
+                  <span class="code-tab-label">Response</span>
+                  <button type="button" class="code-tab-btn active" onclick="switchTab('lowquality','res','200',this)">200 JPG</button>
+                  <button type="button" class="code-tab-btn" onclick="switchTab('lowquality','res','422',this)">422</button>
+                </div>
+                <button type="button" class="btn-copy-code" onclick="copySnippet('lowqualityResBox')">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                  <span>Salin</span>
+                </button>
+              </div>
+              <div class="code-snippet-box scroller"><pre id="lowqualityResBox"></pre></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- ============ STATUS CODES ============ -->
       <section class="section-card" id="ep-status-codes" data-keywords="status codes error handling 200 400 500 502 referensi">
         <div class="section-head">
@@ -3060,6 +3168,10 @@ snippets.iqc3 = {"curl": "# Default: foto asli identik dengan referensi\ncurl \"
 responses.iqc3 = {"200": "HTTP/1.1 200 OK\nContent-Type: image/jpeg\nX-IQC-Variant: 3\nX-IQC-Source: reference-photo / dynamic-render\nCache-Control: no-store\n\n<JPG lebar 736 px; tinggi mengikuti panjang teks>", "500": "{\n  \"status\": \"error\",\n  \"code\": 500,\n  \"message\": \"Gagal membuat IQC3\",\n  \"error\": \"RENDER_FAILED\"\n}"};
 tabState.iqc3 = {code:"curl",res:"200"};
 
+snippets.lowquality = {"curl": "# GET gambar publik\ncurl --get \"{{ORIGIN}}/lowquality\" \\\n  --data-urlencode \"url=https://jpeg.wavebeem.com/icon.jpg\" \\\n  --data \"iterations=25&quality=30&resolution=0.125\" \\\n  -o lowquality.jpg\n\n# POST upload (multipart), file maksimum 3 MB\ncurl \"{{ORIGIN}}/lowquality\" \\\n  -F \"image=@gambar.png\" -F \"iterations=25\" \\\n  -F \"quality=30\" -F \"resolution=0.125\" \\\n  -o lowquality.jpg", "javascript": "const q = new URLSearchParams({\n  url: \"https://jpeg.wavebeem.com/icon.jpg\",\n  iterations: 25, quality: 30, resolution: 0.125\n});\nconst res = await fetch(\"{{ORIGIN}}/lowquality?\" + q);\nif (!res.ok) throw new Error(await res.text());\nconst blob = await res.blob();\ndocument.querySelector(\"#hasil\").src = URL.createObjectURL(blob);\n\n// Upload file dari input[type=file]\nconst form = new FormData();\nform.append(\"image\", document.querySelector(\"#file\").files[0]);\nform.append(\"quality\", \"5\");\nconst upload = await fetch(\"{{ORIGIN}}/lowquality\", {method:\"POST\", body:form});", "python": "import requests\nres = requests.get(\"{{ORIGIN}}/lowquality\", params={\n    \"url\": \"https://jpeg.wavebeem.com/icon.jpg\",\n    \"iterations\": 25, \"quality\": 30, \"resolution\": 0.125,\n}, timeout=70)\nres.raise_for_status()\nopen(\"lowquality.jpg\", \"wb\").write(res.content)\n\nwith open(\"gambar.png\", \"rb\") as f:\n    res = requests.post(\"{{ORIGIN}}/lowquality\", files={\"image\": f},\n                        data={\"iterations\": 25, \"quality\": 5}, timeout=70)\n    res.raise_for_status()\n    open(\"lowquality-upload.jpg\", \"wb\").write(res.content)", "php": "<?php\n$ch = curl_init(\"{{ORIGIN}}/lowquality\");\ncurl_setopt_array($ch, [\n  CURLOPT_POST => true, CURLOPT_RETURNTRANSFER => true, CURLOPT_TIMEOUT => 70,\n  CURLOPT_POSTFIELDS => [\n    \"image\" => new CURLFile(\"gambar.png\"), \"iterations\" => \"25\",\n    \"quality\" => \"30\", \"resolution\" => \"0.125\",\n  ],\n]);\nfile_put_contents(\"lowquality.jpg\", curl_exec($ch));\ncurl_close($ch);", "go": "package main\nimport (\"io\"; \"net/http\"; \"net/url\"; \"os\"; \"time\")\nfunc main() {\n  q := url.Values{}\n  q.Set(\"url\", \"https://jpeg.wavebeem.com/icon.jpg\")\n  q.Set(\"iterations\", \"25\")\n  q.Set(\"quality\", \"30\")\n  q.Set(\"resolution\", \"0.125\")\n  client := &http.Client{Timeout: 70*time.Second}\n  res, err := client.Get(\"{{ORIGIN}}/lowquality?\"+q.Encode())\n  if err != nil { panic(err) }; defer res.Body.Close()\n  if res.StatusCode != 200 { panic(res.Status) }\n  f, _ := os.Create(\"lowquality.jpg\"); defer f.Close()\n  io.Copy(f, res.Body)\n}"};
+responses.lowquality = {"200": "HTTP/1.1 200 OK\nContent-Type: image/jpeg\nX-Lowquality-Iterations: 25\nX-Lowquality-Quality: 30\nX-Lowquality-Resolution: 0.125\nX-Lowquality-Width: 250\nX-Lowquality-Height: 250\nCache-Control: no-store\n\n<file JPEG low quality>", "422": "{\n  \"status\": \"error\",\n  \"code\": 422,\n  \"error\": \"WORKLOAD_TOO_LARGE\",\n  \"message\": \"Kurangi iterations atau resolution.\"\n}"};
+tabState.lowquality = {code:"curl",res:"200"};
+
 function fill(tpl){
   return String(tpl)
     .replace(/\{\{BASE\}\}/g, BASE)
@@ -3107,7 +3219,8 @@ const presets = {
   profile:         { method:'GET',  endpoint:'/api/profile', body:null },
   iqc:             { method:'GET',  endpoint:'/iqc?pesan=halo%20%F0%9F%92%95&mode=light&seed=42', body:null },
   iqc2:            { method:'GET',  endpoint:'/iqc2?pesan=halo%20ges&name=Denji&mode=dark&seed=42', body:null },
-  iqc3:            { method:'GET',  endpoint:'/iqc3', body:null }
+  iqc3:            { method:'GET',  endpoint:'/iqc3', body:null },
+  lowquality:      { method:'POST', endpoint:'/lowquality', body:{url:'https://jpeg.wavebeem.com/icon.jpg',iterations:25,quality:30,resolution:0.125} }
 };
 
 const PG_KEY = 'denjiDocsPlayground';
@@ -3189,12 +3302,13 @@ let pgAbortController = null;
 function responseDetails(res, endpoint, size, elapsed){
   const holder=document.getElementById('pgResponseDetails');
   const list=document.getElementById('pgResponseInfo');
-  holder.hidden=!pgIqc.info(endpoint);list.replaceChildren();
+  const lowquality=/^\/(?:api\/)?lowquality\/?$/.test(new URL(endpoint,ORIGIN).pathname);
+  holder.hidden=!pgIqc.info(endpoint)&&!lowquality;list.replaceChildren();
   if(holder.hidden)return;
   function row(label,value,bad){const dt=document.createElement('dt'),dd=document.createElement('dd');dt.textContent=label;dd.textContent=value;if(bad)dd.className='bad';list.append(dt,dd);}
   row('HTTP',String(res.status),!res.ok);row('Content-Type',res.headers.get('content-type')||'—');
-  for(const header of ['X-IQC-Variant','X-IQC-Renderer','X-IQC-Cache','X-IQC-Source','X-IQC-Error-Code']){
-    const value=res.headers.get(header);if(value)row(header.replace('X-IQC-',''),value,header==='X-IQC-Error-Code');
+  for(const header of lowquality?['X-Lowquality-Iterations','X-Lowquality-Quality','X-Lowquality-Resolution','X-Lowquality-Source','X-Lowquality-Error-Code']:['X-IQC-Variant','X-IQC-Renderer','X-IQC-Cache','X-IQC-Source','X-IQC-Error-Code']){
+    const value=res.headers.get(header);if(value)row(header.replace(/^X-(?:IQC|Lowquality)-/,''),value,header.endsWith('Error-Code'));
   }
   row('Ukuran file',size+' bytes');row('Waktu',elapsed+' ms');row('URL request',new URL(endpoint,ORIGIN).href);
   return {row};
@@ -3246,7 +3360,7 @@ async function executePlayground(e){
         view.onload=()=>{if(id!==pgRequestId)return;detail?.row('Dimensi',view.naturalWidth+' × '+view.naturalHeight+' px');};
       }
       const note=document.createElement('span');note.className='res-note';note.textContent=ctype+' · '+(blob.size/1024).toFixed(1)+' KB · '+elapsed+' ms';
-      const download=document.createElement('a');download.className='res-download';download.href=pgImageURL;download.download=pgIqc.filename(iqc);download.textContent=htmlPreview?'Unduh HTML':'Unduh JPG';
+      const download=document.createElement('a');download.className='res-download';download.href=pgImageURL;download.download=/\/(?:api\/)?lowquality(?:[/?]|$)/.test(endpoint)?'lowquality.'+(ctype.includes('png')?'png':ctype.includes('webp')?'webp':ctype.includes('gif')?'gif':ctype.includes('avif')?'avif':ctype.includes('bmp')?'bmp':'jpg'):pgIqc.filename(iqc);download.textContent=htmlPreview?'Unduh HTML':'Unduh JPG';
       responsePre.replaceChildren(view,note,download);
       if(!res.ok){const error=document.createElement('p');error.className='iqc-response-help';error.textContent='Ini gambar fallback, bukan hasil sukses. Periksa status HTTP dan Error-Code pada info respons.';responsePre.append(error);}
       responsePre.dataset.imageInfo='HTTP '+res.status+'\nContent-Type: '+ctype+'\nUkuran: '+blob.size+' bytes\nURL: '+new URL(endpoint,ORIGIN).href;
@@ -3299,7 +3413,8 @@ function copyAsCurl(){
   if(method !== 'GET' && bodyText){
     cmd += ' \\\n  -H "Content-Type: application/json" \\\n  -d \'' + bodyText.replace(/\n\s*/g, ' ') + '\'';
   }
-  if(/\/(?:api\/)?iqc[23]?(?:[/?]|$)/.test(url)) cmd += ' -o quote.jpg';
+  if(/\/(?:api\/)?lowquality(?:[/?]|$)/.test(url)) cmd += ' -o lowquality.jpg';
+  else if(/\/(?:api\/)?iqc[23]?(?:[/?]|$)/.test(url)) cmd += ' -o quote.jpg';
   copyText(cmd, 'Perintah cURL disalin');
 }
 
@@ -3684,7 +3799,7 @@ document.addEventListener('DOMContentLoaded', function(){
   const baseEl = document.getElementById('baseUrlText');
   if(baseEl) baseEl.textContent = BASE;
 
-  ['dl', 'stream', 'health', 'profile', 'iqc', 'iqc2', 'iqc3'].forEach(renderSection);
+  ['dl', 'stream', 'health', 'profile', 'iqc', 'iqc2', 'iqc3', 'lowquality'].forEach(renderSection);
 
   pgIqc.init();
   loadPlayground();

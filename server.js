@@ -44,6 +44,15 @@ async function handleIqc(req, res) {
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Lewatkan raw stream supaya multipart/base64 tidak terkena limit JSON umum.
+const LOWQUALITY_PATH = path.join(__dirname, 'api', 'lowquality.js');
+app.all(['/lowquality', '/api/lowquality'], async (req, res) => {
+  try { await require(LOWQUALITY_PATH)(req, res); }
+  catch (error) { console.error('[lowquality]', error.message); if (!res.headersSent) res.status(500).json({status:'error',message:'Lowquality tidak tersedia'}); }
+});
+app.get('/lowquality-app', (req, res) => res.sendFile(path.join(__dirname, 'public', 'lowquality.html')));
+
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

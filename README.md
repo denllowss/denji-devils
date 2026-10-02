@@ -32,6 +32,7 @@ Buka `http://localhost:3000`. Port dapat diatur dengan variabel lingkungan `PORT
 | GET | `/iqc`, `/api/iqc` | JPG quote Instagram |
 | GET | `/iqc2`, `/api/iqc2` | JPG quote menu konteks WhatsApp |
 | GET | `/iqc3`, `/api/iqc3` | JPG iMessage / Apple Music, lirik dan warna dinamis |
+| GET / POST | `/lowquality`, `/api/lowquality` | Kompresi JPEG berulang dari URL/upload |
 
 Halaman: `/` (linktree), `/dl` (downloader), `/docs` (dokumentasi + playground), `/app` (editor quote Instagram), `/app3` (editor musik/lirik IQC3).
 
@@ -161,3 +162,42 @@ Buka `/docs#playground`, kemudian pilih IQC1, IQC2, atau IQC3. Tiap versi mempun
 - Isian disimpan per versi di browser; bisa kembali ke contoh default lewat Reset. URL manual dapat mengisi form kembali.
 
 Tautan langsung: `/docs?playground=iqc#playground`, `/docs?playground=iqc2#playground`, `/docs?playground=iqc3#playground`. Contoh spesifik: `/docs?playground=iqc3&preset=solid#playground`.
+
+## Lowquality — JPEG Deep Fry API
+
+API `/lowquality` (alias `/api/lowquality`) mengadaptasi algoritme Canvas dari [THE JPEG ZONE](https://jpeg.wavebeem.com/), sumber [wavebeem/the-jpeg-zone](https://github.com/wavebeem/the-jpeg-zone). Lisensi MIT dan copyright asli dipertahankan dalam `licenses/the-jpeg-zone-MIT.md` dan `THIRD_PARTY_NOTICES.md`.
+
+Tidak memanggil situs sumber untuk memproses foto pengguna: Canvas berjalan di Chromium Denji memakai bootstrap yang sama dengan IQC. Default mengikuti sumber: **25 putaran, quality 30%, resolusi 0.125 MP**. Kualitas langkah ke-i = `(quality + ((i * 7) % 10)) / 100`; kualitas di luar rentang Canvas mengikuti perilaku browser (mis. quality=100 dengan offset >0 memakai fallback browser). Hasil dapat berbeda antarbrowser.
+
+**Playground lengkap:** `/lowquality-app` — upload/drag/drop/paste, URL, contoh gambar, preset, sebelum/sesudah, unduh, cURL dinamis dan "goreng lagi" dari hasil terakhir. Dokumentasi tersedia di `/docs#ep-lowquality`; preset di Playground utama memakai POST JSON URL gambar publik.
+
+### Input & parameter
+
+- GET `?url=...`, POST JSON `{url:...}`, POST multipart field `image`, POST JSON `{image:"data:image/png;base64,..."}`, atau raw `image/*` dengan parameter query.
+- Pilih **satu** sumber: URL atau upload/base64. Query mengoverride pengaturan body.
+- `iterations`: 0–100 (default 25), alias `count`/`times`.
+- `quality`: integer 1–100% (default 30); lebih kecil berarti lebih rusak.
+- `resolution`: 0.0625–4 megapiksel atau `original` (default 0.125); alias `size`. Resize mempertahankan rasio, tidak upscale.
+- `iterations=0` mengembalikan **file asli**, tanpa resize/konversi, mengikuti perilaku sumber. Format bukan selalu JPEG; header MIME dan filename mengikuti input.
+
+```bash
+# URL gambar publik
+curl --get 'https://denji-devils.vercel.app/lowquality' \
+  --data-urlencode 'url=https://jpeg.wavebeem.com/icon.jpg' \
+  --data 'iterations=25&quality=30&resolution=0.125' \
+  -o lowquality.jpg
+
+# Upload
+curl 'http://localhost:3000/lowquality' \
+  -F 'image=@gambar.png' -F 'iterations=50' \
+  -F 'quality=5' -F 'resolution=0.0625' \
+  -o lowquality.jpg
+```
+
+**Batas:** upload/base64 3 MB, download URL 8 MB, input 16 MP/32767 px per sisi, output 4 MB, beban 100 megapiksel-putaran/request. Timeout download total 20 detik, pemrosesan 35 detik. Turunkan iterations/resolution bila mendapatkan `WORKLOAD_TOO_LARGE`.
+
+Format JPEG, PNG, WebP, GIF, AVIF, BMP didukung; SVG tidak. JPEG memakai latar putih untuk transparansi dan tidak mempertahankan animasi. `X-Lowquality-*` menyediakan parameter, dimensi, byte input/output dan kode error. Error selalu JSON dengan status 400/413/415/422/502/504/500, bukan JPEG fallback.
+
+URL hanya HTTP/HTTPS publik tanpa kredensial/port nonstandar. DNS diperiksa dan dipin ke IP publik, setiap redirect divalidasi, dan alamat private/loopback/link-local/reserved/metadata diblokir. Browser renderer tidak mengakses resource eksternal. Gambar hanya diproses di memori, tidak disimpan atau diunggah ke THE JPEG ZONE.
+
+Uji lowquality setelah server berjalan: `npm run test:lowquality`. Untuk deployment: `BASE_URL=https://domain-anda.vercel.app npm run test:lowquality`.

@@ -7,7 +7,8 @@
     "dev": "node scripts/run-node.js server.js",
     "test:iqc": "node scripts/run-node.js scripts/verify-iqc.js",
     "test:iqc:runtime": "node scripts/run-node.js scripts/verify-iqc-runtime.js",
-    "test:iqc3": "node scripts/run-node.js scripts/verify-iqc3.js"
+    "test:iqc3": "node scripts/run-node.js scripts/verify-iqc3.js",
+    "test:lowquality": "node scripts/run-node.js scripts/verify-lowquality.js"
   },
   "dependencies": {
     "@raihan07/vidly": "^13.0.2",
@@ -18,11 +19,14 @@
     "ab-downloader": "^2.0.0",
     "axios": "^1.20.0",
     "btch-downloader": "^6.4.0",
+    "busboy": "1.6.0",
     "cakkatrok-instagram-downloader": "^2.0.2",
     "cheerio": "^1.2.0",
     "express": "^4.19.2",
+    "image-size": "2.0.2",
     "insta-fetcher": "^1.4.0",
     "instagram-url-direct": "^2.0.7",
+    "ipaddr.js": "2.2.0",
     "puppeteer-core": "25.12.0",
     "ruhend-scraper": "^10.0.3",
     "snapsave-media-downloader": "^2.5.1",

@@ -2,6 +2,22 @@
   "version": 2,
   "rewrites": [
     {
+      "source": "/lowquality",
+      "destination": "/api/lowquality"
+    },
+    {
+      "source": "/lowquality/",
+      "destination": "/api/lowquality"
+    },
+    {
+      "source": "/api/lowquality/",
+      "destination": "/api/lowquality"
+    },
+    {
+      "source": "/lowquality-app",
+      "destination": "/lowquality.html"
+    },
+    {
       "source": "/iqc3",
       "destination": "/api/iqc3"
     },
@@ -96,7 +112,7 @@
   ],
   "functions": {
     "api/index.js": {
-      "excludeFiles": "{api/iqc*.js,api/_template*.html,api/iqc3-assets/**,src/services/iqc-runtime.js,node_modules/@sparticuz/chromium/**,node_modules/puppeteer-core/**,node_modules/@puppeteer/browsers/**}"
+      "excludeFiles": "{api/iqc*.js,api/lowquality.js,src/services/lowquality.js,api/_template*.html,api/iqc3-assets/**,src/services/iqc-runtime.js,node_modules/@sparticuz/chromium/**,node_modules/puppeteer-core/**,node_modules/@puppeteer/browsers/**}"
     },
     "api/iqc.js": {
       "includeFiles": "{api/_template*.html,node_modules/@sparticuz/chromium/bin/*.br}",
@@ -110,6 +126,11 @@
     },
     "api/iqc3.js": {
       "includeFiles": "{api/_template*.html,api/iqc3-assets/**,node_modules/@sparticuz/chromium/bin/*.br}",
+      "memory": 2048,
+      "maxDuration": 60
+    },
+    "api/lowquality.js": {
+      "includeFiles": "node_modules/@sparticuz/chromium/bin/*.br",
       "memory": 2048,
       "maxDuration": 60
     }

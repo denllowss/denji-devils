@@ -387,3 +387,6 @@ module.exports = async (req, res) => {
 
 // Renderer bersama, juga dipakai IQC3 tanpa mengubah keluaran IQC/IQC2.
 module.exports.renderImage = renderJpg;
+
+// Browser bersama untuk pipeline Canvas (Lowquality), tanpa screenshot.
+module.exports.withBrowser = getBrowser;
