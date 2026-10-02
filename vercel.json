@@ -1,17 +1,35 @@
 {
   "version": 2,
   "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": "/api/index.js"
+    {"source": "/iqc", "destination": "/api/iqc"},
+    {"source": "/iqc/", "destination": "/api/iqc"},
+    {"source": "/iqc2", "destination": "/api/iqc?v2=1"},
+    {"source": "/iqc2/", "destination": "/api/iqc?v2=1"},
+    {"source": "/api/iqc/", "destination": "/api/iqc"},
+    {"source": "/api/iqc2", "destination": "/api/iqc?v2=1"},
+    {"source": "/api/iqc2/", "destination": "/api/iqc?v2=1"},
+    {"source": "/app", "destination": "/app.html"},
+    {"source": "/api/dl", "destination": "/api/index.js"},
+    {"source": "/api/dl/", "destination": "/api/index.js"},
+    {"source": "/api/stream", "destination": "/api/index.js"},
+    {"source": "/api/stream/", "destination": "/api/index.js"},
+    {"source": "/api/proxy", "destination": "/api/index.js"},
+    {"source": "/api/proxy/", "destination": "/api/index.js"},
+    {"source": "/api/health", "destination": "/api/index.js"},
+    {"source": "/api/health/", "destination": "/api/index.js"},
+    {"source": "/api/profile", "destination": "/api/index.js"},
+    {"source": "/api/profile/", "destination": "/api/index.js"},
+    {"source": "/docs", "destination": "/docs.html"},
+    {"source": "/dl", "destination": "/dl.html"}
+  ],
+  "functions": {
+    "api/index.js": {
+      "excludeFiles": "{api/iqc.js,api/_template*.html,node_modules/@sparticuz/chromium/**,node_modules/puppeteer-core/**,node_modules/@puppeteer/browsers/**}"
     },
-    {
-      "source": "/docs",
-      "destination": "/docs.html"
-    },
-    {
-      "source": "/dl",
-      "destination": "/dl.html"
+    "api/iqc.js": {
+      "includeFiles": "api/_template*.html",
+      "memory": 2048,
+      "maxDuration": 60
     }
-  ]
+  }
 }

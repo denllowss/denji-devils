@@ -2,15 +2,66 @@ const express = require('express');
 const http = require('http');
 const https = require('https');
 const path = require('path');
+const fs = require('fs');
 const { downloadTikTok } = require('./src/services/tiktok');
 const { downloadInstagram } = require('./src/services/instagram');
 const { downloadVideo } = require('./src/services/video');
+
+/* ------------------------------------------------------------------
+   IQC — Instagram Quote Card (gabungan dari repo iqc)
+   Fungsi serverless-nya ada di api/iqc.js (berjalan terpisah di Vercel).
+   Di server lokal (npm start) kita delegasikan /iqc & /iqc2 ke handler
+   yang sama, dimuat hanya saat diperlukan. vercel.json memisahkan
+   route IQC serta mengecualikan Chromium/template dari api/index.js
+   agar fungsi API yang lain tetap ringan.
+   ------------------------------------------------------------------ */
+const IQC_PATH = path.join(__dirname, 'api', 'iqc.js');
+let iqcHandler = null;
+
+function loadIqc() {
+  if (iqcHandler) return iqcHandler;
+  // tiru runtime Vercel agar @sparticuz/chromium mengekstrak librarynya
+  if (!process.env.AWS_LAMBDA_JS_RUNTIME) process.env.AWS_LAMBDA_JS_RUNTIME = 'nodejs20.x';
+  // bersihkan sisa ekstraksi chromium yang tidak lengkap
+  try {
+    if (fs.existsSync('/tmp/chromium') && !fs.existsSync('/tmp/al2023/lib')) {
+      fs.rmSync('/tmp/chromium', { recursive: true, force: true });
+    }
+  } catch (e) { /* abaikan */ }
+  iqcHandler = require(IQC_PATH);
+  return iqcHandler;
+}
+
+async function handleIqc(req, res) {
+  try {
+    // Handler IQC mengenali /iqc2 (termasuk alias /api/iqc2) dari path.
+    await loadIqc()(req, res);
+  } catch (err) {
+    console.error('[iqc] gagal memuat handler:', err && err.message);
+    if (!res.headersSent) {
+      res.status(500).json({
+        status: 'error',
+        code: 500,
+        message: 'IQC tidak tersedia di server ini',
+        hint: 'Pastikan dependensi IQC terpasang. Di Vercel gunakan fungsi /api/iqc.'
+      });
+    }
+  }
+}
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Script pengukuran hanya disediakan platform Vercel. Server lokal
+// membalas JS kosong (bukan fallback index.html), tanpa merekam metrik.
+if (!process.env.VERCEL) {
+  app.get(['/_vercel/insights/script.js', '/_vercel/speed-insights/script.js'], (req, res) => {
+    res.type('application/javascript').send('/* Vercel SDK: stub lokal, tidak merekam metrik. */');
+  });
+}
 
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -144,6 +195,13 @@ async function handleDownload(req, res) {
 app.get('/docs', (req, res) => {
   return res.sendFile(path.join(__dirname, 'public', 'docs.html'));
 });
+
+app.get('/app', (req, res) => {
+  return res.sendFile(path.join(__dirname, 'public', 'app.html'));
+});
+
+/* IQC: /iqc?pesan=halo -> foto JPG 1350x2400, /iqc2 -> versi menu konteks */
+app.get(['/iqc', '/iqc2', '/api/iqc', '/api/iqc2'], handleIqc);
 
 app.get('/dl', (req, res) => {
   const isJson = (req.headers.accept && req.headers.accept.includes('application/json')) || req.query.json === 'true';

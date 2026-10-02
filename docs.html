@@ -28,14 +28,13 @@
   --page-bg: #c8d97c;
   --bodyText: #2c351e;
   --bodyText-muted: #57653d;
-  --button-style-text: #1e2330;
-  --button-style-background: #f1fcbd;
-  --button-style-background-hover: #e0eab0;
-  --button-style-border-color: #323c1f;
-  --button-style-shadow-color: #323c1f;
-  --button-style-shadow: 3px 4px 0 var(--button-style-shadow-color);
-  --button-style-shadow-lg: 5px 6px 0 var(--button-style-shadow-color);
-  --button-style-radius: 20px;
+  --line: #323c1f;
+  --btn-text: #1e2330;
+  --btn-bg: #f1fcbd;
+  --btn-bg-hover: #e0eab0;
+  --btn-shadow: 3px 4px 0 var(--line);
+  --btn-shadow-lg: 5px 6px 0 var(--line);
+  --radius: 20px;
   --card-bg: #f1fcbd;
   --card-inner: #ffffff;
   --code-bg: #151e10;
@@ -43,6 +42,7 @@
   --code-border: #28371d;
   --code-text: #ecf8be;
   --code-muted: #8fa673;
+  --nav-h: 68px;
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-right: env(safe-area-inset-right, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
@@ -53,6 +53,20 @@
   --font-mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
 }
 
+/* ---------- token warna syntax highlight ---------- */
+.tk-comment{ color:#7d9166; font-style:italic; }
+.tk-str{ color:#ffe08a; }
+.tk-num{ color:#ffb4a2; }
+.tk-kw{ color:#7fd1ff; }
+.tk-bool{ color:#ff9ecb; }
+.tk-fn{ color:#d8b4ff; }
+.tk-var{ color:#ffd9a0; }
+.tk-tag{ color:#7fd1ff; }
+.tk-attr{ color:#d8b4ff; }
+.tk-key{ color:#7fd1ff; }
+.tk-flag{ color:#ffe08a; }
+.tk-cmd{ color:#d8b4ff; }
+
 *, *::before, *::after{
   box-sizing: border-box;
   margin: 0;
@@ -62,14 +76,10 @@
 
 html{
   min-height: 100%;
-  min-height: 100dvh;
-  overflow-y: auto;
-  overflow-x: hidden;
   scroll-behavior: smooth;
 }
 
 body{
-  min-height: 100%;
   min-height: 100dvh;
   background-color: var(--page-bg);
   color: var(--bodyText);
@@ -84,398 +94,348 @@ body{
   padding-bottom: calc(40px + var(--safe-bottom));
 }
 
-a{
-  color: inherit;
-  text-decoration: none;
-}
+a{ color: inherit; text-decoration: none; }
+button, input, select, textarea{ font: inherit; color: inherit; }
+button{ cursor: pointer; border: 0; background: none; }
+svg{ display: block; flex-shrink: 0; }
 
-button, input, select, textarea{
-  font: inherit;
-  color: inherit;
+/* ---------- scrollbar ---------- */
+.scroller{ scrollbar-width: thin; scrollbar-color: rgba(50,60,31,.4) transparent; }
+.scroller::-webkit-scrollbar{ width: 10px; height: 10px; }
+.scroller::-webkit-scrollbar-track{ background: transparent; }
+.scroller::-webkit-scrollbar-thumb{
+  background: rgba(50,60,31,.35);
+  border-radius: 99px;
+  border: 2px solid transparent;
+  background-clip: content-box;
 }
+.scroller::-webkit-scrollbar-thumb:hover{ background: rgba(50,60,31,.6); background-clip: content-box; }
 
-button{
-  cursor: pointer;
-  border: 0;
-  background: none;
-}
-
-svg{
-  display: block;
-  flex-shrink: 0;
-}
-
+/* ---------- navbar ---------- */
 .top-navbar{
   position: sticky;
   top: 0;
   z-index: 100;
   width: 100%;
   background: rgba(200, 217, 124, 0.94);
-  border-bottom: 2px solid var(--button-style-border-color);
+  border-bottom: 2px solid var(--line);
   -webkit-backdrop-filter: blur(14px) saturate(160%);
   backdrop-filter: blur(14px) saturate(160%);
   padding-top: var(--safe-top);
 }
 
 .nav-container{
-  max-width: 1320px;
+  max-width: 1460px;
   margin: 0 auto;
-  padding: 12px 18px;
+  padding: 12px 22px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 16px;
+  min-height: var(--nav-h);
 }
 
-.brand-group{
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
+.brand-group{ display: flex; align-items: center; gap: 12px; }
 
 .brand-logo-link{
   display: flex;
   align-items: center;
   gap: 10px;
   font-weight: 900;
-  font-size: 19px;
-  letter-spacing: -0.03em;
-  color: #1e2330;
+  font-size: 16px;
+  letter-spacing: -0.3px;
 }
 
 .brand-avatar{
-  width: 38px;
-  height: 38px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
-  border: 2px solid var(--button-style-border-color);
   object-fit: cover;
-  box-shadow: 2px 2px 0 var(--button-style-shadow-color);
-  background: #fff;
+  border: 2px solid var(--line);
+  box-shadow: 2px 2px 0 var(--line);
 }
 
 .brand-badge{
   font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 800;
-  padding: 3px 9px;
-  border-radius: 10px;
+  padding: 3px 8px;
+  border-radius: 8px;
   background: #ffffff;
-  border: 1.5px solid var(--button-style-border-color);
-  box-shadow: 1.5px 1.5px 0 var(--button-style-shadow-color);
-  color: #1e2330;
+  border: 1.5px solid var(--line);
+  box-shadow: 2px 2px 0 var(--line);
 }
 
 .status-pill{
-  display: inline-flex;
+  display: flex;
   align-items: center;
   gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
   padding: 4px 10px;
   border-radius: 99px;
-  background: rgba(255, 255, 255, 0.75);
-  border: 1.5px solid var(--button-style-border-color);
-  font-size: 11px;
-  font-weight: 700;
-  color: #1e2330;
+  background: #dcfce7;
+  border: 1.5px solid var(--line);
+  color: #166534;
 }
 
 .status-dot{
-  width: 8px;
-  height: 8px;
+  width: 7px; height: 7px;
   border-radius: 50%;
-  background: #22c55e;
-  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.25);
-  animation: pulseDot 2s infinite ease-in-out;
+  background: #16a34a;
+  box-shadow: 0 0 0 3px rgba(22,163,74,.2);
+  animation: pulseDot 2s infinite;
 }
-
 @keyframes pulseDot{
-  0%, 100%{ opacity: 1; transform: scale(1); }
-  50%{ opacity: 0.6; transform: scale(0.85); }
+  0%,100%{ opacity: 1; }
+  50%{ opacity: .35; }
 }
 
-.nav-actions{
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
+.nav-actions{ display: flex; align-items: center; gap: 8px; }
 
 .btn-nav{
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 7px;
   padding: 8px 14px;
-  border-radius: 14px;
-  background: var(--button-style-background);
-  border: 2px solid var(--button-style-border-color);
-  box-shadow: 2px 2px 0 var(--button-style-shadow-color);
-  font-size: 12.5px;
-  font-weight: 700;
-  color: var(--button-style-text);
-  transition: transform .15s var(--ease-pop), background .15s var(--ease), box-shadow .15s var(--ease);
-  touch-action: manipulation;
-  white-space: nowrap;
+  border-radius: 12px;
+  border: 2px solid var(--line);
+  background: var(--btn-bg);
+  color: var(--btn-text);
+  font-size: 13px;
+  font-weight: 800;
+  box-shadow: var(--btn-shadow);
+  transition: transform .12s var(--ease-pop), box-shadow .12s var(--ease), background .15s var(--ease);
 }
+.btn-nav:hover{ background: var(--btn-bg-hover); transform: translate(-1px, -1px); box-shadow: 4px 5px 0 var(--line); }
+.btn-nav:active{ transform: translate(2px, 3px); box-shadow: 0 0 0 var(--line); }
+.btn-nav-primary{ background: #ffd166; }
+.btn-nav-primary:hover{ background: #ffc44d; }
 
-.btn-nav:hover{
-  background: var(--button-style-background-hover);
-  transform: translateY(-1px);
-  box-shadow: 3px 3px 0 var(--button-style-shadow-color);
-}
-
-.btn-nav:active{
-  transform: translate(2px, 2px);
-  box-shadow: 0 0 0 var(--button-style-shadow-color);
-}
-
-.btn-nav-primary{
-  background: #1e2330;
-  color: #f1fcbd;
-  border-color: #1e2330;
-}
-
-.btn-nav-primary:hover{
-  background: #323c1f;
-  color: #ffffff;
-}
-
+/* ---------- kerangka halaman ---------- */
 .page-wrapper{
-  max-width: 1320px;
+  max-width: 1460px;
   margin: 0 auto;
-  padding: 24px 18px 0;
+  padding: 26px 22px 0;
 }
 
 .hero-banner{
   background: var(--card-bg);
-  border: 2.5px solid var(--button-style-border-color);
+  border: 2.5px solid var(--line);
   border-radius: 26px;
-  box-shadow: var(--button-style-shadow-lg);
-  padding: 32px 28px;
-  margin-bottom: 28px;
+  box-shadow: var(--btn-shadow-lg);
+  padding: 28px 30px;
+  margin-bottom: 26px;
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 16px;
   position: relative;
   overflow: hidden;
 }
 
-.hero-header{
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-}
-
-.hero-title-wrap{
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
+.hero-header{ display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+.hero-title-wrap{ display: flex; flex-direction: column; gap: 10px; }
 
 .hero-badge-tag{
-  align-self: flex-start;
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 4px 10px;
-  background: #ffffff;
-  border: 1.5px solid var(--button-style-border-color);
-  border-radius: 10px;
-  font-size: 11.5px;
-  font-weight: 800;
-  color: var(--button-style-text);
-  box-shadow: 1.5px 1.5px 0 var(--button-style-shadow-color);
-}
-
-.hero-title{
-  font-size: clamp(24px, 4vw, 36px);
-  font-weight: 900;
-  letter-spacing: -0.03em;
-  color: #1e2330;
-  line-height: 1.15;
-}
-
-.hero-desc{
-  font-size: clamp(14px, 1.8vw, 16px);
-  color: var(--bodyText-muted);
-  font-weight: 500;
-  max-width: 780px;
-}
-
-.base-url-box{
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 10px;
-  padding: 12px 16px;
-  background: #ffffff;
-  border: 2px solid var(--button-style-border-color);
-  border-radius: 16px;
-  box-shadow: 2px 2px 0 var(--button-style-shadow-color);
-}
-
-.base-url-label{
+  align-self: flex-start;
+  font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 800;
   text-transform: uppercase;
-  color: #57653d;
-  letter-spacing: 0.5px;
+  letter-spacing: .6px;
+  padding: 5px 11px;
+  border-radius: 99px;
+  background: #ffffff;
+  border: 2px solid var(--line);
+  box-shadow: 2px 2px 0 var(--line);
 }
+
+.hero-title{
+  font-size: clamp(24px, 3vw, 36px);
+  font-weight: 900;
+  line-height: 1.15;
+  letter-spacing: -0.8px;
+}
+
+.hero-desc{ font-size: 14.5px; color: var(--bodyText-muted); max-width: 70ch; line-height: 1.6; }
+
+.base-url-box{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 12px 14px;
+  background: var(--code-bg);
+  border: 2px solid var(--line);
+  border-radius: 16px;
+  box-shadow: var(--btn-shadow);
+}
+
+.base-url-label{ font-size: 12px; font-weight: 800; color: var(--code-muted); text-transform: uppercase; letter-spacing: .5px; }
 
 .base-url-code{
   font-family: var(--font-mono);
-  font-size: 13.5px;
-  font-weight: 700;
-  color: #1e2330;
-  background: #f1fcbd;
-  padding: 4px 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--code-text);
+  background: rgba(255,255,255,.05);
+  padding: 5px 10px;
   border-radius: 8px;
-  border: 1.5px solid var(--button-style-border-color);
-  word-break: break-all;
+  border: 1px solid var(--code-border);
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow-x: auto;
+  white-space: nowrap;
 }
 
 .btn-copy-base{
-  margin-left: auto;
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 12px;
-  background: #1e2330;
-  color: #f1fcbd;
-  border: 1.5px solid #1e2330;
+  padding: 7px 12px;
   border-radius: 10px;
-  font-size: 11.5px;
-  font-weight: 700;
-  transition: transform .15s var(--ease-pop), background .15s var(--ease);
+  border: 1.5px solid #3d5230;
+  background: #26331c;
+  color: #ecf8be;
+  font-size: 12px;
+  font-weight: 800;
+  transition: background .15s var(--ease), transform .12s var(--ease-pop);
 }
-
-.btn-copy-base:hover{
-  background: #323c1f;
-  transform: translateY(-1px);
-}
-
-.btn-copy-base:active{
-  transform: scale(0.96);
-}
+.btn-copy-base:hover{ background: #334227; transform: translateY(-1px); }
+.btn-copy-base:active{ transform: translateY(1px); }
 
 .features-grid{
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 10px;
 }
 
 .feature-pill{
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 10px 14px;
-  background: rgba(255, 255, 255, 0.7);
-  border: 1.5px solid var(--button-style-border-color);
+  padding: 10px 12px;
+  background: #ffffff;
+  border: 2px solid var(--line);
   border-radius: 14px;
   font-size: 12.5px;
   font-weight: 700;
-  color: #1e2330;
+  box-shadow: 2px 2px 0 var(--line);
 }
 
 .feature-icon{
-  width: 28px;
-  height: 28px;
-  border-radius: 8px;
-  background: var(--button-style-background);
-  border: 1.5px solid var(--button-style-border-color);
+  width: 26px; height: 26px;
   display: grid;
   place-items: center;
+  border-radius: 8px;
+  background: var(--card-bg);
+  border: 1.5px solid var(--line);
   flex-shrink: 0;
-  color: #1e2330;
 }
 
+/* ---------- layout utama ---------- */
 .main-layout{
   display: grid;
-  grid-template-columns: 280px 1fr;
+  grid-template-columns: 290px minmax(0, 1fr);
   gap: 28px;
   align-items: start;
 }
 
-@media (max-width: 1024px){
-  .main-layout{
-    grid-template-columns: 1fr;
-    gap: 22px;
-  }
-}
-
 .sidebar{
   position: sticky;
-  top: 80px;
+  top: calc(var(--nav-h) + 20px);
+  max-height: calc(100vh - var(--nav-h) - 44px);
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
+  padding-right: 4px;
 }
 
-@media (max-width: 1024px){
-  .sidebar{
-    position: static;
-  }
-}
-
-.search-box{
-  position: relative;
-  width: 100%;
-}
+.search-box{ position: relative; width: 100%; }
 
 .search-input{
   width: 100%;
-  padding: 10px 14px 10px 36px;
+  padding: 10px 46px 10px 36px;
   background: #ffffff;
-  border: 2px solid var(--button-style-border-color);
+  border: 2px solid var(--line);
   border-radius: 16px;
   font-size: 13px;
   font-weight: 600;
   color: #1e2330;
-  box-shadow: 2px 2px 0 var(--button-style-shadow-color);
+  box-shadow: 2px 2px 0 var(--line);
   outline: none;
+  transition: box-shadow .15s var(--ease);
 }
+.search-input:focus{ box-shadow: 0 0 0 3px rgba(50, 60, 31, 0.18), 2px 2px 0 var(--line); }
+.search-input::placeholder{ color: #8a996f; }
 
-.search-input:focus{
-  border-color: #1e2330;
-  box-shadow: 0 0 0 3px rgba(50, 60, 31, 0.15);
-}
+.search-icon{ position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #57653d; pointer-events: none; }
 
-.search-icon{
+.kbd{
   position: absolute;
-  left: 12px;
+  right: 10px;
   top: 50%;
   transform: translateY(-50%);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
   color: #57653d;
+  background: #f1f5e4;
+  border: 1.5px solid rgba(50,60,31,.35);
+  border-radius: 6px;
+  padding: 2px 5px;
   pointer-events: none;
 }
 
 .toc-card{
   background: var(--card-bg);
-  border: 2px solid var(--button-style-border-color);
-  border-radius: 22px;
-  box-shadow: var(--button-style-shadow);
-  padding: 18px 16px;
+  border: 2px solid var(--line);
+  border-radius: 20px;
+  box-shadow: var(--btn-shadow);
+  padding: 16px 14px;
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
 .toc-header{
-  font-size: 12px;
-  font-weight: 800;
+  font-size: 11.5px;
+  font-weight: 900;
   text-transform: uppercase;
-  letter-spacing: 0.6px;
+  letter-spacing: .7px;
   color: var(--bodyText-muted);
   padding-bottom: 8px;
   border-bottom: 1.5px dashed rgba(50, 60, 31, 0.25);
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 8px;
 }
 
-.toc-links{
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+.toc-count{
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 800;
+  color: #1e2330;
+  background: #ffffff;
+  border: 1.5px solid var(--line);
+  border-radius: 99px;
+  padding: 1px 7px;
+}
+
+.toc-links{ display: flex; flex-direction: column; gap: 4px; }
+
+.toc-group-title{
+  font-size: 10.5px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: .8px;
+  color: #8a996f;
+  padding: 8px 12px 2px;
 }
 
 .toc-link{
@@ -484,23 +444,27 @@ svg{
   justify-content: space-between;
   gap: 8px;
   padding: 8px 12px;
-  border-radius: 12px;
+  border-radius: 11px;
   font-size: 13px;
   font-weight: 700;
   color: #1e2330;
-  background: transparent;
-  transition: background .15s var(--ease), transform .15s var(--ease-pop);
+  border: 1.5px solid transparent;
+  transition: background .15s var(--ease), transform .15s var(--ease-pop), box-shadow .15s var(--ease);
 }
-
-.toc-link:hover{
-  background: rgba(255, 255, 255, 0.7);
-  transform: translateX(3px);
-}
-
+.toc-link:hover{ background: rgba(255, 255, 255, 0.75); transform: translateX(3px); }
 .toc-link.active{
   background: #ffffff;
-  border: 1.5px solid var(--button-style-border-color);
-  box-shadow: 2px 2px 0 var(--button-style-shadow-color);
+  border-color: var(--line);
+  box-shadow: 2px 2px 0 var(--line);
+}
+.toc-link.active .toc-link-label{ color: #1e2330; }
+.toc-link-label{
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .method-tag{
@@ -509,44 +473,45 @@ svg{
   font-weight: 800;
   padding: 2px 6px;
   border-radius: 6px;
-  border: 1px solid var(--button-style-border-color);
+  border: 1px solid var(--line);
+  flex-shrink: 0;
+}
+.method-post{ background: #ffedd5; color: #9a3412; }
+.method-get{ background: #dcfce7; color: #166534; }
+.method-ref{ background: #e0e7ff; color: #3730a3; }
+.method-live{ background: #fee2e2; color: #b91c1c; }
+
+.side-note{
+  font-size: 12px;
+  color: var(--bodyText-muted);
+  line-height: 1.55;
+  background: #ffffff;
+  border: 1.5px dashed rgba(50,60,31,.4);
+  border-radius: 12px;
+  padding: 10px 12px;
+}
+.side-note code{
+  font-family: var(--font-mono);
+  font-size: 11px;
+  background: var(--card-bg);
+  border: 1px solid rgba(50,60,31,.3);
+  border-radius: 5px;
+  padding: 1px 4px;
 }
 
-.method-post{
-  background: #ffedd5;
-  color: #9a3412;
-}
+.content-flow{ display: flex; flex-direction: column; gap: 26px; min-width: 0; }
 
-.method-get{
-  background: #dcfce7;
-  color: #166534;
-}
-
-.content-flow{
-  display: flex;
-  flex-direction: column;
-  gap: 28px;
-  min-width: 0;
-}
-
+/* ---------- kartu section ---------- */
 .section-card{
   background: var(--card-bg);
-  border: 2.5px solid var(--button-style-border-color);
+  border: 2.5px solid var(--line);
   border-radius: 24px;
-  box-shadow: var(--button-style-shadow);
-  padding: 24px;
+  box-shadow: var(--btn-shadow);
+  padding: 24px 26px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  scroll-margin-top: 90px;
-}
-
-@media (max-width: 640px){
-  .section-card{
-    padding: 18px 14px;
-    border-radius: 20px;
-    gap: 16px;
-  }
+  gap: 18px;
+  scroll-margin-top: calc(var(--nav-h) + 22px);
 }
 
 .section-head{
@@ -559,480 +524,237 @@ svg{
   border-bottom: 2px dashed rgba(50, 60, 31, 0.2);
 }
 
-.section-title-wrap{
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-}
+.section-title-wrap{ display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 
 .section-title{
-  font-size: clamp(18px, 2.5vw, 22px);
-  font-weight: 900;
-  letter-spacing: -0.02em;
-  color: #1e2330;
+  font-family: var(--font-mono);
+  font-size: clamp(17px, 2vw, 21px);
+  font-weight: 800;
+  letter-spacing: -0.4px;
 }
 
-.endpoint-badge{
-  font-family: var(--font-mono);
-  font-size: 12px;
-  font-weight: 800;
-  padding: 4px 10px;
-  border-radius: 10px;
+.btn-icon-copy{
+  display: inline-grid;
+  place-items: center;
+  width: 26px; height: 26px;
+  border-radius: 8px;
+  border: 1.5px solid var(--line);
   background: #ffffff;
-  border: 1.5px solid var(--button-style-border-color);
-  box-shadow: 1.5px 1.5px 0 var(--button-style-shadow-color);
-  color: #1e2330;
+  color: #57653d;
+  box-shadow: 1.5px 1.5px 0 var(--line);
+  transition: background .15s var(--ease), transform .12s var(--ease-pop);
 }
+.btn-icon-copy:hover{ background: var(--btn-bg-hover); transform: translateY(-1px); color: #1e2330; }
+
+.section-actions{ display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 
 .btn-try-ep{
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  padding: 4px 10px;
+  gap: 6px;
+  padding: 7px 13px;
+  border-radius: 11px;
+  border: 2px solid var(--line);
   background: #ffffff;
-  border: 1.5px solid var(--button-style-border-color);
-  border-radius: 10px;
-  font-size: 11.5px;
-  font-weight: 800;
-  color: #1e2330;
-  box-shadow: 1.5px 1.5px 0 var(--button-style-shadow-color);
-  transition: transform .15s var(--ease-pop), background .15s var(--ease);
-}
-
-.btn-try-ep:hover{
-  background: #f1fcbd;
-  transform: translateY(-1px);
-}
-
-.section-desc{
-  font-size: 14px;
-  color: #2c351e;
-  line-height: 1.6;
-}
-
-.playground-wrap{
-  background: #ffffff;
-  border: 2px solid var(--button-style-border-color);
-  border-radius: 20px;
-  padding: 20px;
-  box-shadow: inset 0 2px 4px rgba(0,0,0,0.03);
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
-
-@media (max-width: 640px){
-  .playground-wrap{
-    padding: 14px;
-    border-radius: 16px;
-  }
-}
-
-.presets-bar{
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.preset-title{
   font-size: 12px;
+  font-weight: 800;
+  box-shadow: 2px 2px 0 var(--line);
+  transition: transform .12s var(--ease-pop), box-shadow .12s var(--ease), background .15s var(--ease);
+}
+.btn-try-ep:hover{ background: var(--btn-bg-hover); transform: translate(-1px,-1px); box-shadow: 3px 4px 0 var(--line); }
+.btn-try-ep:active{ transform: translate(1px,2px); box-shadow: 0 0 0 var(--line); }
+
+.endpoint-badge{
+  font-size: 11px;
   font-weight: 800;
   text-transform: uppercase;
+  letter-spacing: .5px;
+  padding: 6px 11px;
+  border-radius: 99px;
+  background: #ffffff;
+  border: 1.5px solid var(--line);
   color: #57653d;
-  letter-spacing: 0.5px;
 }
 
-.preset-chips{
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.preset-btn{
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  background: var(--button-style-background);
-  border: 1.5px solid var(--button-style-border-color);
-  border-radius: 12px;
-  box-shadow: 1.5px 1.5px 0 var(--button-style-shadow-color);
+.section-desc{ font-size: 14px; color: var(--bodyText-muted); line-height: 1.65; max-width: 78ch; }
+.section-desc code, .block-note code, .note-list code{
+  font-family: var(--font-mono);
   font-size: 12px;
-  font-weight: 700;
-  color: #1e2330;
-  transition: transform .15s var(--ease-pop), background .15s var(--ease);
-  touch-action: manipulation;
+  background: #ffffff;
+  border: 1px solid rgba(50,60,31,.3);
+  border-radius: 5px;
+  padding: 1px 5px;
 }
 
-.preset-btn:hover{
-  background: var(--button-style-background-hover);
-  transform: translateY(-1px);
-}
-
-.preset-btn:active{
-  transform: translate(1px, 1px);
-  box-shadow: 0 0 0;
-}
-
-.request-config{
+/* ---------- grid endpoint (2 kolom di desktop) ---------- */
+.ep-grid{
   display: grid;
-  grid-template-columns: 110px 1fr auto;
-  gap: 8px;
-  align-items: center;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 470px);
+  gap: 24px;
+  align-items: start;
 }
 
-@media (max-width: 680px){
-  .request-config{
-    grid-template-columns: 1fr;
-  }
+.ep-col{ display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+
+.ep-col-code{
+  position: sticky;
+  top: calc(var(--nav-h) + 20px);
+  max-height: calc(100vh - var(--nav-h) - 44px);
+  overflow-y: auto;
+  padding-right: 4px;
 }
 
-.method-select{
-  width: 100%;
-  padding: 10px 12px;
-  background: #f1fcbd;
-  border: 2px solid var(--button-style-border-color);
-  border-radius: 14px;
-  font-family: var(--font-mono);
-  font-size: 13px;
-  font-weight: 800;
-  color: #1e2330;
-  box-shadow: 1.5px 1.5px 0 var(--button-style-shadow-color);
-  cursor: pointer;
-  outline: none;
-}
+.ep-block{ display: flex; flex-direction: column; gap: 10px; min-width: 0; }
 
-.url-input-wrap{
-  position: relative;
+.block-title{
   display: flex;
   align-items: center;
-  width: 100%;
-}
-
-.endpoint-input{
-  width: 100%;
-  padding: 10px 14px;
-  background: #fafce8;
-  border: 2px solid var(--button-style-border-color);
-  border-radius: 14px;
-  font-family: var(--font-mono);
-  font-size: 13px;
-  font-weight: 600;
-  color: #1e2330;
-  box-shadow: inset 0 2px 4px rgba(0,0,0,0.04);
-  outline: none;
-  transition: border-color .15s ease, box-shadow .15s ease;
-}
-
-.endpoint-input:focus{
-  border-color: #1e2330;
-  box-shadow: 0 0 0 3px rgba(50, 60, 31, 0.15);
-}
-
-.btn-send-req{
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
   gap: 8px;
-  padding: 10px 20px;
-  background: #1e2330;
-  color: #f1fcbd;
-  border: 2px solid #1e2330;
-  border-radius: 14px;
-  box-shadow: 2px 3px 0 var(--button-style-shadow-color);
-  font-size: 13px;
-  font-weight: 800;
-  transition: transform .15s var(--ease-pop), background .15s var(--ease), box-shadow .15s var(--ease);
-  white-space: nowrap;
-  touch-action: manipulation;
+  font-size: 11.5px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: .8px;
+  color: var(--bodyText-muted);
+}
+.block-title::before{
+  content: "";
+  width: 4px; height: 14px;
+  border-radius: 2px;
+  background: var(--line);
 }
 
-.btn-send-req:hover{
-  background: #323c1f;
-  transform: translateY(-2px);
-  box-shadow: 3px 4px 0 var(--button-style-shadow-color);
-}
+.block-note{ font-size: 12.5px; color: var(--bodyText-muted); line-height: 1.6; }
 
-.btn-send-req:active{
-  transform: translate(2px, 2px);
-  box-shadow: 0 0 0;
-}
-
-.btn-send-req.loading{
-  pointer-events: none;
-  opacity: 0.85;
-}
-
-.body-editor-wrap{
+.note-list{
+  list-style: none;
   display: flex;
   flex-direction: column;
   gap: 8px;
-}
-
-.body-editor-head{
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.body-editor-title{
-  font-size: 12px;
-  font-weight: 800;
-  text-transform: uppercase;
-  color: #57653d;
-  letter-spacing: 0.5px;
-}
-
-.body-textarea{
-  width: 100%;
-  min-height: 90px;
-  max-height: 220px;
-  padding: 12px 14px;
-  background: var(--code-bg);
-  color: var(--code-text);
-  border: 2px solid var(--button-style-border-color);
+  font-size: 13px;
+  color: var(--bodyText-muted);
+  background: #ffffff;
+  border: 1.5px dashed rgba(50,60,31,.35);
   border-radius: 14px;
+  padding: 12px 14px 12px 12px;
+}
+.note-list li{ display: block; position: relative; padding-left: 16px; line-height: 1.6; min-width: 0; overflow-wrap: anywhere; }
+.note-list li::before{
+  content: "";
+  position: absolute;
+  left: 0; top: 7px;
+  width: 7px; height: 7px;
+  border-radius: 2px;
+  background: var(--line);
+}
+
+.chip-row{ display: flex; flex-wrap: wrap; gap: 6px; }
+.chip{
   font-family: var(--font-mono);
-  font-size: 12.5px;
-  font-weight: 500;
-  line-height: 1.45;
-  box-shadow: inset 0 2px 6px rgba(0,0,0,0.3);
-  outline: none;
-  resize: vertical;
-}
-
-.body-textarea:focus{
-  border-color: #556c38;
-}
-
-.response-box{
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.response-head{
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-}
-
-.response-title-group{
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.response-title{
-  font-size: 12px;
-  font-weight: 800;
-  text-transform: uppercase;
-  color: #57653d;
-  letter-spacing: 0.5px;
-}
-
-.res-status-badge{
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 800;
-  padding: 3px 8px;
-  border-radius: 8px;
-  border: 1px solid var(--button-style-border-color);
-}
-
-.res-status-badge.status-idle{
-  background: #e5e7eb;
-  color: #374151;
-}
-
-.res-status-badge.status-200{
-  background: #dcfce7;
-  color: #15803d;
-}
-
-.res-status-badge.status-400,
-.res-status-badge.status-422,
-.res-status-badge.status-500{
-  background: #fee2e2;
-  color: #b91c1c;
-}
-
-.res-time-badge{
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 700;
-  color: #57653d;
-}
-
-.response-actions{
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-wrap: wrap;
-}
-
-.btn-res-action{
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 5px 10px;
-  background: #f1fcbd;
-  border: 1.5px solid var(--button-style-border-color);
-  border-radius: 10px;
   font-size: 11.5px;
   font-weight: 700;
+  padding: 4px 9px;
+  border-radius: 8px;
+  background: #ffffff;
+  border: 1.5px solid var(--line);
   color: #1e2330;
-  transition: transform .15s var(--ease-pop), background .15s var(--ease);
 }
 
-.btn-res-action:hover{
-  background: #e0eab0;
-  transform: translateY(-1px);
-}
-
-.response-code-container{
-  background: var(--code-bg);
-  border: 2px solid var(--button-style-border-color);
-  border-radius: 14px;
-  padding: 14px;
-  max-height: 400px;
-  overflow: auto;
-  box-shadow: inset 0 2px 6px rgba(0,0,0,0.3);
-}
-
-.response-pre{
-  margin: 0;
-  font-family: var(--font-mono);
-  font-size: 12.5px;
-  line-height: 1.55;
-  color: var(--code-text);
-  white-space: pre-wrap;
-  word-break: break-all;
-}
-
+/* ---------- tabel ---------- */
 .table-wrap{
   width: 100%;
+  max-width: 100%;
   overflow-x: auto;
-  border: 2px solid var(--button-style-border-color);
-  border-radius: 16px;
+  border: 2px solid var(--line);
+  border-radius: 14px;
   background: #ffffff;
-  box-shadow: 2px 2px 0 var(--button-style-shadow-color);
+  box-shadow: 2px 2px 0 var(--line);
   -webkit-overflow-scrolling: touch;
 }
 
-.doc-table{
-  width: 100%;
-  border-collapse: collapse;
-  text-align: left;
-  font-size: 13px;
-}
+.doc-table{ width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; }
 
 .doc-table th{
   background: #fafce8;
   color: #1e2330;
-  font-weight: 800;
-  padding: 12px 16px;
-  border-bottom: 2px solid var(--button-style-border-color);
+  font-weight: 900;
+  padding: 10px 14px;
+  border-bottom: 2px solid var(--line);
   text-transform: uppercase;
-  font-size: 11px;
-  letter-spacing: 0.5px;
+  font-size: 10.5px;
+  letter-spacing: .6px;
+  white-space: nowrap;
 }
 
 .doc-table td{
-  padding: 12px 16px;
+  padding: 10px 14px;
   border-bottom: 1.5px solid rgba(50, 60, 31, 0.12);
   vertical-align: top;
   color: #2c351e;
+  line-height: 1.6;
 }
+.doc-table tr:last-child td{ border-bottom: none; }
+.doc-table tbody tr:hover{ background: #fbfee9; }
 
-.doc-table tr:last-child td{
-  border-bottom: none;
-}
-
-.param-name{
-  font-family: var(--font-mono);
-  font-size: 12.5px;
-  font-weight: 800;
-  color: #1e2330;
-}
-
+.param-name{ font-family: var(--font-mono); font-size: 12.5px; font-weight: 800; color: #1e2330; }
 .param-badge{
   font-size: 10px;
   font-weight: 800;
   padding: 2px 6px;
   border-radius: 6px;
-  border: 1px solid var(--button-style-border-color);
+  border: 1px solid var(--line);
   margin-left: 6px;
   display: inline-block;
 }
+.param-req{ background: #fee2e2; color: #b91c1c; }
+.param-opt{ background: #f3f4f6; color: #4b5563; }
+.param-type{ font-family: var(--font-mono); font-size: 11.5px; font-weight: 700; color: #57653d; white-space: nowrap; }
+.param-path{ font-family: var(--font-mono); font-size: 12px; font-weight: 700; color: #1e2330; }
 
-.param-req{
-  background: #fee2e2;
-  color: #b91c1c;
-}
-
-.param-opt{
-  background: #f3f4f6;
-  color: #4b5563;
-}
-
-.param-type{
-  font-family: var(--font-mono);
-  font-size: 11.5px;
-  font-weight: 700;
-  color: #57653d;
-}
-
-.code-tabs-wrap{
-  display: flex;
-  flex-direction: column;
-  border: 2px solid var(--button-style-border-color);
+/* ---------- panel kode ---------- */
+.code-card{
+  border: 2px solid var(--line);
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: 2.5px 3px 0 var(--button-style-shadow-color);
+  background: var(--code-bg);
+  box-shadow: 2.5px 3px 0 var(--line);
+  display: flex;
+  flex-direction: column;
 }
 
 .code-tabs-head{
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 10px;
   background: var(--code-header-bg);
-  border-bottom: 1.5px solid var(--code-border);
-  padding: 6px 12px;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
+  border-bottom: 2px solid var(--code-border);
+  padding: 7px 9px;
 }
 
-.code-tab-buttons{
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
+.code-tab-buttons{ display: flex; gap: 3px; flex-wrap: wrap; }
 
 .code-tab-btn{
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: 700;
-  padding: 6px 12px;
+  padding: 5px 10px;
   border-radius: 8px;
   color: var(--code-muted);
-  transition: all .15s ease;
+  transition: background .15s var(--ease), color .15s var(--ease);
   white-space: nowrap;
 }
+.code-tab-btn:hover{ color: #ecf8be; background: rgba(255,255,255,.08); }
+.code-tab-btn.active{ color: #151e10; background: #d9ef8f; }
 
-.code-tab-btn:hover{
-  color: #ffffff;
-  background: rgba(255, 255, 255, 0.08);
-}
-
-.code-tab-btn.active{
-  color: #f1fcbd;
-  background: #23311a;
-  border: 1px solid #3d522e;
+.code-tab-label{
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: .7px;
+  color: var(--code-muted);
+  font-family: var(--font-mono);
+  padding-left: 4px;
+  margin-right: auto;
 }
 
 .btn-copy-code{
@@ -1040,162 +762,428 @@ svg{
   align-items: center;
   gap: 5px;
   padding: 5px 10px;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 8px;
-  font-size: 11px;
-  font-weight: 700;
+  border: 1.5px solid #3d5230;
+  background: #1e2a14;
   color: #ecf8be;
-  transition: background .15s ease, transform .15s var(--ease-pop);
+  font-size: 11px;
+  font-weight: 800;
+  flex-shrink: 0;
+  transition: background .15s var(--ease), transform .12s var(--ease-pop);
 }
-
-.btn-copy-code:hover{
-  background: rgba(255, 255, 255, 0.2);
-  transform: translateY(-1px);
-}
+.btn-copy-code:hover{ background: #33461f; transform: translateY(-1px); }
+.btn-copy-code:active{ transform: translateY(1px); }
 
 .code-snippet-box{
   background: var(--code-bg);
-  padding: 16px;
-  overflow-x: auto;
+  padding: 14px 16px;
+  overflow: auto;
+  max-height: 340px;
   -webkit-overflow-scrolling: touch;
 }
 
 .code-snippet-box pre{
-  margin: 0;
   font-family: var(--font-mono);
   font-size: 12.5px;
-  line-height: 1.55;
+  line-height: 1.65;
+  color: var(--code-text);
+  white-space: pre;
+  tab-size: 2;
+}
+
+.code-card-response .code-snippet-box{ background: #121a0d; }
+
+/* ---------- playground ---------- */
+.pg-grid{
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.pg-panel{
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+  background: #ffffff;
+  border: 2px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 2px 2px 0 var(--line);
+}
+
+.panel-head{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1.5px dashed rgba(50,60,31,.28);
+}
+.panel-title{
+  font-size: 11.5px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: .8px;
+  color: var(--bodyText-muted);
+}
+
+.presets-bar{ display: flex; flex-direction: column; gap: 9px; }
+.preset-title{ font-size: 11.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .6px; color: var(--bodyText-muted); }
+.preset-chips{ display: flex; flex-wrap: wrap; gap: 7px; }
+
+.preset-btn{
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  border-radius: 11px;
+  border: 2px solid var(--line);
+  background: var(--card-bg);
+  font-size: 12px;
+  font-weight: 800;
+  box-shadow: 2px 2px 0 var(--line);
+  transition: transform .12s var(--ease-pop), box-shadow .12s var(--ease), background .15s var(--ease);
+}
+.preset-btn:hover{ background: var(--btn-bg-hover); transform: translate(-1px,-1px); box-shadow: 3px 4px 0 var(--line); }
+.preset-btn:active{ transform: translate(1px,2px); box-shadow: 0 0 0 var(--line); }
+
+.request-config{ display: flex; gap: 8px; align-items: stretch; }
+
+.method-select{
+  padding: 10px 12px;
+  background: var(--card-bg);
+  border: 2px solid var(--line);
+  border-radius: 12px;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  font-weight: 800;
+  box-shadow: 2px 2px 0 var(--line);
+  outline: none;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.url-input-wrap{ flex: 1 1 auto; min-width: 0; display: flex; }
+
+.endpoint-input{
+  width: 100%;
+  padding: 10px 14px;
+  background: #ffffff;
+  border: 2px solid var(--line);
+  border-radius: 12px;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  font-weight: 600;
+  box-shadow: 2px 2px 0 var(--line);
+  outline: none;
+  transition: box-shadow .15s var(--ease);
+}
+.endpoint-input:focus{ box-shadow: 0 0 0 3px rgba(50, 60, 31, 0.16), 2px 2px 0 var(--line); }
+
+.btn-send-req{
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 18px;
+  border-radius: 12px;
+  border: 2px solid var(--line);
+  background: #ffd166;
+  font-size: 13px;
+  font-weight: 800;
+  box-shadow: var(--btn-shadow);
+  transition: transform .12s var(--ease-pop), box-shadow .12s var(--ease), background .15s var(--ease);
+  flex-shrink: 0;
+}
+.btn-send-req:hover{ background: #ffc44d; transform: translate(-1px,-1px); box-shadow: 4px 5px 0 var(--line); }
+.btn-send-req:active{ transform: translate(2px,3px); box-shadow: 0 0 0 var(--line); }
+.btn-send-req.loading{ opacity: .85; pointer-events: none; }
+
+.body-editor-wrap{ display: flex; flex-direction: column; gap: 8px; }
+.body-editor-head{ display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.body-editor-title{ font-size: 11.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .6px; color: var(--bodyText-muted); }
+.body-meta{ font-size: 10.5px; font-weight: 700; color: #57653d; font-family: var(--font-mono); }
+
+.body-textarea{
+  width: 100%;
+  min-height: 130px;
+  padding: 12px 14px;
+  background: var(--code-bg);
+  color: var(--code-text);
+  border: 2px solid var(--line);
+  border-radius: 12px;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  line-height: 1.6;
+  resize: vertical;
+  outline: none;
+  box-shadow: 2px 2px 0 var(--line);
+  transition: box-shadow .15s var(--ease);
+}
+.body-textarea:focus{ box-shadow: 0 0 0 3px rgba(50, 60, 31, 0.18), 2px 2px 0 var(--line); }
+
+.response-meta{ display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.res-status-badge{
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 800;
+  padding: 3px 9px;
+  border-radius: 99px;
+  border: 1.5px solid var(--line);
+}
+.res-status-badge.status-idle{ background: #f3f4f6; color: #4b5563; }
+.res-status-badge.status-200{ background: #dcfce7; color: #166534; }
+.res-status-badge.status-400,
+.res-status-badge.status-422,
+.res-status-badge.status-500{ background: #fee2e2; color: #b91c1c; }
+.res-time-badge{
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: #57653d;
+  background: #f1f5e4;
+  border: 1.5px solid rgba(50,60,31,.3);
+  border-radius: 99px;
+  padding: 3px 9px;
+}
+
+.response-actions{ display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+
+.btn-res-action{
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 11px;
+  border-radius: 10px;
+  border: 1.5px solid var(--line);
+  background: var(--card-bg);
+  font-size: 11.5px;
+  font-weight: 800;
+  transition: background .15s var(--ease), transform .12s var(--ease-pop);
+}
+.btn-res-action:hover{ background: var(--btn-bg-hover); transform: translateY(-1px); }
+.btn-res-action:active{ transform: translateY(1px); }
+
+.response-code-container{
+  background: var(--code-bg);
+  border: 2px solid var(--line);
+  border-radius: 12px;
+  padding: 14px 16px;
+  min-height: 240px;
+  max-height: 460px;
+  overflow: auto;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.04);
+}
+.response-pre{
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  line-height: 1.65;
   color: var(--code-text);
   white-space: pre;
 }
 
+.res-img{
+  display: block;
+  max-width: 100%;
+  max-height: 340px;
+  margin: 0 auto;
+  border-radius: 12px;
+  border: 2px solid #3d5230;
+  background: #000;
+}
+.res-note{
+  display: block;
+  margin-top: 10px;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--code-muted);
+  text-align: center;
+  white-space: normal;
+}
+
+
+.res-download{
+  display: flex;
+  width: fit-content;
+  margin: 12px auto 0;
+  padding: 7px 12px;
+  border: 1.5px solid #adc477;
+  border-radius: 8px;
+  background: #e6f0bd;
+  color: #1d2817;
+  font: 800 12px var(--font-mono);
+  text-decoration: none;
+  white-space: normal;
+}
+.res-download:hover{ background: #d4e3a0; }
+.res-download:focus-visible{ outline: 2px solid white; outline-offset: 3px; }
+
+/* ---------- status codes ---------- */
 .status-grid{
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 12px;
 }
-
 .status-card{
   background: #ffffff;
-  border: 2px solid var(--button-style-border-color);
-  border-radius: 14px;
-  padding: 12px 14px;
+  border: 2px solid var(--line);
+  border-radius: 16px;
+  padding: 14px;
+  box-shadow: 2px 2px 0 var(--line);
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  box-shadow: 1.5px 1.5px 0 var(--button-style-shadow-color);
+  gap: 5px;
 }
-
-.status-code-head{
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.status-code-val{
-  font-family: var(--font-mono);
-  font-size: 14px;
-  font-weight: 900;
-}
-
+.status-code-head{ display: flex; align-items: center; justify-content: space-between; }
+.status-code-val{ font-family: var(--font-mono); font-size: 14px; font-weight: 800; }
 .status-code-val.c200{ color: #16a34a; }
 .status-code-val.c400{ color: #ea580c; }
 .status-code-val.c422{ color: #dc2626; }
 .status-code-val.c500{ color: #991b1b; }
-
-.status-code-label{
-  font-size: 12px;
-  font-weight: 800;
-  color: #1e2330;
-}
-
-.status-code-desc{
+.status-code-val.c502{ color: #7c3aed; }
+.status-code-label{ font-size: 12.5px; font-weight: 800; }
+.status-code-desc{ font-size: 12.5px; color: var(--bodyText-muted); line-height: 1.6; }
+.status-code-desc code{
+  font-family: var(--font-mono);
   font-size: 11.5px;
-  color: var(--bodyText-muted);
+  background: var(--card-bg);
+  border: 1px solid rgba(50,60,31,.3);
+  border-radius: 5px;
+  padding: 1px 4px;
 }
 
-.site-footer{
-  margin-top: 40px;
+/* ---------- empty state ---------- */
+.empty-state{
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 46px 20px;
   text-align: center;
+  background: #ffffff;
+  border: 2px dashed rgba(50,60,31,.45);
+  border-radius: 20px;
+}
+.empty-state.show{ display: flex; }
+.empty-title{ font-size: 15px; font-weight: 900; }
+.empty-desc{ font-size: 13px; color: var(--bodyText-muted); }
+
+/* ---------- footer ---------- */
+.site-footer{
+  margin-top: 30px;
+  padding: 22px 0 8px;
+  border-top: 2px dashed rgba(50,60,31,.35);
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 14px;
 }
-
-.footer-nav{
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-}
-
+.footer-nav{ display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
 .footer-btn{
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 16px;
-  border-radius: 16px;
-  background: var(--button-style-background);
-  border: 2px solid var(--button-style-border-color);
-  box-shadow: 2px 3px 0 var(--button-style-shadow-color);
-  font-size: 13px;
+  gap: 7px;
+  padding: 9px 15px;
+  border-radius: 12px;
+  border: 2px solid var(--line);
+  background: var(--btn-bg);
+  font-size: 12.5px;
   font-weight: 800;
-  color: var(--button-style-text);
-  transition: transform .15s var(--ease-pop), background .15s var(--ease);
+  box-shadow: var(--btn-shadow);
+  transition: transform .12s var(--ease-pop), box-shadow .12s var(--ease), background .15s var(--ease);
 }
+.footer-btn:hover{ background: var(--btn-bg-hover); transform: translate(-1px,-1px); box-shadow: 4px 5px 0 var(--line); }
+.footer-copy{ font-size: 12px; color: var(--bodyText-muted); font-weight: 600; }
 
-.footer-btn:hover{
-  background: var(--button-style-background-hover);
-  transform: translateY(-2px);
-}
-
-.footer-copy{
-  font-size: 12px;
-  font-weight: 700;
-  color: #404f26;
-}
-
+/* ---------- toast ---------- */
 .toast{
   position: fixed;
-  bottom: calc(20px + var(--safe-bottom));
   left: 50%;
-  transform: translateX(-50%) translateY(100px);
-  background: #1e2330;
-  color: #f1fcbd;
-  border: 2px solid #323c1f;
-  border-radius: 14px;
-  padding: 10px 18px;
-  font-size: 13px;
-  font-weight: 800;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.25), 3px 3px 0 #323c1f;
-  z-index: 999;
-  pointer-events: none;
-  opacity: 0;
-  transition: transform .25s var(--ease-pop), opacity .25s var(--ease);
+  bottom: calc(26px + var(--safe-bottom));
+  transform: translate(-50%, 140%);
+  z-index: 200;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 9px;
+  padding: 11px 18px;
+  border-radius: 14px;
+  background: var(--code-bg);
+  color: #ecf8be;
+  font-size: 13px;
+  font-weight: 700;
+  border: 2px solid var(--line);
+  box-shadow: 3px 4px 0 rgba(50,60,31,.55);
+  transition: transform .3s var(--ease-pop);
+  max-width: calc(100vw - 32px);
 }
-
-.toast.show{
-  opacity: 1;
-  transform: translateX(-50%) translateY(0);
-}
+.toast.show{ transform: translate(-50%, 0); }
 
 .spinner{
-  width: 16px;
-  height: 16px;
-  border: 2.5px solid rgba(241, 252, 189, 0.3);
-  border-top-color: #f1fcbd;
+  width: 13px; height: 13px;
+  border: 2px solid rgba(30,35,48,.25);
+  border-top-color: #1e2330;
   border-radius: 50%;
-  animation: spin 0.7s linear infinite;
+  animation: spin .7s linear infinite;
+}
+@keyframes spin{ to{ transform: rotate(360deg); } }
+
+/* ---------- back to top ---------- */
+.btn-top{
+  position: fixed;
+  right: 22px;
+  bottom: calc(26px + var(--safe-bottom));
+  z-index: 150;
+  width: 44px; height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  border: 2px solid var(--line);
+  background: var(--btn-bg);
+  color: var(--btn-text);
+  box-shadow: var(--btn-shadow);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(12px);
+  transition: opacity .2s var(--ease), transform .2s var(--ease-pop);
+}
+.btn-top.show{ opacity: 1; pointer-events: auto; transform: translateY(0); }
+.btn-top:hover{ background: var(--btn-bg-hover); }
+
+/* ---------- responsif ---------- */
+@media (max-width: 1399px){
+  .ep-grid{ grid-template-columns: minmax(0, 1fr) minmax(0, 420px); }
 }
 
-@keyframes spin{
-  to{ transform: rotate(360deg); }
+@media (max-width: 1240px){
+  .ep-grid{ grid-template-columns: minmax(0, 1fr); }
+  .ep-col-code{ position: static; max-height: none; overflow: visible; padding-right: 0; }
+  .pg-grid{ grid-template-columns: minmax(0, 1fr); }
+  .response-code-container{ min-height: 200px; max-height: 380px; }
+}
+
+@media (max-width: 1080px){
+  .main-layout{ grid-template-columns: minmax(0, 1fr); gap: 22px; }
+  .sidebar{ position: static; max-height: none; overflow: visible; }
+}
+
+@media (max-width: 760px){
+  .btn-nav span{ display: none; }
+  .btn-nav{ padding: 8px 10px; }
+  .nav-container{ gap: 10px; }
+}
+
+@media (max-width: 680px){
+  .page-wrapper{ padding: 18px 14px 0; }
+  .nav-container{ padding: 10px 14px; }
+  .hero-banner{ padding: 22px 18px; border-radius: 22px; }
+  .section-card{ padding: 18px 15px; border-radius: 20px; gap: 16px; }
+  .request-config{ flex-wrap: wrap; }
+  .url-input-wrap{ flex: 1 1 100%; order: 3; }
+  .method-select{ order: 1; }
+  .btn-send-req{ order: 2; flex: 1 1 auto; justify-content: center; }
+  .table-wrap{ font-size: 12px; }
 }
 
 @media (max-width: 480px){
@@ -1203,11 +1191,10 @@ svg{
   .status-pill{ display: none; }
   .btn-nav span{ display: none; }
   .btn-nav{ padding: 8px 10px; }
-  .hero-banner{ padding: 22px 16px; }
+  .kbd{ display: none; }
 }
 </style>
 </head>
-
 <body>
 
 <header class="top-navbar">
@@ -1249,17 +1236,17 @@ svg{
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
           RESTful API Service
         </span>
-        <h1 class="hero-title">Denji Media Extractor & Downloader API</h1>
+        <h1 class="hero-title">Denji API — Media Downloader &amp; IQC</h1>
       </div>
     </div>
-    
+
     <p class="hero-desc">
-      Layanan REST API berkecepatan tinggi untuk ekstraksi video TikTok & Instagram tanpa watermark, direct audio MP3, foto slide/carousel, dan relay streaming media.
+      Layanan REST API berkecepatan tinggi untuk ekstraksi video TikTok &amp; Instagram tanpa watermark, direct audio MP3, foto slide/carousel, relay streaming media, serta generator quote card Instagram/WhatsApp dalam format JPG.
     </p>
 
     <div class="base-url-box">
       <span class="base-url-label">Base API URL:</span>
-      <code class="base-url-code" id="baseUrlText">https://devils-sigma.vercel.app/api</code>
+      <code class="base-url-code scroller" id="baseUrlText">https://denji-devils.vercel.app/api</code>
       <button class="btn-copy-base" id="btnCopyBase" type="button" onclick="copyBaseUrl()">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
         <span>Salin URL</span>
@@ -1271,19 +1258,19 @@ svg{
         <div class="feature-icon">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
         </div>
-        <span>Tanpa API Key (Gratis & Publik)</span>
+        <span>Tanpa API Key (Gratis &amp; Publik)</span>
       </div>
       <div class="feature-pill">
         <div class="feature-icon">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="21 8 21 21 3 21 3 8"></polyline><rect x="1" y="3" width="22" height="5"></rect><line x1="10" y1="12" x2="14" y2="12"></line></svg>
         </div>
-        <span>Format Standar JSON Terstruktur</span>
+        <span>Respons JSON, Stream &amp; JPG</span>
       </div>
       <div class="feature-pill">
         <div class="feature-icon">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
         </div>
-        <span>Dukungan Penuh CORS (Cross-Origin)</span>
+        <span>Proxy Stream: CORS &amp; Range</span>
       </div>
       <div class="feature-pill">
         <div class="feature-icon">
@@ -1296,160 +1283,199 @@ svg{
 
   <main class="main-layout">
 
-    <aside class="sidebar">
+    <aside class="sidebar scroller">
       <div class="search-box">
         <svg class="search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-        <input type="text" id="endpointSearch" class="search-input" placeholder="Cari endpoint..." oninput="filterEndpoints(this.value)">
+        <input type="text" id="endpointSearch" class="search-input" placeholder="Cari endpoint..." autocomplete="off" oninput="filterDocs(this.value)">
+        <span class="kbd">Ctrl K</span>
       </div>
 
       <div class="toc-card">
         <div class="toc-header">
           <span>Daftar Endpoint</span>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+          <span class="toc-count">6</span>
         </div>
         <nav class="toc-links" id="tocLinks">
-          <a href="#playground" class="toc-link active" data-title="playground">
-            <span>Playground Interaktif</span>
-            <span class="method-tag method-post">TEST</span>
+          <span class="toc-group-title">Playground</span>
+          <a href="#playground" class="toc-link" data-title="playground interaktif tester live">
+            <span class="toc-link-label">Playground Interaktif</span>
+            <span class="method-tag method-live">LIVE</span>
           </a>
-          <a href="#ep-dl" class="toc-link" data-title="/api/dl extractor">
-            <span>/api/dl (Extractor)</span>
+
+          <span class="toc-group-title">Endpoints</span>
+          <a href="#ep-dl" class="toc-link" data-title="/api/dl tiktok instagram extractor download media">
+            <span class="toc-link-label">/api/dl</span>
             <span class="method-tag method-post">POST</span>
           </a>
-          <a href="#ep-stream" class="toc-link" data-title="/api/stream relay">
-            <span>/api/stream (Relay)</span>
+          <a href="#ep-stream" class="toc-link" data-title="/api/stream proxy relay video mp4">
+            <span class="toc-link-label">/api/stream</span>
             <span class="method-tag method-get">GET</span>
           </a>
-          <a href="#ep-health" class="toc-link" data-title="/api/health status">
-            <span>/api/health (Status)</span>
+          <a href="#ep-health" class="toc-link" data-title="/api/health status uptime server">
+            <span class="toc-link-label">/api/health</span>
             <span class="method-tag method-get">GET</span>
           </a>
-          <a href="#ep-profile" class="toc-link" data-title="/api/profile links">
-            <span>/api/profile (Links)</span>
+          <a href="#ep-profile" class="toc-link" data-title="/api/profile links sosial metadata">
+            <span class="toc-link-label">/api/profile</span>
             <span class="method-tag method-get">GET</span>
           </a>
-          <a href="#ep-status-codes" class="toc-link" data-title="status codes reference">
-            <span>Status Codes Reference</span>
-            <span class="method-tag method-get">REF</span>
+
+          <a href="#ep-iqc" class="toc-link" data-title="/iqc quote card instagram dm jpg pesan mode seed emoji">
+            <span class="toc-link-label">/iqc</span>
+            <span class="method-tag method-get">GET</span>
+          </a>
+          <a href="#ep-iqc2" class="toc-link" data-title="/iqc2 menu konteks whatsapp quote card name v2">
+            <span class="toc-link-label">/iqc2</span>
+            <span class="method-tag method-get">GET</span>
+          </a>
+
+          <span class="toc-group-title">Referensi</span>
+          <a href="#ep-status-codes" class="toc-link" data-title="status codes error handling referensi">
+            <span class="toc-link-label">Status Codes</span>
+            <span class="method-tag method-ref">REF</span>
           </a>
         </nav>
       </div>
 
       <div class="toc-card">
-        <div class="toc-header">
-          <span>SDK & Bahasa</span>
-        </div>
-        <div style="font-size: 12.5px; color: #2c351e; line-height: 1.5;">
-          Contoh implementasi lengkap tersedia dalam cURL, JavaScript Fetch, Python, PHP, dan Go di setiap endpoint.
+        <div class="toc-header"><span>SDK &amp; Bahasa</span></div>
+        <div class="side-note">
+          Semua contoh kode otomatis memakai <code>base URL</code> sesuai domain yang sedang Anda buka, jadi tinggal salin &amp; jalankan.
         </div>
       </div>
     </aside>
 
     <div class="content-flow">
 
-      <section class="section-card" id="playground">
+      <!-- ============ PLAYGROUND ============ -->
+      <section class="section-card" id="playground" data-keywords="playground interaktif tester live uji coba request">
         <div class="section-head">
           <div class="section-title-wrap">
-            <span class="method-tag method-post" style="font-size: 13px; padding: 4px 10px;">LIVE</span>
+            <span class="method-tag method-live" style="font-size: 12px; padding: 4px 10px;">LIVE</span>
             <h2 class="section-title">Interactive API Playground</h2>
           </div>
           <span class="endpoint-badge">Realtime Client Tester</span>
         </div>
 
         <p class="section-desc">
-          Uji coba seluruh endpoint API secara langsung dari browser Anda tanpa memerlukan instalasi software tambahan.
+          Uji seluruh endpoint langsung dari browser tanpa instalasi tambahan. Panel kiri untuk menyusun request, panel kanan menampilkan respon, status, dan waktu eksekusi.
         </p>
 
-        <div class="playground-wrap">
-          <div class="presets-bar">
-            <span class="preset-title">Pilih Contoh Preset Cepat:</span>
-            <div class="preset-chips">
-              <button type="button" class="preset-btn" onclick="applyPreset('tiktok')">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 3 15.68 6.34 6.34 0 0 0 9.33 22a6.34 6.34 0 0 0 6.34-6.32V8.75a8.16 8.16 0 0 0 4.92 1.63V6.93a4.85 4.85 0 0 1-1-.24z"/></svg>
-                <span>TikTok Video</span>
-              </button>
-              <button type="button" class="preset-btn" onclick="applyPreset('tiktok_slide')">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
-                <span>TikTok Slide Foto</span>
-              </button>
-              <button type="button" class="preset-btn" onclick="applyPreset('instagram_reel')">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-                <span>Instagram Reel / Post</span>
-              </button>
-              <button type="button" class="preset-btn" onclick="applyPreset('instagram_story')">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
-                <span>Instagram Story</span>
-              </button>
-              <button type="button" class="preset-btn" onclick="applyPreset('health')">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
-                <span>Health Check</span>
-              </button>
-              <button type="button" class="preset-btn" onclick="applyPreset('profile')">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                <span>Profile Meta</span>
-              </button>
-            </div>
-          </div>
-
-          <form id="playgroundForm" onsubmit="executePlayground(event)">
-            <div class="request-config">
-              <select id="pgMethod" class="method-select" onchange="handleMethodChange()">
-                <option value="POST">POST</option>
-                <option value="GET">GET</option>
-              </select>
-              <div class="url-input-wrap">
-                <input type="text" id="pgEndpoint" class="endpoint-input" value="/api/dl" placeholder="/api/dl" required>
-              </div>
-              <button type="submit" id="pgSubmitBtn" class="btn-send-req">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-                <span id="pgBtnText">Kirim Request</span>
-              </button>
+        <div class="pg-grid">
+          <div class="pg-panel">
+            <div class="panel-head">
+              <span class="panel-title">Request</span>
+              <span class="body-meta" id="pgHint">POST &middot; application/json</span>
             </div>
 
-            <div class="body-editor-wrap" id="pgBodyWrap" style="margin-top: 14px;">
-              <div class="body-editor-head">
-                <span class="body-editor-title">Request Body (JSON):</span>
-                <span style="font-size: 11px; font-weight: 700; color: #57653d; font-family: var(--font-mono);">application/json</span>
+            <div class="presets-bar">
+              <span class="preset-title">Preset Cepat</span>
+              <div class="preset-chips">
+                <button type="button" class="preset-btn" onclick="applyPreset('tiktok')">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 3 15.68 6.34 6.34 0 0 0 9.33 22a6.34 6.34 0 0 0 6.34-6.32V8.75a8.16 8.16 0 0 0 4.92 1.63V6.93a4.85 4.85 0 0 1-1-.24z"/></svg>
+                  <span>TikTok Video</span>
+                </button>
+                <button type="button" class="preset-btn" onclick="applyPreset('tiktok_slide')">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                  <span>TikTok Slide</span>
+                </button>
+                <button type="button" class="preset-btn" onclick="applyPreset('instagram_reel')">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                  <span>IG Reel / Post</span>
+                </button>
+                <button type="button" class="preset-btn" onclick="applyPreset('instagram_story')">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                  <span>IG Story</span>
+                </button>
+                <button type="button" class="preset-btn" onclick="applyPreset('health')">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
+                  <span>Health Check</span>
+                </button>
+                <button type="button" class="preset-btn" onclick="applyPreset('profile')">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                  <span>Profile Meta</span>
+                </button>
+                <button type="button" class="preset-btn" onclick="applyPreset('iqc')">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="8" cy="8" r="1.5"></circle><path d="m21 15-5-5L5 21"></path></svg>
+                  <span>IQC · IG</span>
+                </button>
+                <button type="button" class="preset-btn" onclick="applyPreset('iqc2')">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a4 4 0 0 1-4 4H7l-4 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"></path><path d="M8 8h8M8 12h5"></path></svg>
+                  <span>IQC · WhatsApp</span>
+                </button>
               </div>
-              <textarea id="pgBody" class="body-textarea" spellcheck="false">{
+            </div>
+
+            <form id="playgroundForm" onsubmit="executePlayground(event)">
+              <div class="request-config">
+                <select id="pgMethod" class="method-select" onchange="handleMethodChange()">
+                  <option value="POST">POST</option>
+                  <option value="GET">GET</option>
+                </select>
+                <div class="url-input-wrap">
+                  <input type="text" id="pgEndpoint" class="endpoint-input" value="/api/dl" placeholder="/api/dl" spellcheck="false" required>
+                </div>
+                <button type="submit" id="pgSubmitBtn" class="btn-send-req">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                  <span id="pgBtnText">Kirim</span>
+                </button>
+              </div>
+
+              <div class="body-editor-wrap" id="pgBodyWrap" style="margin-top: 14px;">
+                <div class="body-editor-head">
+                  <span class="body-editor-title">Request Body (JSON)</span>
+                  <span class="body-meta">application/json</span>
+                </div>
+                <textarea id="pgBody" class="body-textarea" spellcheck="false">{
   "url": "https://www.tiktok.com/@inidenjiww/video/738291029102"
 }</textarea>
-            </div>
-          </form>
+              </div>
+            </form>
+          </div>
 
-          <div class="response-box">
-            <div class="response-head">
-              <div class="response-title-group">
-                <span class="response-title">API Response:</span>
+          <div class="pg-panel">
+            <div class="panel-head">
+              <span class="panel-title">Response</span>
+              <div class="response-meta">
                 <span id="pgStatusBadge" class="res-status-badge status-idle">Ready</span>
                 <span id="pgTimeBadge" class="res-time-badge">0 ms</span>
               </div>
-              <div class="response-actions">
-                <button type="button" class="btn-res-action" onclick="copyResponseJson()">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                  <span>Salin JSON</span>
-                </button>
-                <button type="button" class="btn-res-action" onclick="clearPlayground()">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-                  <span>Bersihkan</span>
-                </button>
-              </div>
             </div>
 
-            <div class="response-code-container">
-              <pre id="pgResponseCode" class="response-pre">Tekan tombol Kirim Request atau pilih preset di atas untuk melihat respon JSON.</pre>
+            <div class="response-actions">
+              <button type="button" class="btn-res-action" onclick="copyResponse()">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                <span>Salin JSON</span>
+              </button>
+              <button type="button" class="btn-res-action" onclick="copyAsCurl()">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M16 18l6-6-6-6"></path><path d="M8 6l-6 6 6 6"></path></svg>
+                <span>Salin cURL</span>
+              </button>
+              <button type="button" class="btn-res-action" onclick="clearPlayground()">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                <span>Bersihkan</span>
+              </button>
+            </div>
+
+            <div class="response-code-container scroller">
+              <pre id="pgResponseCode" class="response-pre">Tekan tombol Kirim atau pilih salah satu preset di sebelah kiri untuk melihat respon JSON atau gambar JPG.</pre>
             </div>
           </div>
         </div>
       </section>
 
-      <section class="section-card" id="ep-dl">
+      <!-- ============ /api/dl ============ -->
+      <section class="section-card endpoint" id="ep-dl" data-keywords="/api/dl post tiktok instagram extractor download media video slide foto carousel mp3 audio">
         <div class="section-head">
           <div class="section-title-wrap">
             <span class="method-tag method-post">POST</span>
+            <span class="method-tag method-get">GET</span>
             <h2 class="section-title">/api/dl</h2>
+            <button class="btn-icon-copy" type="button" title="Salin path endpoint" aria-label="Salin path endpoint" onclick="copyText('/api/dl', 'Path endpoint disalin')">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            </button>
           </div>
-          <div style="display:flex; align-items:center; gap:8px;">
+          <div class="section-actions">
             <button type="button" class="btn-try-ep" onclick="setupPlayground('POST', '/api/dl', { url: 'https://www.tiktok.com/@inidenjiww/video/738291029102' })">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
               <span>Uji di Playground</span>
@@ -1459,66 +1485,133 @@ svg{
         </div>
 
         <p class="section-desc">
-          Mengekstrak metadata media lengkap, URL file direct stream (MP4/MP3), resolusi, thumbnail, foto slide/carousel, dan link download dari tautan TikTok dan Instagram yang dikirimkan.
+          Mengekstrak metadata media lengkap, URL direct stream (MP4/MP3), thumbnail, foto slide/carousel, dan link unduhan dari tautan TikTok maupun Instagram. Platform dideteksi otomatis dari URL yang dikirim.
         </p>
 
-        <div>
-          <h3 style="font-size: 14px; font-weight: 800; text-transform: uppercase; margin-bottom: 10px; color: #57653d;">Request Headers & Payload</h3>
-          <div class="table-wrap">
-            <table class="doc-table">
-              <thead>
-                <tr>
-                  <th>Parameter</th>
-                  <th>Tipe</th>
-                  <th>Keterangan</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>
-                    <span class="param-name">url</span>
-                    <span class="param-badge param-req">Wajib</span>
-                  </td>
-                  <td><span class="param-type">string</span></td>
-                  <td>Tautan URL media target yang ingin diekstrak (TikTok video/slide atau Instagram reel/post/story).</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <div>
-          <h3 style="font-size: 14px; font-weight: 800; text-transform: uppercase; margin-bottom: 10px; color: #57653d;">Contoh Kode Integrasi (Code Snippets)</h3>
-          <div class="code-tabs-wrap">
-            <div class="code-tabs-head">
-              <div class="code-tab-buttons">
-                <button type="button" class="code-tab-btn active" onclick="switchCodeTab('dl', 'curl', this)">cURL</button>
-                <button type="button" class="code-tab-btn" onclick="switchCodeTab('dl', 'fetch', this)">JavaScript</button>
-                <button type="button" class="code-tab-btn" onclick="switchCodeTab('dl', 'python', this)">Python</button>
-                <button type="button" class="code-tab-btn" onclick="switchCodeTab('dl', 'php', this)">PHP</button>
-                <button type="button" class="code-tab-btn" onclick="switchCodeTab('dl', 'go', this)">Go</button>
+        <div class="ep-grid">
+          <div class="ep-col">
+            <div class="ep-block">
+              <h3 class="block-title">Parameter Request</h3>
+              <p class="block-note">
+                Kirim lewat <code>POST</code> body JSON, atau cukup <code>GET</code> dengan query <code>?url=...</code> untuk pemakaian cepat.
+              </p>
+              <div class="table-wrap scroller">
+                <table class="doc-table">
+                  <thead>
+                    <tr><th>Parameter</th><th>Lokasi</th><th>Tipe</th><th>Keterangan</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><span class="param-name">url</span><span class="param-badge param-req">Wajib</span></td>
+                      <td><span class="param-path">body / query</span></td>
+                      <td><span class="param-type">string</span></td>
+                      <td>Tautan media target: video &amp; slide TikTok, reel/post/story Instagram, atau direct link <code>.mp4/.m3u8</code>.</td>
+                    </tr>
+                    <tr>
+                      <td><span class="param-name">Content-Type</span><span class="param-badge param-opt">Header</span></td>
+                      <td><span class="param-path">header</span></td>
+                      <td><span class="param-type">string</span></td>
+                      <td>Wajib <code>application/json</code> bila mengirim body JSON pada metode <code>POST</code>.</td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
-              <button type="button" class="btn-copy-code" onclick="copySnippet('dlCodeBox')">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                <span>Salin</span>
-              </button>
+              <div class="chip-row">
+                <span class="chip">tiktok.com</span>
+                <span class="chip">vt.tiktok.com</span>
+                <span class="chip">instagram.com/reel</span>
+                <span class="chip">instagram.com/p</span>
+                <span class="chip">instagram.com/stories</span>
+                <span class="chip">*.mp4 / *.m3u8</span>
+              </div>
             </div>
-            <div class="code-snippet-box">
-              <pre id="dlCodeBox">curl -X POST "https://devils-sigma.vercel.app/api/dl" \
-  -H "Content-Type: application/json" \
-  -d '{"url": "https://www.tiktok.com/@inidenjiww/video/738291029102"}'</pre>
+
+            <div class="ep-block">
+              <h3 class="block-title">Field Respons</h3>
+              <div class="table-wrap scroller">
+                <table class="doc-table">
+                  <thead>
+                    <tr><th>Field</th><th>Tipe</th><th>Keterangan</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr><td><span class="param-name">status</span></td><td><span class="param-type">string</span></td><td><code>success</code> atau <code>error</code>.</td></tr>
+                    <tr><td><span class="param-name">code</span></td><td><span class="param-type">number</span></td><td>Salinan HTTP status code.</td></tr>
+                    <tr><td><span class="param-name">platform</span></td><td><span class="param-type">string</span></td><td><code>tiktok</code>, <code>instagram</code>, atau <code>video</code>.</td></tr>
+                    <tr><td><span class="param-name">source</span></td><td><span class="param-type">string</span></td><td>Engine yang dipakai, misal <code>tikwm</code>, <code>lovetik</code>, <code>ssstik</code>, <code>snapsave</code>, <code>videodropper</code>.</td></tr>
+                    <tr><td><span class="param-name">type</span></td><td><span class="param-type">string</span></td><td><code>video</code> &middot; <code>image</code> &middot; <code>live_photo</code> &middot; <code>carousel</code> &middot; <code>story</code> &middot; <code>folder</code>.</td></tr>
+                    <tr><td><span class="param-name">id</span></td><td><span class="param-type">string | null</span></td><td>ID media dari platform asal.</td></tr>
+                    <tr><td><span class="param-name">title</span></td><td><span class="param-type">string</span></td><td>Judul atau caption media.</td></tr>
+                    <tr><td><span class="param-name">cover</span></td><td><span class="param-type">string | null</span></td><td>URL thumbnail / cover.</td></tr>
+                    <tr><td><span class="param-name">duration</span></td><td><span class="param-type">number | null</span></td><td>Durasi dalam detik (TikTok).</td></tr>
+                    <tr><td><span class="param-name">author</span></td><td><span class="param-type">object</span></td><td><code>{ id, name, username, avatar }</code>.</td></tr>
+                    <tr><td><span class="param-name">downloads</span></td><td><span class="param-type">object</span></td><td><code>{ video, video_hd, video_watermark, audio, photos[], live_photos[], media[] }</code>.</td></tr>
+                    <tr><td><span class="param-name">stats</span></td><td><span class="param-type">object</span></td><td><code>{ likes, comments, shares, views, downloads }</code> — TikTok via <code>tikwm</code>.</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="ep-block">
+              <h3 class="block-title">Catatan Pemakaian</h3>
+              <ul class="note-list">
+                <li>Postingan harus bersifat publik — akun privat atau media berbayar tidak dapat diekstrak.</li>
+                <li>Gunakan field <code>downloads.video_hd</code> untuk kualitas terbaik; fallback ke <code>downloads.video</code> bila null.</li>
+                <li>Slide/carousel mengisi <code>downloads.photos[]</code> dan <code>downloads.media[]</code>; video tunggal mengisi <code>downloads.video</code>.</li>
+                <li>Semua URL direct stream bisa di-relay lewat <code>/api/stream</code> bila terblokir CORS/hotlink.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="ep-col ep-col-code scroller">
+            <div class="code-card">
+              <div class="code-tabs-head">
+                <div class="code-tab-buttons">
+                  <span class="code-tab-label">Request</span>
+                  <button type="button" class="code-tab-btn active" onclick="switchTab('dl','code','curl',this)">cURL</button>
+                  <button type="button" class="code-tab-btn" onclick="switchTab('dl','code','javascript',this)">JavaScript</button>
+                  <button type="button" class="code-tab-btn" onclick="switchTab('dl','code','python',this)">Python</button>
+                  <button type="button" class="code-tab-btn" onclick="switchTab('dl','code','php',this)">PHP</button>
+                  <button type="button" class="code-tab-btn" onclick="switchTab('dl','code','go',this)">Go</button>
+                </div>
+                <button type="button" class="btn-copy-code" onclick="copySnippet('dlCodeBox')">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                  <span>Salin</span>
+                </button>
+              </div>
+              <div class="code-snippet-box scroller"><pre id="dlCodeBox"></pre></div>
+            </div>
+
+            <div class="code-card code-card-response">
+              <div class="code-tabs-head">
+                <div class="code-tab-buttons">
+                  <span class="code-tab-label">Response</span>
+                  <button type="button" class="code-tab-btn active" onclick="switchTab('dl','res','200',this)">200 Video</button>
+                  <button type="button" class="code-tab-btn" onclick="switchTab('dl','res','slide',this)">200 Slide</button>
+                  <button type="button" class="code-tab-btn" onclick="switchTab('dl','res','400',this)">400</button>
+                  <button type="button" class="code-tab-btn" onclick="switchTab('dl','res','500',this)">500</button>
+                </div>
+                <button type="button" class="btn-copy-code" onclick="copySnippet('dlResBox')">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                  <span>Salin</span>
+                </button>
+              </div>
+              <div class="code-snippet-box scroller"><pre id="dlResBox"></pre></div>
             </div>
           </div>
         </div>
       </section>
 
-      <section class="section-card" id="ep-stream">
+      <!-- ============ /api/stream ============ -->
+      <section class="section-card endpoint" id="ep-stream" data-keywords="/api/stream get proxy relay video mp4 cors hotlink referer download">
         <div class="section-head">
           <div class="section-title-wrap">
             <span class="method-tag method-get">GET</span>
             <h2 class="section-title">/api/stream</h2>
+            <button class="btn-icon-copy" type="button" title="Salin path endpoint" aria-label="Salin path endpoint" onclick="copyText('/api/stream', 'Path endpoint disalin')">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            </button>
           </div>
-          <div style="display:flex; align-items:center; gap:8px;">
+          <div class="section-actions">
             <button type="button" class="btn-try-ep" onclick="setupPlayground('GET', '/api/stream?url=https%3A%2F%2Fmp4-06.overfetch.video%2FvMVlX9VsHp%2Fmaster.mp4')">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
               <span>Uji di Playground</span>
@@ -1528,71 +1621,119 @@ svg{
         </div>
 
         <p class="section-desc">
-          Melakukan streaming relay direct playback untuk memintas CORS policy, header referer, atau batasan hotlinking pada pemutar video HTML5 dan aplikasi pihak ketiga.
+          Relay streaming direct playback untuk memintas CORS policy, header referer, dan batasan hotlinking pada pemutar video HTML5 maupun aplikasi pihak ketiga. Mendukung HTTP Range sehingga video bisa di-seek.
         </p>
 
-        <div>
-          <h3 style="font-size: 14px; font-weight: 800; text-transform: uppercase; margin-bottom: 10px; color: #57653d;">Query Parameters</h3>
-          <div class="table-wrap">
-            <table class="doc-table">
-              <thead>
-                <tr>
-                  <th>Parameter</th>
-                  <th>Tipe</th>
-                  <th>Keterangan</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>
-                    <span class="param-name">url</span>
-                    <span class="param-badge param-req">Wajib</span>
-                  </td>
-                  <td><span class="param-type">string</span></td>
-                  <td>Direct stream URL yang akan di-relay melalui proxy server.</td>
-                </tr>
-                <tr>
-                  <td>
-                    <span class="param-name">ref</span>
-                    <span class="param-badge param-opt">Opsional</span>
-                  </td>
-                  <td><span class="param-type">string</span></td>
-                  <td>Custom HTTP Referer header yang dikirimkan ke target server.</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <div>
-          <h3 style="font-size: 14px; font-weight: 800; text-transform: uppercase; margin-bottom: 10px; color: #57653d;">Contoh Kode Integrasi</h3>
-          <div class="code-tabs-wrap">
-            <div class="code-tabs-head">
-              <div class="code-tab-buttons">
-                <button type="button" class="code-tab-btn active" onclick="switchCodeTab('stream', 'curl', this)">cURL</button>
-                <button type="button" class="code-tab-btn" onclick="switchCodeTab('stream', 'fetch', this)">JavaScript</button>
-                <button type="button" class="code-tab-btn" onclick="switchCodeTab('stream', 'python', this)">Python</button>
-                <button type="button" class="code-tab-btn" onclick="switchCodeTab('stream', 'html', this)">HTML5 Video</button>
+        <div class="ep-grid">
+          <div class="ep-col">
+            <div class="ep-block">
+              <h3 class="block-title">Query Parameters</h3>
+              <div class="table-wrap scroller">
+                <table class="doc-table">
+                  <thead>
+                    <tr><th>Parameter</th><th>Tipe</th><th>Keterangan</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><span class="param-name">url</span><span class="param-badge param-req">Wajib</span></td>
+                      <td><span class="param-type">string</span></td>
+                      <td>Direct stream URL yang akan di-relay. Wajib di-<code>encodeURIComponent</code>.</td>
+                    </tr>
+                    <tr>
+                      <td><span class="param-name">ref</span><span class="param-badge param-opt">Opsional</span></td>
+                      <td><span class="param-type">string</span></td>
+                      <td>Custom HTTP <code>Referer</code> yang dikirim ke server target. Default <code>https://vidmonstr.com/</code>.</td>
+                    </tr>
+                    <tr>
+                      <td><span class="param-name">dl</span><span class="param-badge param-opt">Opsional</span></td>
+                      <td><span class="param-type">string</span></td>
+                      <td>Isi <code>1</code> untuk memaksa header <code>Content-Disposition: attachment</code> (unduh, bukan putar).</td>
+                    </tr>
+                    <tr>
+                      <td><span class="param-name">title</span><span class="param-badge param-opt">Opsional</span></td>
+                      <td><span class="param-type">string</span></td>
+                      <td>Nama file saat <code>dl=1</code>. Ekstensi <code>.mp4</code> ditambahkan otomatis.</td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
-              <button type="button" class="btn-copy-code" onclick="copySnippet('streamCodeBox')">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                <span>Salin</span>
-              </button>
             </div>
-            <div class="code-snippet-box">
-              <pre id="streamCodeBox">curl "https://devils-sigma.vercel.app/api/stream?url=https%3A%2F%2Fmp4-06.overfetch.video%2FvMVlX9VsHp%2Fmaster.mp4"</pre>
+
+            <div class="ep-block">
+              <h3 class="block-title">Respons</h3>
+              <p class="block-note">
+                Respons bukan JSON, melainkan binary stream yang diteruskan apa adanya dari server asal.
+              </p>
+              <div class="table-wrap scroller">
+                <table class="doc-table">
+                  <thead>
+                    <tr><th>Header</th><th>Nilai</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr><td><span class="param-name">Content-Type</span></td><td><span class="param-type">video/mp4</span> (mengikuti server asal)</td></tr>
+                    <tr><td><span class="param-name">Accept-Ranges</span></td><td><span class="param-type">bytes</span> — mendukung seek / partial request</td></tr>
+                    <tr><td><span class="param-name">Cache-Control</span></td><td><span class="param-type">public, max-age=86400</span></td></tr>
+                    <tr><td><span class="param-name">Access-Control-Allow-Origin</span></td><td><span class="param-type">*</span></td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <ul class="note-list">
+                <li>Endpoint <code>/api/proxy</code> adalah alias dengan perilaku yang sama persis.</li>
+                <li>Gunakan parameter <code>ref</code> bila CDN target menolak request tanpa referer yang sesuai.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="ep-col ep-col-code scroller">
+            <div class="code-card">
+              <div class="code-tabs-head">
+                <div class="code-tab-buttons">
+                  <span class="code-tab-label">Request</span>
+                  <button type="button" class="code-tab-btn active" onclick="switchTab('stream','code','curl',this)">cURL</button>
+                  <button type="button" class="code-tab-btn" onclick="switchTab('stream','code','javascript',this)">JavaScript</button>
+                  <button type="button" class="code-tab-btn" onclick="switchTab('stream','code','python',this)">Python</button>
+                  <button type="button" class="code-tab-btn" onclick="switchTab('stream','code','php',this)">PHP</button>
+                  <button type="button" class="code-tab-btn" onclick="switchTab('stream','code','go',this)">Go</button>
+                  <button type="button" class="code-tab-btn" onclick="switchTab('stream','code','html',this)">HTML5</button>
+                </div>
+                <button type="button" class="btn-copy-code" onclick="copySnippet('streamCodeBox')">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                  <span>Salin</span>
+                </button>
+              </div>
+              <div class="code-snippet-box scroller"><pre id="streamCodeBox"></pre></div>
+            </div>
+
+            <div class="code-card code-card-response">
+              <div class="code-tabs-head">
+                <div class="code-tab-buttons">
+                  <span class="code-tab-label">Response</span>
+                  <button type="button" class="code-tab-btn active" onclick="switchTab('stream','res','200',this)">200 Stream</button>
+                  <button type="button" class="code-tab-btn" onclick="switchTab('stream','res','400',this)">400</button>
+                  <button type="button" class="code-tab-btn" onclick="switchTab('stream','res','502',this)">502</button>
+                </div>
+                <button type="button" class="btn-copy-code" onclick="copySnippet('streamResBox')">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                  <span>Salin</span>
+                </button>
+              </div>
+              <div class="code-snippet-box scroller"><pre id="streamResBox"></pre></div>
             </div>
           </div>
         </div>
       </section>
 
-      <section class="section-card" id="ep-health">
+      <!-- ============ /api/health ============ -->
+      <section class="section-card endpoint" id="ep-health" data-keywords="/api/health get status uptime timestamp server monitoring">
         <div class="section-head">
           <div class="section-title-wrap">
             <span class="method-tag method-get">GET</span>
             <h2 class="section-title">/api/health</h2>
+            <button class="btn-icon-copy" type="button" title="Salin path endpoint" aria-label="Salin path endpoint" onclick="copyText('/api/health', 'Path endpoint disalin')">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            </button>
           </div>
-          <div style="display:flex; align-items:center; gap:8px;">
+          <div class="section-actions">
             <button type="button" class="btn-try-ep" onclick="setupPlayground('GET', '/api/health')">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
               <span>Uji di Playground</span>
@@ -1602,112 +1743,448 @@ svg{
         </div>
 
         <p class="section-desc">
-          Memeriksa status operasional server, uptime, engine version, timestamp sistem realtime, dan metrik lingkungan server.
+          Memeriksa status operasional server, uptime proses, dan timestamp sistem realtime. Ringan dan aman dijadikan heartbeat untuk monitoring.
         </p>
 
-        <div>
-          <h3 style="font-size: 14px; font-weight: 800; text-transform: uppercase; margin-bottom: 10px; color: #57653d;">Contoh Kode Integrasi</h3>
-          <div class="code-tabs-wrap">
-            <div class="code-tabs-head">
-              <div class="code-tab-buttons">
-                <button type="button" class="code-tab-btn active" onclick="switchCodeTab('health', 'curl', this)">cURL</button>
-                <button type="button" class="code-tab-btn" onclick="switchCodeTab('health', 'fetch', this)">JavaScript</button>
-                <button type="button" class="code-tab-btn" onclick="switchCodeTab('health', 'python', this)">Python</button>
+        <div class="ep-grid">
+          <div class="ep-col">
+            <div class="ep-block">
+              <h3 class="block-title">Field Respons</h3>
+              <div class="table-wrap scroller">
+                <table class="doc-table">
+                  <thead>
+                    <tr><th>Field</th><th>Tipe</th><th>Keterangan</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr><td><span class="param-name">status</span></td><td><span class="param-type">string</span></td><td>Selalu <code>ok</code> bila server hidup.</td></tr>
+                    <tr><td><span class="param-name">uptime</span></td><td><span class="param-type">number</span></td><td>Lama proses berjalan dalam detik.</td></tr>
+                    <tr><td><span class="param-name">timestamp</span></td><td><span class="param-type">string</span></td><td>Waktu server format ISO 8601 (UTC).</td></tr>
+                  </tbody>
+                </table>
               </div>
-              <button type="button" class="btn-copy-code" onclick="copySnippet('healthCodeBox')">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                <span>Salin</span>
-              </button>
             </div>
-            <div class="code-snippet-box">
-              <pre id="healthCodeBox">curl "https://devils-sigma.vercel.app/api/health"</pre>
+          </div>
+
+          <div class="ep-col ep-col-code scroller">
+            <div class="code-card">
+              <div class="code-tabs-head">
+                <div class="code-tab-buttons">
+                  <span class="code-tab-label">Request</span>
+                  <button type="button" class="code-tab-btn active" onclick="switchTab('health','code','curl',this)">cURL</button>
+                  <button type="button" class="code-tab-btn" onclick="switchTab('health','code','javascript',this)">JavaScript</button>
+                  <button type="button" class="code-tab-btn" onclick="switchTab('health','code','python',this)">Python</button>
+                  <button type="button" class="code-tab-btn" onclick="switchTab('health','code','php',this)">PHP</button>
+                  <button type="button" class="code-tab-btn" onclick="switchTab('health','code','go',this)">Go</button>
+                </div>
+                <button type="button" class="btn-copy-code" onclick="copySnippet('healthCodeBox')">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                  <span>Salin</span>
+                </button>
+              </div>
+              <div class="code-snippet-box scroller"><pre id="healthCodeBox"></pre></div>
+            </div>
+
+            <div class="code-card code-card-response">
+              <div class="code-tabs-head">
+                <div class="code-tab-buttons">
+                  <span class="code-tab-label">Response</span>
+                  <button type="button" class="code-tab-btn active" onclick="switchTab('health','res','200',this)">200 OK</button>
+                </div>
+                <button type="button" class="btn-copy-code" onclick="copySnippet('healthResBox')">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                  <span>Salin</span>
+                </button>
+              </div>
+              <div class="code-snippet-box scroller"><pre id="healthResBox"></pre></div>
             </div>
           </div>
         </div>
       </section>
 
-      <section class="section-card" id="ep-profile">
+      <!-- ============ /api/profile ============ -->
+      <section class="section-card endpoint" id="ep-profile" data-keywords="/api/profile get metadata links sosial whatsapp verifikasi">
         <div class="section-head">
           <div class="section-title-wrap">
             <span class="method-tag method-get">GET</span>
             <h2 class="section-title">/api/profile</h2>
+            <button class="btn-icon-copy" type="button" title="Salin path endpoint" aria-label="Salin path endpoint" onclick="copyText('/api/profile', 'Path endpoint disalin')">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            </button>
           </div>
-          <div style="display:flex; align-items:center; gap:8px;">
+          <div class="section-actions">
             <button type="button" class="btn-try-ep" onclick="setupPlayground('GET', '/api/profile')">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
               <span>Uji di Playground</span>
             </button>
-            <span class="endpoint-badge">Metadata & Links</span>
+            <span class="endpoint-badge">Metadata &amp; Links</span>
           </div>
         </div>
 
         <p class="section-desc">
-          Mengambil metadata profil resmi, daftar tautan aktif, cover image, avatar, channel WhatsApp, dan badge verifikasi.
+          Mengambil metadata profil resmi: nama, bio, badge verifikasi, daftar tautan aktif, dan seluruh akun sosial yang terhubung.
         </p>
 
-        <div>
-          <h3 style="font-size: 14px; font-weight: 800; text-transform: uppercase; margin-bottom: 10px; color: #57653d;">Contoh Kode Integrasi</h3>
-          <div class="code-tabs-wrap">
-            <div class="code-tabs-head">
-              <div class="code-tab-buttons">
-                <button type="button" class="code-tab-btn active" onclick="switchCodeTab('profile', 'curl', this)">cURL</button>
-                <button type="button" class="code-tab-btn" onclick="switchCodeTab('profile', 'fetch', this)">JavaScript</button>
-                <button type="button" class="code-tab-btn" onclick="switchCodeTab('profile', 'python', this)">Python</button>
+        <div class="ep-grid">
+          <div class="ep-col">
+            <div class="ep-block">
+              <h3 class="block-title">Field Respons</h3>
+              <div class="table-wrap scroller">
+                <table class="doc-table">
+                  <thead>
+                    <tr><th>Field</th><th>Tipe</th><th>Keterangan</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr><td><span class="param-name">title</span></td><td><span class="param-type">string</span></td><td>Judul halaman profil.</td></tr>
+                    <tr><td><span class="param-name">name</span></td><td><span class="param-type">string</span></td><td>Nama tampilan.</td></tr>
+                    <tr><td><span class="param-name">bio</span></td><td><span class="param-type">string</span></td><td>Deskripsi singkat profil.</td></tr>
+                    <tr><td><span class="param-name">verified</span></td><td><span class="param-type">boolean</span></td><td>Status badge verifikasi.</td></tr>
+                    <tr><td><span class="param-name">links</span></td><td><span class="param-type">array</span></td><td>Daftar <code>{ title, url }</code> tautan utama.</td></tr>
+                    <tr><td><span class="param-name">socials</span></td><td><span class="param-type">array</span></td><td>Daftar <code>{ platform, url }</code> akun sosial.</td></tr>
+                  </tbody>
+                </table>
               </div>
-              <button type="button" class="btn-copy-code" onclick="copySnippet('profileCodeBox')">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                <span>Salin</span>
-              </button>
             </div>
-            <div class="code-snippet-box">
-              <pre id="profileCodeBox">curl "https://devils-sigma.vercel.app/api/profile"</pre>
+          </div>
+
+          <div class="ep-col ep-col-code scroller">
+            <div class="code-card">
+              <div class="code-tabs-head">
+                <div class="code-tab-buttons">
+                  <span class="code-tab-label">Request</span>
+                  <button type="button" class="code-tab-btn active" onclick="switchTab('profile','code','curl',this)">cURL</button>
+                  <button type="button" class="code-tab-btn" onclick="switchTab('profile','code','javascript',this)">JavaScript</button>
+                  <button type="button" class="code-tab-btn" onclick="switchTab('profile','code','python',this)">Python</button>
+                  <button type="button" class="code-tab-btn" onclick="switchTab('profile','code','php',this)">PHP</button>
+                  <button type="button" class="code-tab-btn" onclick="switchTab('profile','code','go',this)">Go</button>
+                </div>
+                <button type="button" class="btn-copy-code" onclick="copySnippet('profileCodeBox')">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                  <span>Salin</span>
+                </button>
+              </div>
+              <div class="code-snippet-box scroller"><pre id="profileCodeBox"></pre></div>
+            </div>
+
+            <div class="code-card code-card-response">
+              <div class="code-tabs-head">
+                <div class="code-tab-buttons">
+                  <span class="code-tab-label">Response</span>
+                  <button type="button" class="code-tab-btn active" onclick="switchTab('profile','res','200',this)">200 OK</button>
+                </div>
+                <button type="button" class="btn-copy-code" onclick="copySnippet('profileResBox')">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                  <span>Salin</span>
+                </button>
+              </div>
+              <div class="code-snippet-box scroller"><pre id="profileResBox"></pre></div>
             </div>
           </div>
         </div>
       </section>
 
-      <section class="section-card" id="ep-status-codes">
+      <!-- ============ /iqc ============ -->
+      <section class="section-card endpoint" id="ep-iqc" data-keywords="/iqc quote card instagram dm jpg gambar pesan mode seed emoji iphone whatsapp">
         <div class="section-head">
           <div class="section-title-wrap">
-            <h2 class="section-title">HTTP Status Codes Reference</h2>
+            <span class="method-tag method-get">GET</span>
+            <h2 class="section-title">/iqc</h2>
+            <button class="btn-icon-copy" type="button" title="Salin path endpoint" aria-label="Salin path endpoint" onclick="copyText('/iqc', 'Path endpoint disalin')">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            </button>
           </div>
-          <span class="endpoint-badge">Error Handling Standards</span>
+          <div class="section-actions">
+            <button type="button" class="btn-try-ep" onclick="setupPlayground('GET', '/iqc?pesan=halo')">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+              <span>Uji di Playground</span>
+            </button>
+            <span class="endpoint-badge">Quote Card · JPG</span>
+          </div>
         </div>
+
+        <p class="section-desc">
+          Mengubah teks menjadi <strong>foto JPG</strong> berupa tangkapan layar obrolan Instagram DM — lengkap dengan emoji gaya iPhone, wallpaper percakapan blur acak, jam WIB otomatis, dan indikator baterai.
+        </p>
+
+        <div class="ep-grid">
+          <div class="ep-col">
+            <div class="ep-block">
+              <h3 class="block-title">Query Parameters</h3>
+              <div class="table-wrap scroller">
+                <table class="doc-table">
+                  <thead>
+                    <tr><th>Parameter</th><th>Tipe</th><th>Keterangan</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><span class="param-name">pesan</span><span class="param-badge param-opt">Opsional</span></td>
+                      <td><span class="param-type">string</span></td>
+                      <td>Isi bubble chat. Mendukung emoji dan baris baru, maksimal <code>1000</code> karakter, aman dari XSS.</td>
+                    </tr>
+                    <tr>
+                      <td><span class="param-name">mode</span><span class="param-badge param-opt">Opsional</span></td>
+                      <td><span class="param-type">string</span></td>
+                      <td><code>dark</code> untuk tampilan gelap, <code>light</code> memaksa terang. Kosongkan untuk terang.</td>
+                    </tr>
+                    <tr>
+                      <td><span class="param-name">seed</span><span class="param-badge param-opt">Opsional</span></td>
+                      <td><span class="param-type">number</span></td>
+                      <td>Angka bulat — wallpaper <strong>dan</strong> level baterai (30–100%) terkunci sesuai seed; jam tetap mengikuti WIB.</td>
+                    </tr>
+                    <tr>
+                      <td><span class="param-name">name</span><span class="param-badge param-opt">Opsional</span></td>
+                      <td><span class="param-type">string</span></td>
+                      <td>Nama pada kartu (khusus v2). Maksimal 30 karakter, default <code>Jidar</code>.</td>
+                    </tr>
+                    <tr>
+                      <td><span class="param-name">v2</span><span class="param-badge param-opt">Opsional</span></td>
+                      <td><span class="param-type">string</span></td>
+                      <td><code>1</code> = versi menu konteks WhatsApp. Sama dengan memanggil <code>/iqc2</code>.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="chip-row">
+                <span class="chip">1350x2400 px</span>
+                <span class="chip">kualitas 90</span>
+                <span class="chip">emoji Apple</span>
+                <span class="chip">jam WIB</span>
+                <span class="chip">wallpaper acak</span>
+              </div>
+            </div>
+
+            <div class="ep-block">
+              <h3 class="block-title">Respons</h3>
+              <p class="block-note">
+                Bukan JSON — endpoint membalas <code>image/jpeg</code> berukuran <code>1350&times;2400</code> piksel (rasio 9:16, kualitas 90).
+              </p>
+              <div class="table-wrap scroller">
+                <table class="doc-table">
+                  <thead>
+                    <tr><th>Header</th><th>Nilai</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr><td><span class="param-name">Content-Type</span></td><td><span class="param-type">image/jpeg</span></td></tr>
+                    <tr><td><span class="param-name">Cache-Control</span></td><td><span class="param-type">no-store</span> — browser/CDN tidak menyimpan respons, termasuk saat memakai <code>seed</code></td></tr>
+                    <tr><td><span class="param-name">X-Content-Type-Options</span></td><td><span class="param-type">nosniff</span></td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <ul class="note-list">
+                <li>Gambar dirender <strong>headless Chromium</strong> (<code>puppeteer-core</code> + <code>@sparticuz/chromium</code>) — request pertama dapat lebih lambat karena cold start browser.</li>
+                <li>Tanpa <code>seed</code>, wallpaper &amp; baterai diacak. Dengan seed, server memakai cache memori per menit WIB; header tetap <code>no-store</code>.</li>
+                <li>Emoji umum (❤ 😂 🔥 💯 🙏) tertanam di template; emoji langka diunduh dari CDN saat render dengan fallback ke teks.</li>
+                <li>Bila render gagal total, endpoint <strong>tetap</strong> membalas gambar — foto "gagal membuat gambar" dengan status <code>500</code>.</li>
+                <li>Alias API: <code>/api/iqc</code> dan <code>/api/iqc2</code>. Buka <a href="/app">editor IQC</a> untuk mengubah teks dan mengunduh JPG.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="ep-col ep-col-code scroller">
+            <div class="code-card">
+              <div class="code-tabs-head">
+                <div class="code-tab-buttons">
+                  <span class="code-tab-label">Request</span>
+                  <button type="button" class="code-tab-btn active" onclick="switchTab('iqc','code','curl',this)">cURL</button>
+                  <button type="button" class="code-tab-btn" onclick="switchTab('iqc','code','javascript',this)">JavaScript</button>
+                  <button type="button" class="code-tab-btn" onclick="switchTab('iqc','code','python',this)">Python</button>
+                  <button type="button" class="code-tab-btn" onclick="switchTab('iqc','code','php',this)">PHP</button>
+                  <button type="button" class="code-tab-btn" onclick="switchTab('iqc','code','go',this)">Go</button>
+                </div>
+                <button type="button" class="btn-copy-code" onclick="copySnippet('iqcCodeBox')">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                  <span>Salin</span>
+                </button>
+              </div>
+              <div class="code-snippet-box scroller"><pre id="iqcCodeBox"></pre></div>
+            </div>
+
+            <div class="code-card code-card-response">
+              <div class="code-tabs-head">
+                <div class="code-tab-buttons">
+                  <span class="code-tab-label">Response</span>
+                  <button type="button" class="code-tab-btn active" onclick="switchTab('iqc','res','200',this)">200 JPG</button>
+                  <button type="button" class="code-tab-btn" onclick="switchTab('iqc','res','500',this)">500</button>
+                </div>
+                <button type="button" class="btn-copy-code" onclick="copySnippet('iqcResBox')">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                  <span>Salin</span>
+                </button>
+              </div>
+              <div class="code-snippet-box scroller"><pre id="iqcResBox"></pre></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ /iqc2 ============ -->
+      <section class="section-card endpoint" id="ep-iqc2" data-keywords="/iqc2 quote card instagram dm jpg gambar pesan mode seed emoji iphone whatsapp">
+        <div class="section-head">
+          <div class="section-title-wrap">
+            <span class="method-tag method-get">GET</span>
+            <h2 class="section-title">/iqc2</h2>
+            <button class="btn-icon-copy" type="button" title="Salin path endpoint" aria-label="Salin path endpoint" onclick="copyText('/iqc2', 'Path endpoint disalin')">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            </button>
+          </div>
+          <div class="section-actions">
+            <button type="button" class="btn-try-ep" onclick="setupPlayground('GET', '/iqc2?pesan=halo')">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+              <span>Uji di Playground</span>
+            </button>
+            <span class="endpoint-badge">WhatsApp · JPG</span>
+          </div>
+        </div>
+
+        <p class="section-desc">
+          Varian kedua: replika <strong>menu konteks WhatsApp iOS</strong> — kartu preview berisi nama, tujuh menu lengkap, latar ruangan blur, dan bubble pesan yang sama dengan <code>/iqc</code>. Identik dengan memanggil <code>/iqc?v2=1</code>.
+        </p>
+
+        <div class="ep-grid">
+          <div class="ep-col">
+            <div class="ep-block">
+              <h3 class="block-title">Query Parameters</h3>
+              <div class="table-wrap scroller">
+                <table class="doc-table">
+                  <thead>
+                    <tr><th>Parameter</th><th>Tipe</th><th>Keterangan</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><span class="param-name">pesan</span><span class="param-badge param-opt">Opsional</span></td>
+                      <td><span class="param-type">string</span></td>
+                      <td>Isi bubble chat pada kartu preview, maksimal <code>1000</code> karakter.</td>
+                    </tr>
+                    <tr>
+                      <td><span class="param-name">name</span><span class="param-badge param-opt">Opsional</span></td>
+                      <td><span class="param-type">string</span></td>
+                      <td>Nama yang tampil di kartu. Maksimal 30 karakter, default <code>Jidar</code>.</td>
+                    </tr>
+                    <tr>
+                      <td><span class="param-name">mode</span><span class="param-badge param-opt">Opsional</span></td>
+                      <td><span class="param-type">string</span></td>
+                      <td><code>dark</code> / <code>light</code>. Tanpa parameter: gelap.</td>
+                    </tr>
+                    <tr>
+                      <td><span class="param-name">seed</span><span class="param-badge param-opt">Opsional</span></td>
+                      <td><span class="param-type">number</span></td>
+                      <td>Mengunci level baterai (30–100%). Latar v2 tetap; jam selalu mengikuti WIB.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="chip-row">
+                <span class="chip">9:16</span>
+                <span class="chip">name= opsional</span>
+                <span class="chip">menu konteks</span>
+                <span class="chip">baterai acak</span>
+                <span class="chip">jam WIB</span>
+              </div>
+            </div>
+
+            <div class="ep-block">
+              <h3 class="block-title">Respons</h3>
+              <p class="block-note">
+                Bukan JSON — endpoint membalas <code>image/jpeg</code> berukuran <code>1350&times;2400</code> piksel (rasio 9:16, kualitas 90).
+              </p>
+              <div class="table-wrap scroller">
+                <table class="doc-table">
+                  <thead>
+                    <tr><th>Header</th><th>Nilai</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr><td><span class="param-name">Content-Type</span></td><td><span class="param-type">image/jpeg</span></td></tr>
+                    <tr><td><span class="param-name">Cache-Control</span></td><td><span class="param-type">no-store</span> — browser/CDN tidak menyimpan respons, termasuk saat memakai <code>seed</code></td></tr>
+                    <tr><td><span class="param-name">X-Content-Type-Options</span></td><td><span class="param-type">nosniff</span></td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <ul class="note-list">
+                <li>Ukuran &amp; format keluaran sama dengan <code>/iqc</code>: JPG <code>1350&times;2400</code>, kualitas 90.</li>
+                <li>Nama dikirim lewat parameter <code>name</code> (bukan <code>nama</code>).</li>
+                <li>Sertakan <code>&amp;seed=</code> untuk mengunci baterai. Gambar dapat berubah ketika menit WIB berganti; cache hanya ada di memori server.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="ep-col ep-col-code scroller">
+            <div class="code-card">
+              <div class="code-tabs-head">
+                <div class="code-tab-buttons">
+                  <span class="code-tab-label">Request</span>
+                  <button type="button" class="code-tab-btn active" onclick="switchTab('iqc2','code','curl',this)">cURL</button>
+                  <button type="button" class="code-tab-btn" onclick="switchTab('iqc2','code','javascript',this)">JavaScript</button>
+                  <button type="button" class="code-tab-btn" onclick="switchTab('iqc2','code','python',this)">Python</button>
+                  <button type="button" class="code-tab-btn" onclick="switchTab('iqc2','code','php',this)">PHP</button>
+                  <button type="button" class="code-tab-btn" onclick="switchTab('iqc2','code','go',this)">Go</button>
+                </div>
+                <button type="button" class="btn-copy-code" onclick="copySnippet('iqc2CodeBox')">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                  <span>Salin</span>
+                </button>
+              </div>
+              <div class="code-snippet-box scroller"><pre id="iqc2CodeBox"></pre></div>
+            </div>
+
+            <div class="code-card code-card-response">
+              <div class="code-tabs-head">
+                <div class="code-tab-buttons">
+                  <span class="code-tab-label">Response</span>
+                  <button type="button" class="code-tab-btn active" onclick="switchTab('iqc2','res','200',this)">200 JPG</button>
+                  <button type="button" class="code-tab-btn" onclick="switchTab('iqc2','res','500',this)">500</button>
+                </div>
+                <button type="button" class="btn-copy-code" onclick="copySnippet('iqc2ResBox')">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                  <span>Salin</span>
+                </button>
+              </div>
+              <div class="code-snippet-box scroller"><pre id="iqc2ResBox"></pre></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ STATUS CODES ============ -->
+      <section class="section-card" id="ep-status-codes" data-keywords="status codes error handling 200 400 500 502 referensi">
+        <div class="section-head">
+          <div class="section-title-wrap">
+            <span class="method-tag method-ref">REF</span>
+            <h2 class="section-title">HTTP Status Codes</h2>
+          </div>
+          <span class="endpoint-badge">Error Handling</span>
+        </div>
+
+        <p class="section-desc">
+          Periksa status HTTP dan <code>Content-Type</code>: downloader membalas JSON, proxy dapat membalas teks, sedangkan IQC tetap membalas gambar fallback saat render gagal.
+        </p>
 
         <div class="status-grid">
           <div class="status-card">
-            <div class="status-code-head">
-              <span class="status-code-val c200">200 OK</span>
-            </div>
+            <div class="status-code-head"><span class="status-code-val c200">200 OK</span></div>
             <span class="status-code-label">Sukses</span>
-            <span class="status-code-desc">Permintaan berhasil diproses dan media berhasil diekstrak secara akurat.</span>
+            <span class="status-code-desc">Permintaan berhasil diproses. Format hasil mengikuti endpoint: JSON, stream media, atau JPG.</span>
           </div>
-
           <div class="status-card">
-            <div class="status-code-head">
-              <span class="status-code-val c400">400 Bad Request</span>
-            </div>
+            <div class="status-code-head"><span class="status-code-val c400">400 Bad Request</span></div>
             <span class="status-code-label">Parameter Kurang</span>
-            <span class="status-code-desc">Body JSON tidak memiliki properti <code>url</code> yang valid.</span>
+            <span class="status-code-desc">Parameter <code>url</code> yang diperlukan belum diisi pada body/query.</span>
           </div>
-
           <div class="status-card">
-            <div class="status-code-head">
-              <span class="status-code-val c422">422 Unprocessable</span>
-            </div>
-            <span class="status-code-label">Ekstraksi Gagal</span>
-            <span class="status-code-desc">Tautan media diproteksi, privat, atau tidak didukung oleh extractor.</span>
+            <div class="status-code-head"><span class="status-code-val c500">500 Server Error</span></div>
+            <span class="status-code-label">Pemrosesan Gagal</span>
+            <span class="status-code-desc">Ekstraksi media gagal, atau render IQC gagal. IQC mengirim gambar fallback dengan status ini.</span>
           </div>
-
           <div class="status-card">
-            <div class="status-code-head">
-              <span class="status-code-val c500">500 Server Error</span>
-            </div>
-            <span class="status-code-label">Internal Error</span>
-            <span class="status-code-desc">Terjadi kendala pada upstream stream gateway atau serverless timeout.</span>
+            <div class="status-code-head"><span class="status-code-val c502">502 Bad Gateway</span></div>
+            <span class="status-code-label">Upstream Error</span>
+            <span class="status-code-desc">Server sumber media tidak bisa dihubungi — umumnya pada <code>/api/stream</code>.</span>
           </div>
         </div>
       </section>
+
+      <div class="empty-state" id="docsEmpty">
+        <span class="empty-title">Endpoint tidak ditemukan</span>
+        <span class="empty-desc">Coba kata kunci lain seperti <code>/api/dl</code>, <code>stream</code>, <code>health</code>, <code>profile</code>, atau <code>iqc</code>.</span>
+      </div>
 
     </div>
   </main>
@@ -1730,55 +2207,177 @@ svg{
 
 </div>
 
+<button class="btn-top" id="btnTop" type="button" aria-label="Kembali ke atas" onclick="scrollToTop()">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+</button>
+
 <div class="toast" id="toastBox">
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
   <span id="toastMsg">Tersalin ke clipboard</span>
 </div>
 
 <script>
+/* =========================================================
+   1. Base URL dinamis
+   ========================================================= */
+function getOrigin(){
+  const o = (window.location && window.location.origin) ? window.location.origin : '';
+  if(o && o.indexOf('file:') !== 0 && o.indexOf('null') !== 0) return o;
+  return 'https://denji-devils.vercel.app';
+}
+const ORIGIN = getOrigin();
+const BASE = ORIGIN + '/api';
+
+/* =========================================================
+   2. Syntax highlighter ringan (tanpa dependensi)
+   ========================================================= */
+const HL_RULES = {
+  curl: [
+    { t:'comment', p:'#[^\\n]*' },
+    { t:'str',     p:'"(?:\\\\.|[^"\\\\])*"|\'(?:\\\\.|[^\'\\\\])*\'' },
+    { t:'cmd',     p:'\\bcurl\\b' },
+    { t:'flag',    p:'\\B-{1,2}[A-Za-z][\\w-]*' },
+    { t:'num',     p:'\\b\\d+(?:\\.\\d+)?\\b' }
+  ],
+  javascript: [
+    { t:'comment', p:'//[^\\n]*|/\\*[\\s\\S]*?\\*/' },
+    { t:'str',     p:'`(?:\\\\.|[^`\\\\])*`|"(?:\\\\.|[^"\\\\])*"|\'(?:\\\\.|[^\'\\\\])*\'' },
+    { t:'kw',      p:'\\b(?:const|let|var|function|return|await|async|new|if|else|for|of|in|try|catch|finally|throw|typeof|class|export|default)\\b' },
+    { t:'bool',    p:'\\b(?:true|false|null|undefined)\\b' },
+    { t:'fn',      p:'\\b[A-Za-z_$][\\w$]*(?=\\s*\\()' },
+    { t:'num',     p:'\\b\\d+(?:\\.\\d+)?\\b' }
+  ],
+  python: [
+    { t:'comment', p:'#[^\\n]*' },
+    { t:'str',     p:'"""[\\s\\S]*?"""|\'\'\'[\\s\\S]*?\'\'\'|"(?:\\\\.|[^"\\\\])*"|\'(?:\\\\.|[^\'\\\\])*\'' },
+    { t:'kw',      p:'\\b(?:import|from|as|def|return|with|if|elif|else|for|in|while|class|try|except|finally|raise|lambda|print|pass|not|and|or)\\b' },
+    { t:'bool',    p:'\\b(?:True|False|None)\\b' },
+    { t:'fn',      p:'\\b[A-Za-z_][\\w]*(?=\\s*\\()' },
+    { t:'num',     p:'\\b\\d+(?:\\.\\d+)?\\b' }
+  ],
+  php: [
+    { t:'comment', p:'//[^\\n]*|#[^\\n]*|/\\*[\\s\\S]*?\\*/' },
+    { t:'str',     p:'"(?:\\\\.|[^"\\\\])*"|\'(?:\\\\.|[^\'\\\\])*\'' },
+    { t:'var',     p:'\\$[A-Za-z_][\\w]*' },
+    { t:'kw',      p:'<\\?php|\\b(?:echo|array|function|return|if|else|foreach|as|new|true|false|null)\\b' },
+    { t:'fn',      p:'\\b[A-Za-z_][\\w]*(?=\\s*\\()' },
+    { t:'num',     p:'\\b\\d+(?:\\.\\d+)?\\b' }
+  ],
+  go: [
+    { t:'comment', p:'//[^\\n]*|/\\*[\\s\\S]*?\\*/' },
+    { t:'str',     p:'`(?:\\\\.|[^`\\\\])*`|"(?:\\\\.|[^"\\\\])*"' },
+    { t:'kw',      p:'\\b(?:package|import|func|var|const|type|struct|interface|if|else|for|range|return|defer|go|map|chan|nil|true|false|string|int|error)\\b' },
+    { t:'fn',      p:'\\b[A-Za-z_][\\w]*(?=\\s*\\()' },
+    { t:'num',     p:'\\b\\d+(?:\\.\\d+)?\\b' }
+  ],
+  html: [
+    { t:'comment', p:'<!--[\\s\\S]*?-->' },
+    { t:'tag',     p:'</?[A-Za-z][\\w-]*|/?>' },
+    { t:'str',     p:'"(?:\\\\.|[^"\\\\])*"|\'(?:\\\\.|[^\'\\\\])*\'' },
+    { t:'attr',    p:'\\b[A-Za-z_:][\\w:.-]*(?=\\s*=)' }
+  ],
+  json: [
+    { t:'comment', p:'//[^\\n]*' },
+    { t:'key',     p:'"(?:\\\\.|[^"\\\\])*"(?=\\s*:)' },
+    { t:'str',     p:'"(?:\\\\.|[^"\\\\])*"' },
+    { t:'bool',    p:'\\b(?:true|false|null)\\b' },
+    { t:'num',     p:'-?\\b\\d+(?:\\.\\d+)?\\b' }
+  ],
+  plain: [
+    { t:'comment', p:'^[^\\n]*:' },
+    { t:'num',     p:'\\b\\d+(?:\\.\\d+)?\\b' }
+  ]
+};
+
+const HL_CACHE = {};
+
+function buildRegex(lang){
+  const rules = HL_RULES[lang] || HL_RULES.json;
+  let src = rules.map(function(r){ return '(' + r.p + ')'; }).join('|');
+  try{
+    return new RegExp(src, 'gm');
+  } catch(e){
+    return null;
+  }
+}
+
+function esc(s){
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function highlight(code, lang){
+  const rules = HL_RULES[lang] || HL_RULES.json;
+  const re = buildRegex(lang);
+  if(!re) return esc(code);
+  re.lastIndex = 0;
+  let out = '', last = 0, m;
+  while((m = re.exec(code)) !== null){
+    if(m[0] === ''){ re.lastIndex++; continue; }
+    let type = 'plain';
+    for(let i = 1; i < m.length; i++){
+      if(m[i] !== undefined){ type = rules[i - 1].t; break; }
+    }
+    out += esc(code.slice(last, m.index));
+    out += '<span class="tk-' + type + '">' + esc(m[0]) + '</span>';
+    last = m.index + m[0].length;
+  }
+  out += esc(code.slice(last));
+  return out;
+}
+
+/* =========================================================
+   3. Snippet contoh kode  ({{BASE}} diganti otomatis)
+   ========================================================= */
+const DEMO_TT   = 'https://www.tiktok.com/@inidenjiww/video/738291029102';
+const DEMO_IG   = 'https://www.instagram.com/reel/C8rI91hS4Qv/';
+const DEMO_MP4  = 'https://mp4-06.overfetch.video/vMVlX9VsHp/master.mp4';
+
 const snippets = {
   dl: {
-    curl: `curl -X POST "https://devils-sigma.vercel.app/api/dl" \\
+    curl: `# POST dengan JSON body
+curl -X POST "{{BASE}}/dl" \\
   -H "Content-Type: application/json" \\
-  -d '{"url": "https://www.tiktok.com/@inidenjiww/video/738291029102"}'`,
-    fetch: `fetch("https://devils-sigma.vercel.app/api/dl", {
+  -d '{"url": "${DEMO_TT}"}'
+
+# Alternatif cepat lewat query string
+curl -G "{{BASE}}/dl" --data-urlencode "url=${DEMO_TT}"`,
+
+    javascript: `const res = await fetch("{{BASE}}/dl", {
   method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({
-    url: "https://www.tiktok.com/@inidenjiww/video/738291029102"
-  })
-})
-.then(res => res.json())
-.then(data => console.log(data))
-.catch(err => console.error(err));`,
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ url: "${DEMO_TT}" })
+});
+
+const data = await res.json();
+console.log(data.downloads.video_hd || data.downloads.video);`,
+
     python: `import requests
 
-url = "https://devils-sigma.vercel.app/api/dl"
-payload = {
-    "url": "https://www.tiktok.com/@inidenjiww/video/738291029102"
-}
-headers = {
-    "Content-Type": "application/json"
-}
+res = requests.post(
+    "{{BASE}}/dl",
+    json={"url": "${DEMO_TT}"},
+    timeout=30
+)
+data = res.json()
 
-response = requests.post(url, json=payload, headers=headers)
-data = response.json()
-print(data)`,
+print(data["downloads"]["video_hd"])`,
+
     php: `<?php
-$curl = curl_init();
-curl_setopt_array($curl, [
-  CURLOPT_URL => "https://devils-sigma.vercel.app/api/dl",
+$ch = curl_init("{{BASE}}/dl");
+curl_setopt_array($ch, [
   CURLOPT_RETURNTRANSFER => true,
-  CURLOPT_POST => true,
-  CURLOPT_POSTFIELDS => json_encode(["url" => "https://www.tiktok.com/@inidenjiww/video/738291029102"]),
-  CURLOPT_HTTPHEADER => ["Content-Type: application/json"],
+  CURLOPT_POST           => true,
+  CURLOPT_HTTPHEADER     => ["Content-Type: application/json"],
+  CURLOPT_POSTFIELDS     => json_encode(["url" => "${DEMO_TT}"]),
+  CURLOPT_TIMEOUT        => 30,
 ]);
 
-$response = curl_exec($curl);
-curl_close($curl);
-echo $response;`,
+$json = curl_exec($ch);
+curl_close($ch);
+
+$data = json_decode($json, true);
+echo $data["downloads"]["video_hd"];`,
+
     go: `package main
 
 import (
@@ -1786,275 +2385,782 @@ import (
   "encoding/json"
   "fmt"
   "net/http"
-  "io"
 )
 
 func main() {
-  url := "https://devils-sigma.vercel.app/api/dl"
   payload, _ := json.Marshal(map[string]string{
-    "url": "https://www.tiktok.com/@inidenjiww/video/738291029102",
+    "url": "${DEMO_TT}",
   })
 
-  req, _ := http.NewRequest("POST", url, bytes.NewBuffer(payload))
+  req, _ := http.NewRequest("POST", "{{BASE}}/dl", bytes.NewBuffer(payload))
   req.Header.Set("Content-Type", "application/json")
 
-  client := &http.Client{}
-  res, err := client.Do(req)
-  if err != nil { panic(err) }
+  res, err := http.DefaultClient.Do(req)
+  if err != nil {
+    panic(err)
+  }
   defer res.Body.Close()
 
-  body, _ := io.ReadAll(res.Body)
-  fmt.Println(string(body))
+  var out map[string]interface{}
+  json.NewDecoder(res.Body).Decode(&out)
+  fmt.Println(out["downloads"])
 }`
   },
+
   stream: {
-    curl: `curl "https://devils-sigma.vercel.app/api/stream?url=https%3A%2F%2Fcdn.example.com%2Fvideo.mp4"`,
-    fetch: `fetch("https://devils-sigma.vercel.app/api/stream?url=" + encodeURIComponent("https://cdn.example.com/video.mp4"))
-  .then(res => res.blob())
-  .then(blob => console.log("Stream Blob received:", blob));`,
+    curl: `# Streaming relay biasa (bisa di-seek, support Range)
+curl "{{BASE}}/stream?url=https%3A%2F%2Fmp4-06.overfetch.video%2FvMVlX9VsHp%2Fmaster.mp4" \\
+  -o video.mp4
+
+# Paksa unduh dengan nama file sendiri
+curl -L "{{BASE}}/stream?url=https%3A%2F%2Fmp4-06.overfetch.video%2FvMVlX9VsHp%2Fmaster.mp4&dl=1&title=klip" \\
+  -o klip.mp4`,
+
+    javascript: `const target = "${DEMO_MP4}";
+const url = "{{BASE}}/stream?url=" + encodeURIComponent(target);
+
+// Dipakai langsung sebagai src pemutar video
+video.src = url;
+
+// Atau ambil sebagai Blob
+const blob = await fetch(url).then(r => r.blob());`,
+
     python: `import requests
 
-stream_url = "https://devils-sigma.vercel.app/api/stream"
-params = {
-    "url": "https://cdn.example.com/video.mp4"
-}
+params = {"url": "${DEMO_MP4}"}
 
-with requests.get(stream_url, params=params, stream=True) as r:
+with requests.get("{{BASE}}/stream", params=params, stream=True, timeout=60) as r:
     r.raise_for_status()
     with open("video.mp4", "wb") as f:
         for chunk in r.iter_content(chunk_size=8192):
             f.write(chunk)
-print("Download complete.")`,
-    html: `<video controls autoplay width="100%">
-  <source src="https://devils-sigma.vercel.app/api/stream?url=https%3A%2F%2Fcdn.example.com%2Fvideo.mp4" type="video/mp4">
-  Browser Anda tidak mendukung HTML5 video tag.
+
+print("Download selesai.")`,
+
+    php: `<?php
+$target = "${DEMO_MP4}";
+$url = "{{BASE}}/stream?url=" . urlencode($target);
+
+$ch = curl_init($url);
+curl_setopt_array($ch, [
+  CURLOPT_RETURNTRANSFER => true,
+  CURLOPT_FOLLOWLOCATION => true,
+  CURLOPT_TIMEOUT        => 120,
+]);
+
+file_put_contents("video.mp4", curl_exec($ch));
+curl_close($ch);`,
+
+    go: `package main
+
+import (
+  "io"
+  "net/http"
+  "net/url"
+  "os"
+)
+
+func main() {
+  endpoint := "{{BASE}}/stream?url=" + url.QueryEscape("${DEMO_MP4}")
+
+  res, err := http.Get(endpoint)
+  if err != nil {
+    panic(err)
+  }
+  defer res.Body.Close()
+
+  f, _ := os.Create("video.mp4")
+  defer f.Close()
+  io.Copy(f, res.Body)
+}`,
+
+    html: `<!-- Tinggal tempel sebagai src pemutar -->
+<video controls autoplay playsinline width="100%">
+  <source src="{{BASE}}/stream?url=https%3A%2F%2Fmp4-06.overfetch.video%2FvMVlX9VsHp%2Fmaster.mp4"
+          type="video/mp4">
+  Browser Anda tidak mendukung tag video HTML5.
 </video>`
   },
+
   health: {
-    curl: `curl "https://devils-sigma.vercel.app/api/health"`,
-    fetch: `fetch("https://devils-sigma.vercel.app/api/health")
-  .then(res => res.json())
-  .then(data => console.log(data));`,
+    curl: `curl "{{BASE}}/health"`,
+
+    javascript: `const res = await fetch("{{BASE}}/health");
+const { status, uptime, timestamp } = await res.json();
+console.log(status, uptime, timestamp);`,
+
     python: `import requests
 
-res = requests.get("https://devils-sigma.vercel.app/api/health")
-print(res.json())`
+data = requests.get("{{BASE}}/health", timeout=10).json()
+print(data["status"], data["uptime"])`,
+
+    php: `<?php
+$json = file_get_contents("{{BASE}}/health");
+$data = json_decode($json, true);
+echo $data["status"];`,
+
+    go: `package main
+
+import (
+  "encoding/json"
+  "fmt"
+  "net/http"
+)
+
+func main() {
+  res, _ := http.Get("{{BASE}}/health")
+  defer res.Body.Close()
+
+  var out map[string]interface{}
+  json.NewDecoder(res.Body).Decode(&out)
+  fmt.Println(out["status"], out["uptime"])
+}`
   },
+
   profile: {
-    curl: `curl "https://devils-sigma.vercel.app/api/profile"`,
-    fetch: `fetch("https://devils-sigma.vercel.app/api/profile")
-  .then(res => res.json())
-  .then(data => console.log(data));`,
+    curl: `curl "{{BASE}}/profile"`,
+
+    javascript: `const res = await fetch("{{BASE}}/profile");
+const profile = await res.json();
+console.log(profile.name, profile.links);`,
+
     python: `import requests
 
-res = requests.get("https://devils-sigma.vercel.app/api/profile")
-print(res.json())`
+profile = requests.get("{{BASE}}/profile", timeout=10).json()
+for link in profile["links"]:
+    print(link["title"], link["url"])`,
+
+    php: `<?php
+$json = file_get_contents("{{BASE}}/profile");
+$profile = json_decode($json, true);
+
+foreach ($profile["links"] as $link) {
+  echo $link["title"] . " -> " . $link["url"] . PHP_EOL;
+}`,
+
+    go: `package main
+
+import (
+  "encoding/json"
+  "fmt"
+  "net/http"
+)
+
+type Link struct {
+  Title string
+  URL   string
+}
+
+type Profile struct {
+  Name    string
+  Bio     string
+  Verified bool
+  Links   []Link
+}
+
+func main() {
+  res, _ := http.Get("{{BASE}}/profile")
+  defer res.Body.Close()
+
+  var profile Profile
+  json.NewDecoder(res.Body).Decode(&profile)
+
+  fmt.Println(profile.Name)
+  for _, l := range profile.Links {
+    fmt.Println(l.Title, l.URL)
+  }
+}`
+  },
+
+  iqc: {
+    curl: `# Foto JPG siap pakai (1350x2400, rasio 9:16)
+curl "{{ORIGIN}}/iqc?pesan=halo%F0%9F%92%95" -o quote.jpg
+
+# Dark mode + wallpaper & baterai dikunci lewat seed
+curl "{{ORIGIN}}/iqc?pesan=miss%20you&mode=dark&seed=42" -o quote-dark.jpg`,
+
+    javascript: `const pesan = "halo ❤";
+const url = "{{ORIGIN}}/iqc?pesan=" + encodeURIComponent(pesan);
+
+// pakai langsung sebagai src gambar
+document.querySelector("#hasil").src = url;
+
+// atau ambil sebagai Blob untuk diunggah
+const blob = await fetch(url).then(r => r.blob());`,
+
+    python: `import requests
+
+params = {"pesan": "halo ❤", "mode": "dark", "seed": 42}
+res = requests.get("{{ORIGIN}}/iqc", params=params, timeout=60)
+
+with open("quote.jpg", "wb") as f:
+    f.write(res.content)
+
+print("quote.jpg tersimpan", len(res.content), "bytes")`,
+
+    php: `<?php
+$url = "{{ORIGIN}}/iqc?pesan=" . urlencode("halo ❤") . "&seed=42";
+
+$ch = curl_init($url);
+curl_setopt_array($ch, [
+  CURLOPT_RETURNTRANSFER => true,
+  CURLOPT_TIMEOUT        => 60,
+]);
+
+file_put_contents("quote.jpg", curl_exec($ch));
+curl_close($ch);`,
+
+    go: `package main
+
+import (
+  "io"
+  "net/http"
+  "net/url"
+  "os"
+)
+
+func main() {
+  endpoint := "{{ORIGIN}}/iqc?pesan=" + url.QueryEscape("halo ❤")
+
+  res, err := http.Get(endpoint)
+  if err != nil {
+    panic(err)
+  }
+  defer res.Body.Close()
+
+  f, _ := os.Create("quote.jpg")
+  defer f.Close()
+  io.Copy(f, res.Body)
+}`
+  },
+
+  iqc2: {
+    curl: `# /iqc2 = versi menu konteks WhatsApp (nama bisa diganti)
+curl "{{ORIGIN}}/iqc2?pesan=halo%20ges&name=Jidar" -o quote2.jpg
+
+# bentuk panjang yang setara
+curl "{{ORIGIN}}/iqc?pesan=halo%20ges&name=Jidar&v2=1" -o quote2.jpg`,
+
+    javascript: `const url = "{{ORIGIN}}/iqc2?" + new URLSearchParams({
+  pesan: "halo ges",
+  name: "Jidar",
+  seed: 42
+});
+
+document.querySelector("#hasil").src = url;`,
+
+    python: `import requests
+
+res = requests.get("{{ORIGIN}}/iqc2", params={
+    "pesan": "halo ges",
+    "name": "Jidar",
+    "seed": 42,
+}, timeout=60)
+
+open("quote2.jpg", "wb").write(res.content)`,
+
+    php: `<?php
+$url = "{{ORIGIN}}/iqc2?" . http_build_query([
+  "pesan" => "halo ges",
+  "name"  => "Jidar",
+  "seed"  => 42,
+]);
+
+file_put_contents("quote2.jpg", file_get_contents($url));`,
+
+    go: `package main
+
+import (
+  "io"
+  "net/http"
+  "net/url"
+  "os"
+)
+
+func main() {
+  q := url.Values{}
+  q.Set("pesan", "halo ges")
+  q.Set("name", "Jidar")
+  q.Set("seed", "42")
+
+  res, err := http.Get("{{ORIGIN}}/iqc2?" + q.Encode())
+  if err != nil {
+    panic(err)
+  }
+  defer res.Body.Close()
+
+  f, _ := os.Create("quote2.jpg")
+  defer f.Close()
+  io.Copy(f, res.Body)
+}`
   }
 };
 
+/* =========================================================
+   4. Contoh respons
+   ========================================================= */
+const responses = {
+  dl: {
+    '200': `{
+  "status": "success",
+  "code": 200,
+  "platform": "tiktok",
+  "source": "tikwm",
+  "type": "video",
+  "id": "738291029102",
+  "title": "part 2 #fyp #denji",
+  "cover": "https://p16-sign.tiktokcdn.com/obj/cover.jpeg",
+  "duration": 24,
+  "author": {
+    "id": "6823114567890123456",
+    "name": "denji",
+    "username": "@inidenjiww",
+    "avatar": "https://p16-sign.tiktokcdn.com/avatar.jpeg"
+  },
+  "downloads": {
+    "video": "https://v16-webapp.tiktok.com/video.mp4",
+    "video_hd": "https://v16-webapp.tiktok.com/video_hd.mp4",
+    "video_watermark": null,
+    "audio": "https://sf16.tiktokcdn.com/music.mp3",
+    "photos": null,
+    "media": [
+      {
+        "type": "video",
+        "url": "https://v16-webapp.tiktok.com/video_hd.mp4",
+        "thumbnail": "https://p16-sign.tiktokcdn.com/obj/cover.jpeg",
+        "download": "https://v16-webapp.tiktok.com/video_hd.mp4"
+      }
+    ]
+  },
+  "stats": {
+    "likes": 12400,
+    "comments": 312,
+    "shares": 58,
+    "views": 231000,
+    "downloads": 0
+  }
+}`,
+    slide: `{
+  "status": "success",
+  "code": 200,
+  "platform": "tiktok",
+  "source": "tikwm",
+  "type": "image",
+  "id": "738291029102",
+  "title": "slide dump #fyp",
+  "cover": "https://p16-sign.tiktokcdn.com/obj/cover.jpeg",
+  "duration": null,
+  "author": {
+    "id": "6823114567890123456",
+    "name": "denji",
+    "username": "@inidenjiww",
+    "avatar": "https://p16-sign.tiktokcdn.com/avatar.jpeg"
+  },
+  "downloads": {
+    "video": null,
+    "video_hd": null,
+    "video_watermark": null,
+    "audio": "https://sf16.tiktokcdn.com/music.mp3",
+    "photos": [
+      "https://p16-sign.tiktokcdn.com/obj/1.jpeg",
+      "https://p16-sign.tiktokcdn.com/obj/2.jpeg",
+      "https://p16-sign.tiktokcdn.com/obj/3.jpeg"
+    ],
+    "media": [
+      {
+        "type": "image",
+        "index": 1,
+        "url": "https://p16-sign.tiktokcdn.com/obj/1.jpeg",
+        "thumbnail": "https://p16-sign.tiktokcdn.com/obj/1.jpeg",
+        "download": "https://p16-sign.tiktokcdn.com/obj/1.jpeg",
+        "hd_photo": "https://p16-sign.tiktokcdn.com/obj/1.jpeg"
+      }
+    ]
+  },
+  "stats": {
+    "likes": 8300,
+    "comments": 140,
+    "shares": 22,
+    "views": 152000,
+    "downloads": 0
+  }
+}`,
+    '400': `{
+  "status": "error",
+  "code": 400,
+  "message": "Parameter URL wajib diisi"
+}`,
+    '500': `{
+  "status": "error",
+  "code": 500,
+  "message": "Tidak dapat mengunduh media dari TikTok. Pastikan video atau postingan bersifat publik."
+}`
+  },
+
+  stream: {
+    '200': `HTTP/1.1 200 OK
+Content-Type: video/mp4
+Accept-Ranges: bytes
+Content-Length: 4829134
+Cache-Control: public, max-age=86400
+Access-Control-Allow-Origin: *
+
+<body berupa binary stream, bukan JSON>`,
+    '400': `HTTP/1.1 400 Bad Request
+Content-Type: text/html; charset=utf-8
+
+URL parameter is required`,
+    '502': `HTTP/1.1 502 Bad Gateway
+Content-Type: text/html; charset=utf-8
+
+Stream error: getaddrinfo ENOTFOUND cdn.example.com`
+  },
+
+  health: {
+    '200': `{
+  "status": "ok",
+  "uptime": 86421.57,
+  "timestamp": "2026-10-01T09:12:44.512Z"
+}`
+  },
+
+  profile: {
+    '200': `{
+  "title": "Denji Web",
+  "name": "denji",
+  "bio": "harvey, nobody know what i see",
+  "verified": true,
+  "links": [
+    {
+      "title": "Channel Wa (koleksi sticker)",
+      "url": "https://whatsapp.com/channel/0029VbBDyGpEFeXu4KTwvo08"
+    },
+    {
+      "title": "Nomor wa",
+      "url": "https://wa.me/18674678687"
+    }
+  ],
+  "socials": [
+    { "platform": "instagram", "url": "https://instagram.com" },
+    { "platform": "tiktok", "url": "https://www.tiktok.com/@inidenjiww" },
+    { "platform": "pinterest", "url": "https://www.pinterest.com" },
+    { "platform": "linkedin", "url": "https://linkedin.com" }
+  ]
+}`
+  },
+
+  iqc: {
+    '200': `HTTP/1.1 200 OK
+Content-Type: image/jpeg
+Content-Length: 184301
+Cache-Control: no-store
+X-Content-Type-Options: nosniff
+
+<file biner JPG 1350x2400 px, kualitas 90 — bukan JSON>`,
+    '500': `HTTP/1.1 500 Internal Server Error
+Content-Type: image/jpeg
+
+<foto fallback "gagal membuat gambar" — endpoint tetap membalas gambar>`
+  },
+
+  iqc2: {
+    '200': `HTTP/1.1 200 OK
+Content-Type: image/jpeg
+Content-Length: 191208
+Cache-Control: no-store
+
+<file biner JPG 1350x2400 px — versi menu konteks WhatsApp>`,
+    '500': `HTTP/1.1 500 Internal Server Error
+Content-Type: image/jpeg
+
+<foto fallback "gagal membuat gambar" — endpoint tetap membalas gambar>`
+  }
+};
+
+/* =========================================================
+   5. Render tab kode
+   ========================================================= */
+const LANG_MAP = { curl:'curl', javascript:'javascript', python:'python', php:'php', go:'go', html:'html' };
+const tabState = {
+  dl:     { code:'curl', res:'200' },
+  stream: { code:'curl', res:'200' },
+  health: { code:'curl', res:'200' },
+  profile:{ code:'curl', res:'200' },
+  iqc:    { code:'curl', res:'200' },
+  iqc2:   { code:'curl', res:'200' }
+};
+
+function fill(tpl){
+  return String(tpl)
+    .replace(/\{\{BASE\}\}/g, BASE)
+    .replace(/\{\{ORIGIN\}\}/g, ORIGIN);
+}
+
+function renderBox(id, text, lang){
+  const el = document.getElementById(id);
+  if(!el) return;
+  el.innerHTML = highlight(fill(text), lang);
+}
+
+function renderSection(name){
+  const st = tabState[name];
+  if(!st) return;
+  if(snippets[name] && snippets[name][st.code]){
+    renderBox(name + 'CodeBox', snippets[name][st.code], LANG_MAP[st.code] || 'json');
+  }
+  if(responses[name] && responses[name][st.res]){
+    renderBox(name + 'ResBox', responses[name][st.res], 'json');
+  }
+}
+
+function switchTab(section, kind, key, btn){
+  if(!tabState[section]) return;
+  tabState[section][kind] = key;
+  if(btn && btn.parentElement){
+    btn.parentElement.querySelectorAll('.code-tab-btn').forEach(function(b){
+      b.classList.remove('active');
+    });
+    btn.classList.add('active');
+  }
+  renderSection(section);
+}
+
+/* =========================================================
+   6. Playground
+   ========================================================= */
 const presets = {
-  tiktok: {
-    method: "POST",
-    endpoint: "/api/dl",
-    body: JSON.stringify({ url: "https://www.tiktok.com/@inidenjiww/video/738291029102" }, null, 2)
-  },
-  tiktok_slide: {
-    method: "POST",
-    endpoint: "/api/dl",
-    body: JSON.stringify({ url: "https://vt.tiktok.com/ZSjR1vLdK/" }, null, 2)
-  },
-  instagram_reel: {
-    method: "POST",
-    endpoint: "/api/dl",
-    body: JSON.stringify({ url: "https://www.instagram.com/reel/C8rI91hS4Qv/" }, null, 2)
-  },
-  instagram_story: {
-    method: "POST",
-    endpoint: "/api/dl",
-    body: JSON.stringify({ url: "https://instagram.com/stories/inidenjiww" }, null, 2)
-  },
-  health: {
-    method: "GET",
-    endpoint: "/api/health",
-    body: ""
-  },
-  profile: {
-    method: "GET",
-    endpoint: "/api/profile",
-    body: ""
-  }
+  tiktok:          { method:'POST', endpoint:'/api/dl', body:{ url: DEMO_TT } },
+  tiktok_slide:    { method:'POST', endpoint:'/api/dl', body:{ url: 'https://vt.tiktok.com/ZSjR1vLdK/' } },
+  instagram_reel:  { method:'POST', endpoint:'/api/dl', body:{ url: DEMO_IG } },
+  instagram_story: { method:'POST', endpoint:'/api/dl', body:{ url: 'https://instagram.com/stories/inidenjiww' } },
+  health:          { method:'GET',  endpoint:'/api/health',  body:null },
+  profile:         { method:'GET',  endpoint:'/api/profile', body:null },
+  iqc:             { method:'GET',  endpoint:'/iqc?pesan=halo%20%F0%9F%92%95&mode=light&seed=42', body:null },
+  iqc2:            { method:'GET',  endpoint:'/iqc2?pesan=halo%20ges&name=Denji&mode=dark&seed=42', body:null }
 };
 
-let currentResponseJson = null;
+const PG_KEY = 'denjiDocsPlayground';
+let pgImageURL = null;
+
+function releasePlaygroundImage(){
+  if(pgImageURL){ URL.revokeObjectURL(pgImageURL); pgImageURL = null; }
+  const out = document.getElementById('pgResponseCode');
+  if(out) delete out.dataset.imageInfo;
+}
+window.addEventListener('pagehide', releasePlaygroundImage);
+
 
 function applyPreset(type){
   const p = presets[type];
   if(!p) return;
   document.getElementById('pgMethod').value = p.method;
   document.getElementById('pgEndpoint').value = p.endpoint;
-  document.getElementById('pgBody').value = p.body;
+  document.getElementById('pgBody').value = p.body ? JSON.stringify(p.body, null, 2) : '';
   handleMethodChange();
-  showToast("Preset '" + type + "' diterapkan");
+  savePlayground();
+  showToast('Preset diterapkan');
 }
 
 function setupPlayground(method, endpoint, bodyObj){
   document.getElementById('pgMethod').value = method;
   document.getElementById('pgEndpoint').value = endpoint;
-  if(bodyObj){
-    document.getElementById('pgBody').value = JSON.stringify(bodyObj, null, 2);
-  } else {
-    document.getElementById('pgBody').value = "";
-  }
+  document.getElementById('pgBody').value = bodyObj ? JSON.stringify(bodyObj, null, 2) : '';
   handleMethodChange();
-  const pg = document.getElementById('playground');
-  if(pg){
-    pg.scrollIntoView({ behavior: 'smooth' });
-  }
-  showToast("Endpoint dimuat ke Playground");
+  savePlayground();
+  smoothScrollTo('playground');
+  showToast('Endpoint dimuat ke Playground');
 }
 
 function handleMethodChange(){
   const method = document.getElementById('pgMethod').value;
   const bodyWrap = document.getElementById('pgBodyWrap');
-  if(method === 'GET'){
-    bodyWrap.style.display = 'none';
-  } else {
-    bodyWrap.style.display = 'flex';
+  const hint = document.getElementById('pgHint');
+  bodyWrap.style.display = (method === 'GET') ? 'none' : 'flex';
+  if(hint){
+    hint.textContent = (method === 'GET') ? 'GET · query string' : 'POST · application/json';
   }
 }
 
-function filterEndpoints(query){
-  const q = String(query || '').toLowerCase().trim();
-  const links = document.querySelectorAll('#tocLinks .toc-link');
-  links.forEach(link => {
-    const title = link.getAttribute('data-title') || link.textContent.toLowerCase();
-    if(!q || title.includes(q)){
-      link.style.display = 'flex';
-    } else {
-      link.style.display = 'none';
-    }
-  });
+function savePlayground(){
+  try{
+    localStorage.setItem(PG_KEY, JSON.stringify({
+      method: document.getElementById('pgMethod').value,
+      endpoint: document.getElementById('pgEndpoint').value,
+      body: document.getElementById('pgBody').value
+    }));
+  } catch(e){}
 }
 
-function switchCodeTab(section, lang, btn){
-  const parent = btn.parentElement;
-  parent.querySelectorAll('.code-tab-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-
-  const codeBox = document.getElementById(section + 'CodeBox');
-  if(codeBox && snippets[section] && snippets[section][lang]){
-    codeBox.textContent = snippets[section][lang];
-  }
+function loadPlayground(){
+  try{
+    const raw = localStorage.getItem(PG_KEY);
+    if(!raw) return;
+    const s = JSON.parse(raw);
+    if(s.method) document.getElementById('pgMethod').value = s.method;
+    if(s.endpoint) document.getElementById('pgEndpoint').value = s.endpoint;
+    if(typeof s.body === 'string') document.getElementById('pgBody').value = s.body;
+  } catch(e){}
 }
 
 async function executePlayground(e){
   e.preventDefault();
-  const method = document.getElementById('pgMethod').value;
+  const method   = document.getElementById('pgMethod').value;
   const endpoint = document.getElementById('pgEndpoint').value.trim();
   const bodyText = document.getElementById('pgBody').value.trim();
-  const submitBtn = document.getElementById('pgSubmitBtn');
-  const btnText = document.getElementById('pgBtnText');
+
+  const submitBtn   = document.getElementById('pgSubmitBtn');
+  const btnText     = document.getElementById('pgBtnText');
   const statusBadge = document.getElementById('pgStatusBadge');
-  const timeBadge = document.getElementById('pgTimeBadge');
-  const responseCode = document.getElementById('pgResponseCode');
+  const timeBadge   = document.getElementById('pgTimeBadge');
+  const responsePre = document.getElementById('pgResponseCode');
 
   submitBtn.classList.add('loading');
-  btnText.innerHTML = '<div class="spinner"></div> Memproses...';
+  btnText.innerHTML = '<div class="spinner"></div> Memproses';
   statusBadge.className = 'res-status-badge status-idle';
   statusBadge.textContent = 'Fetching...';
   timeBadge.textContent = '...';
-  responseCode.textContent = 'Menghubungi server...';
+  releasePlaygroundImage();
+  responsePre.textContent = 'Menghubungi server...';
 
-  const startTime = performance.now();
+  savePlayground();
+
+  const t0 = performance.now();
 
   try{
-    const options = {
-      method: method,
-      headers: {}
-    };
-
+    const options = { method: method, headers: {} };
     if(method === 'POST'){
       options.headers['Content-Type'] = 'application/json';
       options.body = bodyText;
     }
 
-    const res = await fetch(endpoint, options);
-    const duration = Math.round(performance.now() - startTime);
+    const res  = await fetch(endpoint, options);
+    const ms   = Math.round(performance.now() - t0);
+    const ctype  = res.headers.get('content-type') || '';
+    const isJson = ctype.indexOf('application/json') !== -1;
+    const isImage = ctype.indexOf('image/') === 0;
 
-    timeBadge.textContent = duration + ' ms';
+    timeBadge.textContent = ms + ' ms';
     statusBadge.textContent = res.status + ' ' + (res.statusText || (res.status === 200 ? 'OK' : 'Error'));
     statusBadge.className = 'res-status-badge ' + (res.status === 200 ? 'status-200' : 'status-400');
 
-    const text = await res.text();
-    try{
-      const json = JSON.parse(text);
-      currentResponseJson = json;
-      responseCode.textContent = JSON.stringify(json, null, 2);
-    } catch(err){
-      currentResponseJson = text;
-      responseCode.textContent = text;
+    if(isImage){
+      // Gunakan blob respons yang sama: satu request, tidak merender JPG dua kali.
+      const blob = await res.blob();
+      const elapsed = Math.round(performance.now() - t0);
+      timeBadge.textContent = elapsed + ' ms';
+      const kb = (blob.size / 1024).toFixed(1);
+      pgImageURL = URL.createObjectURL(blob);
+
+      const img = document.createElement('img');
+      img.className = 'res-img';
+      img.src = pgImageURL;
+      img.alt = 'Hasil gambar dari ' + endpoint;
+
+      const note = document.createElement('span');
+      note.className = 'res-note';
+      note.textContent = ctype + ' · ' + kb + ' KB · ' + elapsed + ' ms';
+
+      const download = document.createElement('a');
+      download.className = 'res-download';
+      download.href = pgImageURL;
+      download.download = /\/iqc2(?:[/?]|$)|[?&]v2=1(?:&|$)/.test(endpoint) ? 'quote2.jpg' : 'quote.jpg';
+      download.textContent = 'Unduh JPG';
+
+      responsePre.replaceChildren(img, note, download);
+      responsePre.dataset.imageInfo = 'HTTP ' + res.status + '\nContent-Type: ' + ctype +
+        '\nUkuran: ' + blob.size + ' bytes\nURL: ' + new URL(endpoint, ORIGIN).href;
+    } else {
+      const text = await res.text();
+      if(isJson){
+        try{
+          renderBox('pgResponseCode', JSON.stringify(JSON.parse(text), null, 2), 'json');
+        } catch(err){
+          renderBox('pgResponseCode', text, 'plain');
+        }
+      } else {
+        const preview = text.length > 4000 ? text.slice(0, 4000) + '\n\n... (respons biner / non-JSON dipotong)' : text;
+        renderBox('pgResponseCode', preview, 'plain');
+      }
     }
   } catch(err){
-    const duration = Math.round(performance.now() - startTime);
-    timeBadge.textContent = duration + ' ms';
+    timeBadge.textContent = Math.round(performance.now() - t0) + ' ms';
     statusBadge.textContent = 'Network Error';
     statusBadge.className = 'res-status-badge status-500';
-    responseCode.textContent = JSON.stringify({
-      status: "error",
-      message: err.message || "Failed to fetch from server"
-    }, null, 2);
+    renderBox('pgResponseCode', JSON.stringify({
+      status: 'error',
+      message: err.message || 'Failed to fetch from server'
+    }, null, 2), 'json');
   } finally{
     submitBtn.classList.remove('loading');
-    btnText.innerHTML = 'Kirim Request';
+    btnText.textContent = 'Kirim';
   }
 }
 
 function clearPlayground(){
-  document.getElementById('pgResponseCode').textContent = 'Respon dibersihkan.';
+  releasePlaygroundImage();
+  renderBox('pgResponseCode', 'Respon dibersihkan.', 'plain');
   const statusBadge = document.getElementById('pgStatusBadge');
   statusBadge.className = 'res-status-badge status-idle';
   statusBadge.textContent = 'Ready';
   document.getElementById('pgTimeBadge').textContent = '0 ms';
-  currentResponseJson = null;
   showToast('Playground dibersihkan');
 }
 
-function copyResponseJson(){
-  const code = document.getElementById('pgResponseCode').textContent;
-  navigator.clipboard.writeText(code).then(() => {
-    showToast('JSON respon disalin ke clipboard');
-  }).catch(() => {
-    fallbackCopy(code);
-  });
+function copyAsCurl(){
+  const method   = document.getElementById('pgMethod').value;
+  const endpoint = document.getElementById('pgEndpoint').value.trim();
+  const bodyText = document.getElementById('pgBody').value.trim();
+  const url = /^https?:\/\//i.test(endpoint) ? endpoint : window.location.origin + endpoint;
+
+  let cmd = 'curl -X ' + method + ' "' + url + '"';
+  if(method !== 'GET' && bodyText){
+    cmd += ' \\\n  -H "Content-Type: application/json" \\\n  -d \'' + bodyText.replace(/\n\s*/g, ' ') + '\'';
+  }
+  if(/\/(?:api\/)?iqc2?(?:[/?]|$)/.test(url)) cmd += ' -o quote.jpg';
+  copyText(cmd, 'Perintah cURL disalin');
 }
 
-function copySnippet(boxId){
-  const el = document.getElementById(boxId);
-  if(!el) return;
-  navigator.clipboard.writeText(el.textContent).then(() => {
-    showToast('Kode snippet disalin ke clipboard');
-  }).catch(() => {
-    fallbackCopy(el.textContent);
-  });
-}
-
-function copyBaseUrl(){
-  const url = document.getElementById('baseUrlText').textContent;
-  navigator.clipboard.writeText(url).then(() => {
-    showToast('Base URL disalin');
-  }).catch(() => {
-    fallbackCopy(url);
-  });
+/* =========================================================
+   7. Clipboard & toast
+   ========================================================= */
+function copyText(text, msg){
+  const done = function(){ showToast(msg || 'Tersalin ke clipboard'); };
+  if(navigator.clipboard && window.isSecureContext){
+    navigator.clipboard.writeText(text).then(done, function(){ fallbackCopy(text); done(); });
+  } else {
+    fallbackCopy(text);
+    done();
+  }
 }
 
 function fallbackCopy(text){
   const ta = document.createElement('textarea');
   ta.value = text;
+  ta.setAttribute('readonly', '');
+  ta.style.position = 'fixed';
+  ta.style.opacity = '0';
   document.body.appendChild(ta);
   ta.select();
-  document.execCommand('copy');
+  try{ document.execCommand('copy'); } catch(e){}
   document.body.removeChild(ta);
-  showToast('Tersalin ke clipboard');
+}
+
+function copySnippet(boxId){
+  const el = document.getElementById(boxId);
+  if(!el) return;
+  copyText(el.textContent, 'Kode disalin ke clipboard');
+}
+
+function copyResponse(){
+  const el = document.getElementById('pgResponseCode');
+  if(!el) return;
+  copyText(el.dataset.imageInfo || el.textContent, 'Respon disalin ke clipboard');
+}
+
+function copyBaseUrl(){
+  const el = document.getElementById('baseUrlText');
+  if(!el) return;
+  copyText(el.textContent, 'Base URL disalin');
 }
 
 function showToast(msg){
@@ -2064,39 +3170,155 @@ function showToast(msg){
   toastMsg.textContent = msg;
   toast.classList.add('show');
   clearTimeout(window.__toastTimer);
-  window.__toastTimer = setTimeout(() => {
+  window.__toastTimer = setTimeout(function(){
     toast.classList.remove('show');
   }, 2200);
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  const origin = window.location.origin;
-  if(origin && !origin.includes('file:')){
-    const baseUrlEl = document.getElementById('baseUrlText');
-    if(baseUrlEl){
-      baseUrlEl.textContent = origin + '/api';
+/* =========================================================
+   8. Pencarian endpoint
+   ========================================================= */
+function filterDocs(query){
+  const q = String(query || '').toLowerCase().trim();
+  const sections = document.querySelectorAll('.section-card');
+  const links = document.querySelectorAll('#tocLinks .toc-link');
+  const groups = document.querySelectorAll('#tocLinks .toc-group-title');
+  const empty = document.getElementById('docsEmpty');
+  let visible = 0;
+
+  sections.forEach(function(sec){
+    const title = sec.querySelector('.section-title');
+    const hay = [
+      sec.id,
+      sec.getAttribute('data-keywords') || '',
+      title ? title.textContent : ''
+    ].join(' ').toLowerCase();
+    const match = !q || hay.indexOf(q) !== -1;
+    sec.style.display = match ? '' : 'none';
+    if(match) visible++;
+  });
+
+  links.forEach(function(link){
+    const hay = (link.getAttribute('data-title') || '') + ' ' + link.textContent;
+    link.style.display = (!q || hay.toLowerCase().indexOf(q) !== -1) ? '' : 'none';
+  });
+
+  // sembunyikan judul grup yang semua anaknya hilang
+  groups.forEach(function(g){
+    let node = g.nextElementSibling, any = false;
+    while(node && node.classList && node.classList.contains('toc-link')){
+      if(node.style.display !== 'none'){ any = true; break; }
+      node = node.nextElementSibling;
     }
+    g.style.display = any ? '' : 'none';
+  });
+
+  if(empty) empty.classList.toggle('show', visible === 0);
+}
+
+/* =========================================================
+   9. Navigasi: scroll spy, smooth scroll, shortcut
+   ========================================================= */
+function navOffset(){
+  const nav = document.querySelector('.top-navbar');
+  return (nav ? nav.offsetHeight : 68) + 22;
+}
+
+function smoothScrollTo(id){
+  const el = document.getElementById(id);
+  if(!el) return;
+  const top = el.getBoundingClientRect().top + window.pageYOffset - navOffset();
+  window.scrollTo({ top: top, behavior: 'smooth' });
+  history.replaceState(null, '', '#' + id);
+}
+
+function scrollToTop(){
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function initNav(){
+  const sections = Array.prototype.slice.call(document.querySelectorAll('.section-card'));
+  const links = Array.prototype.slice.call(document.querySelectorAll('#tocLinks .toc-link'));
+
+  links.forEach(function(link){
+    link.addEventListener('click', function(e){
+      const id = link.getAttribute('href').slice(1);
+      const el = document.getElementById(id);
+      if(!el) return;
+      e.preventDefault();
+      smoothScrollTo(id);
+    });
+  });
+
+  let raf = null;
+  function spy(){
+    raf = null;
+    const line = window.pageYOffset + navOffset() + 8;
+    let current = sections[0];
+    sections.forEach(function(sec){
+      if(sec.style.display === 'none') return;
+      const top = sec.getBoundingClientRect().top + window.pageYOffset;
+      if(top <= line) current = sec;
+    });
+    links.forEach(function(link){
+      link.classList.toggle('active', current && link.getAttribute('href') === '#' + current.id);
+    });
   }
 
-  const sections = document.querySelectorAll('.section-card');
-  const navLinks = document.querySelectorAll('.toc-link');
-
-  window.addEventListener('scroll', () => {
-    let current = '';
-    sections.forEach(sec => {
-      const top = sec.offsetTop - 120;
-      if(window.pageYOffset >= top){
-        current = sec.getAttribute('id');
-      }
-    });
-
-    navLinks.forEach(link => {
-      link.classList.remove('active');
-      if(link.getAttribute('href') === '#' + current){
-        link.classList.add('active');
-      }
-    });
+  window.addEventListener('scroll', function(){
+    if(raf === null) raf = requestAnimationFrame(spy);
   }, { passive: true });
+
+  window.addEventListener('resize', function(){
+    if(raf === null) raf = requestAnimationFrame(spy);
+  });
+
+  const btnTop = document.getElementById('btnTop');
+  window.addEventListener('scroll', function(){
+    if(!btnTop) return;
+    btnTop.classList.toggle('show', window.pageYOffset > 600);
+  }, { passive: true });
+
+  const search = document.getElementById('endpointSearch');
+  document.addEventListener('keydown', function(e){
+    const typing = /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName);
+    if((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k'){
+      e.preventDefault();
+      if(search){ search.focus(); search.select(); }
+      return;
+    }
+    if(e.key === '/' && !typing){
+      e.preventDefault();
+      if(search) search.focus();
+      return;
+    }
+    if(e.key === 'Escape' && search && document.activeElement === search){
+      search.value = '';
+      filterDocs('');
+      search.blur();
+    }
+  });
+
+  spy();
+}
+
+/* =========================================================
+   10. Init
+   ========================================================= */
+document.addEventListener('DOMContentLoaded', function(){
+  const baseEl = document.getElementById('baseUrlText');
+  if(baseEl) baseEl.textContent = BASE;
+
+  ['dl', 'stream', 'health', 'profile', 'iqc', 'iqc2'].forEach(renderSection);
+
+  loadPlayground();
+  handleMethodChange();
+  initNav();
+
+  const epInput = document.getElementById('pgEndpoint');
+  const bodyInput = document.getElementById('pgBody');
+  if(epInput)  epInput.addEventListener('change', savePlayground);
+  if(bodyInput) bodyInput.addEventListener('change', savePlayground);
 });
 </script>
 </body>
