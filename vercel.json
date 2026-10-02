@@ -2,6 +2,22 @@
   "version": 2,
   "rewrites": [
     {
+      "source": "/iqc3",
+      "destination": "/api/iqc3"
+    },
+    {
+      "source": "/iqc3/",
+      "destination": "/api/iqc3"
+    },
+    {
+      "source": "/api/iqc3/",
+      "destination": "/api/iqc3"
+    },
+    {
+      "source": "/app3",
+      "destination": "/app3.html"
+    },
+    {
       "source": "/iqc",
       "destination": "/api/iqc"
     },
@@ -80,7 +96,7 @@
   ],
   "functions": {
     "api/index.js": {
-      "excludeFiles": "{api/iqc*.js,api/_template*.html,src/services/iqc-runtime.js,node_modules/@sparticuz/chromium/**,node_modules/puppeteer-core/**,node_modules/@puppeteer/browsers/**}"
+      "excludeFiles": "{api/iqc*.js,api/_template*.html,api/iqc3-assets/**,src/services/iqc-runtime.js,node_modules/@sparticuz/chromium/**,node_modules/puppeteer-core/**,node_modules/@puppeteer/browsers/**}"
     },
     "api/iqc.js": {
       "includeFiles": "{api/_template*.html,node_modules/@sparticuz/chromium/bin/*.br}",
@@ -89,6 +105,11 @@
     },
     "api/iqc2.js": {
       "includeFiles": "{api/_template*.html,node_modules/@sparticuz/chromium/bin/*.br}",
+      "memory": 2048,
+      "maxDuration": 60
+    },
+    "api/iqc3.js": {
+      "includeFiles": "{api/_template*.html,api/iqc3-assets/**,node_modules/@sparticuz/chromium/bin/*.br}",
       "memory": 2048,
       "maxDuration": 60
     }

@@ -6,7 +6,8 @@
     "start": "node scripts/run-node.js server.js",
     "dev": "node scripts/run-node.js server.js",
     "test:iqc": "node scripts/run-node.js scripts/verify-iqc.js",
-    "test:iqc:runtime": "node scripts/run-node.js scripts/verify-iqc-runtime.js"
+    "test:iqc:runtime": "node scripts/run-node.js scripts/verify-iqc-runtime.js",
+    "test:iqc3": "node scripts/run-node.js scripts/verify-iqc3.js"
   },
   "dependencies": {
     "@raihan07/vidly": "^13.0.2",

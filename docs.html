@@ -1293,7 +1293,7 @@ svg{ display: block; flex-shrink: 0; }
       <div class="toc-card">
         <div class="toc-header">
           <span>Daftar Endpoint</span>
-          <span class="toc-count">6</span>
+          <span class="toc-count">7</span>
         </div>
         <nav class="toc-links" id="tocLinks">
           <span class="toc-group-title">Playground</span>
@@ -1327,6 +1327,10 @@ svg{ display: block; flex-shrink: 0; }
           <a href="#ep-iqc2" class="toc-link" data-title="/iqc2 menu konteks whatsapp quote card name v2">
             <span class="toc-link-label">/iqc2</span>
             <span class="method-tag method-get">GET</span>
+          </a>
+
+          <a href="#ep-iqc3" class="toc-link" data-title="/iqc3 imessage music lirik gradient solid artist warna">
+            <span class="toc-link-label">/iqc3</span><span class="method-tag method-get">GET</span>
           </a>
 
           <span class="toc-group-title">Referensi</span>
@@ -1403,6 +1407,7 @@ svg{ display: block; flex-shrink: 0; }
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a4 4 0 0 1-4 4H7l-4 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"></path><path d="M8 8h8M8 12h5"></path></svg>
                   <span>IQC · WhatsApp</span>
                 </button>
+                <button type="button" class="preset-btn" onclick="applyPreset('iqc3')"><span>IQC3 · Music</span></button>
               </div>
             </div>
 
@@ -2139,6 +2144,118 @@ svg{ display: block; flex-shrink: 0; }
                 </button>
               </div>
               <div class="code-snippet-box scroller"><pre id="iqc2ResBox"></pre></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ /iqc3 ============ -->
+      <section class="section-card endpoint" id="ep-iqc3" data-keywords="/iqc3 imessage apple music lirik lyrics gradient solid artist lagu warna foto">
+        <div class="section-head">
+          <div class="section-title-wrap">
+            <span class="method-tag method-get">GET</span>
+            <h2 class="section-title">/iqc3</h2>
+            <button class="btn-icon-copy" type="button" title="Salin path endpoint" aria-label="Salin path endpoint" onclick="copyText('/iqc3', 'Path endpoint disalin')">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            </button>
+          </div>
+          <div class="section-actions">
+            <button type="button" class="btn-try-ep" onclick="setupPlayground('GET', '/iqc3?pesan=halo')">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+              <span>Uji di Playground</span>
+            </button>
+            <span class="endpoint-badge">iMessage · Music JPG</span>
+          </div>
+        </div>
+
+        <p class="section-desc">
+          Quote <strong>iMessage × Apple Music</strong> dari foto referensi: lirik, nama musik, artis, gradient/solid, dan waktu bisa diubah. Tanpa parameter, hasil memakai <strong>foto asli yang identik</strong>. Setelah diedit, tinggi kartu dan gambar mengikuti teks secara otomatis.
+        </p>
+
+        <div class="ep-grid">
+          <div class="ep-col">
+            <div class="ep-block">
+              <h3 class="block-title">Query Parameters</h3>
+              <div class="table-wrap scroller">
+                <table class="doc-table">
+                  <thead>
+                    <tr><th>Parameter</th><th>Tipe</th><th>Keterangan</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr><td><span class="param-name">lirik</span><span class="param-badge param-opt">Opsional</span></td><td><span class="param-type">string</span></td><td>Isi lirik/pesan, maksimal 1000 karakter. Baris baru didukung. Alias: <code>lyrics</code> / <code>pesan</code>.</td></tr>
+                    <tr><td><span class="param-name">music</span><span class="param-badge param-opt">Opsional</span></td><td><span class="param-type">string</span></td><td>Nama musik, maksimal 100 karakter. Default <code>Good Days</code>. Alias: <code>judul</code> / <code>title</code> / <code>lagu</code>.</td></tr>
+                    <tr><td><span class="param-name">artist</span><span class="param-badge param-opt">Opsional</span></td><td><span class="param-type">string</span></td><td>Nama artis, maksimal 100 karakter. Default <code>SZA</code>. Alias: <code>artis</code>.</td></tr>
+                    <tr><td><span class="param-name">bg</span><span class="param-badge param-opt">Opsional</span></td><td><span class="param-type">string</span></td><td><code>gradient</code> (default) atau <code>solid</code>. Yang diubah adalah latar kartu lirik, bukan latar layar blur.</td></tr>
+                    <tr><td><span class="param-name">color1 / color2</span><span class="param-badge param-opt">Opsional</span></td><td><span class="param-type">hex</span></td><td>Dua warna gradient. Gunakan enam digit hex, mis. <code>2e617b</code> dan <code>312553</code>; tanda # boleh digunakan jika di-URL-encode.</td></tr>
+                    <tr><td><span class="param-name">color</span><span class="param-badge param-opt">Opsional</span></td><td><span class="param-type">hex</span></td><td>Warna untuk mode solid, mis. <code>1f4260</code>.</td></tr>
+                    <tr><td><span class="param-name">angle</span><span class="param-badge param-opt">Opsional</span></td><td><span class="param-type">number</span></td><td>Arah gradient 0–360 derajat, default <code>135</code>.</td></tr>
+                    <tr><td><span class="param-name">time</span><span class="param-badge param-opt">Opsional</span></td><td><span class="param-type">string</span></td><td>Label waktu di kartu (maks. 10 karakter), default <code>0:03</code>.</td></tr>
+                    <tr><td><span class="param-name">html</span><span class="param-badge param-opt">Opsional</span></td><td><span class="param-type">string</span></td><td><code>1</code> untuk template HTML/pratinjau. Kosongkan untuk foto JPG.</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="chip-row"><span class="chip">736 px lebar</span><span class="chip">tinggi otomatis</span><span class="chip">gradient / solid</span><span class="chip">foto referensi</span></div>
+            </div>
+
+            <div class="ep-block">
+              <h3 class="block-title">Respons</h3>
+              <p class="block-note">
+                Sukses membalas <code>image/jpeg</code>, lebar <code>736</code> px, tinggi minimal <code>1308</code> px. Teks panjang memperbesar tinggi hasil tanpa dipotong. Jika gagal, respons berupa JSON dengan status 500.
+              </p>
+              <div class="table-wrap scroller">
+                <table class="doc-table">
+                  <thead>
+                    <tr><th>Header</th><th>Nilai</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr><td><span class="param-name">Content-Type</span></td><td><span class="param-type">image/jpeg</span></td></tr>
+                    <tr><td><span class="param-name">Cache-Control</span></td><td><span class="param-type">no-store</span> — browser/CDN tidak menyimpan respons, termasuk saat memakai <code>seed</code></td></tr>
+                    <tr><td><span class="param-name">X-Content-Type-Options</span></td><td><span class="param-type">nosniff</span></td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <ul class="note-list">
+                <li>Default menggunakan JPEG asli, bukan menggambar ulang font/ikon. Setelah teks atau warna diubah, komponennya dirender dinamis mengikuti layout foto.</li>
+                <li>Reaksi dan menu memakai asset dari foto referensi. Judul/artis panjang dapat membungkus ke beberapa baris.</li>
+                <li>Untuk <code>#2e617b</code>, tulis <code>%232e617b</code> di URL atau gunakan <code>URLSearchParams</code>. Lebih praktis memakai hex tanpa tanda #.</li>
+                <li>Alias <code>/api/iqc3</code>. Buka <a href="/app3">editor IQC3</a> untuk pratinjau langsung, pemilih warna, dan unduh JPG.</li>
+                <li>Gambar statis: tombol play dan nama musik tidak memutar audio. Kode kegagalan aman ada pada header <code>X-IQC-Error-Code</code>.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="ep-col ep-col-code scroller">
+            <div class="code-card">
+              <div class="code-tabs-head">
+                <div class="code-tab-buttons">
+                  <span class="code-tab-label">Request</span>
+                  <button type="button" class="code-tab-btn active" onclick="switchTab('iqc3','code','curl',this)">cURL</button>
+                  <button type="button" class="code-tab-btn" onclick="switchTab('iqc3','code','javascript',this)">JavaScript</button>
+                  <button type="button" class="code-tab-btn" onclick="switchTab('iqc3','code','python',this)">Python</button>
+                  <button type="button" class="code-tab-btn" onclick="switchTab('iqc3','code','php',this)">PHP</button>
+                  <button type="button" class="code-tab-btn" onclick="switchTab('iqc3','code','go',this)">Go</button>
+                </div>
+                <button type="button" class="btn-copy-code" onclick="copySnippet('iqc3CodeBox')">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                  <span>Salin</span>
+                </button>
+              </div>
+              <div class="code-snippet-box scroller"><pre id="iqc3CodeBox"></pre></div>
+            </div>
+
+            <div class="code-card code-card-response">
+              <div class="code-tabs-head">
+                <div class="code-tab-buttons">
+                  <span class="code-tab-label">Response</span>
+                  <button type="button" class="code-tab-btn active" onclick="switchTab('iqc3','res','200',this)">200 JPG</button>
+                  <button type="button" class="code-tab-btn" onclick="switchTab('iqc3','res','500',this)">500</button>
+                </div>
+                <button type="button" class="btn-copy-code" onclick="copySnippet('iqc3ResBox')">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                  <span>Salin</span>
+                </button>
+              </div>
+              <div class="code-snippet-box scroller"><pre id="iqc3ResBox"></pre></div>
             </div>
           </div>
         </div>
@@ -2891,6 +3008,10 @@ const tabState = {
   iqc2:   { code:'curl', res:'200' }
 };
 
+snippets.iqc3 = {"curl": "# Default: foto asli identik dengan referensi\ncurl \"{{ORIGIN}}/iqc3\" -o quote3.jpg\n\n# Lirik/musik/artis, gradient dua warna\ncurl --get \"{{ORIGIN}}/iqc3\" \\\n  --data-urlencode \"lirik=Langit sore dan lagu favorit kita.\" \\\n  --data-urlencode \"music=Good Days\" \\\n  --data-urlencode \"artist=SZA\" \\\n  --data \"bg=gradient&color1=2e617b&color2=312553&angle=135\" \\\n  -o quote3.jpg\n\n# Solid: bg=solid&color=1f4260", "javascript": "const q = new URLSearchParams({\n  lirik: \"Langit sore dan lagu favorit kita.\",\n  music: \"Good Days\", artist: \"SZA\",\n  bg: \"gradient\", color1: \"#2e617b\", color2: \"#312553\"\n});\nconst url = \"{{ORIGIN}}/iqc3?\" + q;\ndocument.querySelector(\"#hasil\").src = url;\nconst blob = await fetch(url).then(r => r.blob());", "python": "import requests\nres = requests.get(\"{{ORIGIN}}/iqc3\", params={\n    \"lirik\": \"Langit sore dan lagu favorit kita.\",\n    \"music\": \"Good Days\", \"artist\": \"SZA\",\n    \"bg\": \"solid\", \"color\": \"#1f4260\",\n}, timeout=60)\nres.raise_for_status()\nopen(\"quote3.jpg\", \"wb\").write(res.content)", "php": "<?php\n$q = http_build_query([\n  \"lirik\" => \"Langit sore dan lagu favorit kita.\",\n  \"music\" => \"Good Days\", \"artist\" => \"SZA\",\n  \"bg\" => \"solid\", \"color\" => \"#1f4260\",\n]);\nfile_put_contents(\"quote3.jpg\", file_get_contents(\"{{ORIGIN}}/iqc3?\" . $q));", "go": "package main\nimport (\"io\"; \"net/http\"; \"net/url\"; \"os\")\nfunc main() {\n  q := url.Values{}\n  q.Set(\"lirik\", \"Langit sore dan lagu favorit kita.\")\n  q.Set(\"music\", \"Good Days\")\n  q.Set(\"artist\", \"SZA\")\n  q.Set(\"bg\", \"solid\")\n  q.Set(\"color\", \"#1f4260\")\n  res, err := http.Get(\"{{ORIGIN}}/iqc3?\" + q.Encode())\n  if err != nil { panic(err) }\n  defer res.Body.Close()\n  f, _ := os.Create(\"quote3.jpg\")\n  defer f.Close()\n  io.Copy(f, res.Body)\n}"};
+responses.iqc3 = {"200": "HTTP/1.1 200 OK\nContent-Type: image/jpeg\nX-IQC-Variant: 3\nX-IQC-Source: reference-photo / dynamic-render\nCache-Control: no-store\n\n<JPG lebar 736 px; tinggi mengikuti panjang teks>", "500": "{\n  \"status\": \"error\",\n  \"code\": 500,\n  \"message\": \"Gagal membuat IQC3\",\n  \"error\": \"RENDER_FAILED\"\n}"};
+tabState.iqc3 = {code:"curl",res:"200"};
+
 function fill(tpl){
   return String(tpl)
     .replace(/\{\{BASE\}\}/g, BASE)
@@ -2937,7 +3058,8 @@ const presets = {
   health:          { method:'GET',  endpoint:'/api/health',  body:null },
   profile:         { method:'GET',  endpoint:'/api/profile', body:null },
   iqc:             { method:'GET',  endpoint:'/iqc?pesan=halo%20%F0%9F%92%95&mode=light&seed=42', body:null },
-  iqc2:            { method:'GET',  endpoint:'/iqc2?pesan=halo%20ges&name=Denji&mode=dark&seed=42', body:null }
+  iqc2:            { method:'GET',  endpoint:'/iqc2?pesan=halo%20ges&name=Denji&mode=dark&seed=42', body:null },
+  iqc3:            { method:'GET',  endpoint:'/iqc3', body:null }
 };
 
 const PG_KEY = 'denjiDocsPlayground';
@@ -3064,7 +3186,7 @@ async function executePlayground(e){
       const download = document.createElement('a');
       download.className = 'res-download';
       download.href = pgImageURL;
-      download.download = /\/iqc2(?:[/?]|$)|[?&]v2=1(?:&|$)/.test(endpoint) ? 'quote2.jpg' : 'quote.jpg';
+      download.download = /\/iqc3(?:[/?]|$)/.test(endpoint) ? 'quote3.jpg' : /\/iqc2(?:[/?]|$)|[?&]v2=1(?:&|$)/.test(endpoint) ? 'quote2.jpg' : 'quote.jpg';
       download.textContent = 'Unduh JPG';
 
       responsePre.replaceChildren(img, note, download);
@@ -3117,7 +3239,7 @@ function copyAsCurl(){
   if(method !== 'GET' && bodyText){
     cmd += ' \\\n  -H "Content-Type: application/json" \\\n  -d \'' + bodyText.replace(/\n\s*/g, ' ') + '\'';
   }
-  if(/\/(?:api\/)?iqc2?(?:[/?]|$)/.test(url)) cmd += ' -o quote.jpg';
+  if(/\/(?:api\/)?iqc[23]?(?:[/?]|$)/.test(url)) cmd += ' -o quote.jpg';
   copyText(cmd, 'Perintah cURL disalin');
 }
 
@@ -3310,7 +3432,7 @@ document.addEventListener('DOMContentLoaded', function(){
   const baseEl = document.getElementById('baseUrlText');
   if(baseEl) baseEl.textContent = BASE;
 
-  ['dl', 'stream', 'health', 'profile', 'iqc', 'iqc2'].forEach(renderSection);
+  ['dl', 'stream', 'health', 'profile', 'iqc', 'iqc2', 'iqc3'].forEach(renderSection);
 
   loadPlayground();
   handleMethodChange();

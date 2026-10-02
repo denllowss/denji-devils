@@ -15,6 +15,7 @@ const { downloadVideo } = require('./src/services/video');
    agar fungsi API yang lain tetap ringan.
    ------------------------------------------------------------------ */
 const IQC_PATH = path.join(__dirname, 'api', 'iqc.js');
+const IQC3_PATH = path.join(__dirname, 'api', 'iqc3.js');
 let iqcHandler = null;
 
 function loadIqc() {
@@ -193,6 +194,13 @@ app.get('/app', (req, res) => {
 
 /* IQC: /iqc?pesan=halo -> foto JPG 1350x2400, /iqc2 -> versi menu konteks */
 app.get(['/iqc', '/iqc2', '/api/iqc', '/api/iqc2'], handleIqc);
+app.get(['/iqc3', '/api/iqc3'], async (req, res) => {
+  try { await require(IQC3_PATH)(req, res); }
+  catch (error) { console.error('[iqc3]', error.message); if (!res.headersSent) res.status(500).json({status:'error',message:'IQC3 tidak tersedia'}); }
+});
+app.options(['/iqc3', '/api/iqc3'], (req, res) => require(IQC3_PATH)(req, res));
+app.get('/app3', (req, res) => res.sendFile(path.join(__dirname, 'public', 'app3.html')));
+
 
 app.get('/dl', (req, res) => {
   const isJson = (req.headers.accept && req.headers.accept.includes('application/json')) || req.query.json === 'true';

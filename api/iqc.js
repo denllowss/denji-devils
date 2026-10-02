@@ -249,14 +249,21 @@ function getBrowser() {
   return browserPromise;
 }
 
-async function renderJpg(html) {
+async function renderJpg(html, options = {}) {
   const browser = await getBrowser();
   let page;
   try {
     page = await browser.newPage();
+    if (options.width) await page.setViewport({
+      width: options.width, height: options.height || H,
+      deviceScaleFactor: options.scale || SCALE
+    });
 
     // muat dokumen; emoji CDN ditunggu lewat waitForFunction di bawah
     await page.setContent(html, { waitUntil: 'domcontentloaded', timeout: 10000 });
+    if (options.variant === 3) {
+      await page.waitForFunction(() => window.__iqc3Ready === true, { timeout: 7000 });
+    } else {
     // pastikan wallpaper final (render ulang setelah emoji termuat) & emoji bubble siap
     await page.waitForFunction(() => {
       const bg = document.querySelector('.bg');
@@ -273,6 +280,7 @@ async function renderJpg(html) {
         if (typeof window.__renderWallpaper === 'function') window.__renderWallpaper();
       });
     });
+    }
     // font kustom (fraktur/CJK/dll) — dibatasi 4 dtk agar tak menggantung
     await Promise.race([
       page.evaluate(() => document.fonts.ready),
@@ -280,7 +288,8 @@ async function renderJpg(html) {
     ]).catch(() => {});
     await new Promise((r) => setTimeout(r, 120)); // buffer singkat paint akhir
 
-    return await page.screenshot({ type: 'jpeg', quality: 90, fullPage: false });
+    if (options.variant === 3) await page.evaluate(() => window.dispatchEvent(new Event('resize')));
+    return await page.screenshot({ type: 'jpeg', quality: options.quality || 90, fullPage: !!options.fullPage });
   } catch (e) {
     // browser/tab mati (crash, OOM) -> buang instance hangat, request berikutnya launch baru
     const msg = String((e && e.message) || e);
@@ -375,3 +384,6 @@ module.exports = async (req, res) => {
     }
   }
 };
+
+// Renderer bersama, juga dipakai IQC3 tanpa mengubah keluaran IQC/IQC2.
+module.exports.renderImage = renderJpg;

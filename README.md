@@ -31,8 +31,9 @@ Buka `http://localhost:3000`. Port dapat diatur dengan variabel lingkungan `PORT
 | GET | `/api/profile` | JSON profil |
 | GET | `/iqc`, `/api/iqc` | JPG quote Instagram |
 | GET | `/iqc2`, `/api/iqc2` | JPG quote menu konteks WhatsApp |
+| GET | `/iqc3`, `/api/iqc3` | JPG iMessage / Apple Music, lirik dan warna dinamis |
 
-Halaman: `/` (linktree), `/dl` (downloader), `/docs` (dokumentasi + playground), `/app` (editor quote Instagram).
+Halaman: `/` (linktree), `/dl` (downloader), `/docs` (dokumentasi + playground), `/app` (editor quote Instagram), `/app3` (editor musik/lirik IQC3).
 
 ## IQC
 
@@ -99,3 +100,50 @@ Script npm memakai `scripts/run-node.js` agar Node project tidak dibayangi `node
 `@vercel/analytics` dan `@vercel/speed-insights` sudah terpasang. Situs ini bukan Next.js, jadi bootstrap browser berada di `public/js/config.js`, menggunakan API `inject()` dan `injectSpeedInsights()` melalui ESM CDN yang versinya dipatok. Toggle-nya ada pada `ANALITIK`.
 
 Semua halaman, termasuk editor IQC, memuat config tersebut. Contoh komponen `/next` disimpan sebagai komentar untuk migrasi Next.js, bukan dijalankan di HTML statis. Aktifkan Analytics/Speed Insights di dashboard Vercel agar data dikumpulkan. Script pengukuran `/_vercel/...` tersedia pada deployment Vercel. Express lokal membalas stub JS kosong pada dua path SDK agar browser tidak mencoba membaca fallback HTML sebagai JavaScript; tidak ada metrik yang direkam oleh stub.
+
+## IQC3 — iMessage × Apple Music
+
+Uji endpoint setelah server berjalan: `npm run test:iqc3`. Untuk deployment: `BASE_URL=https://domain-anda.vercel.app npm run test:iqc3`.
+
+Berdasarkan foto referensi pengguna. Endpoint `/iqc3` (alias `/api/iqc3`) menghasilkan JPG quote musik iMessage; editor lengkap ada di `/app3`.
+
+- **Default persis foto:** tanpa perubahan parameter, API mengirim JPEG referensi asli, identik byte/piksel. Reaksi dan menu tidak digambar ulang.
+- **Konten dapat diubah:** lirik, nama musik, artis, dan label waktu. Maksimum 1000 karakter lirik, 100 karakter nama lagu/artis.
+- **Tinggi otomatis:** saat teks diubah, kartu musik/menu dan tinggi gambar menyesuaikan. Lebar 736 px, tinggi minimal 1308 px; lirik tidak dipotong secara visual. Hasil bukan selalu rasio 9:16.
+- **Gradient atau solid:** warna diterapkan pada kartu lirik/musik; latar layar blur tetap mengambil foto. Default gradient menggunakan tekstur foto. Warna khusus memakai dua stop gradient atau satu warna solid.
+- Hasil adalah gambar statis, bukan pemutar audio. Teks dinamis memakai font Inter; desain/ikon/latar berasal dari foto. Tidak menjanjikan font iOS dinamis yang identik pixel-per-pixel.
+
+```bash
+# Foto referensi asli
+curl 'http://localhost:3000/iqc3' -o iqc3.jpg
+
+# Teks & gradient khusus
+curl --get 'http://localhost:3000/iqc3' \
+  --data-urlencode 'lirik=Langit sore dan lagu favorit kita.' \
+  --data-urlencode 'music=Good Days' \
+  --data-urlencode 'artist=SZA' \
+  --data 'bg=gradient&color1=2e617b&color2=312553&angle=135' \
+  -o iqc3.jpg
+
+# Latar solid
+curl --get 'http://localhost:3000/iqc3' \
+  --data-urlencode 'lirik=Pesanmu di sini' \
+  --data 'bg=solid&color=1f4260' \
+  -o iqc3-solid.jpg
+```
+
+| Parameter | Perilaku |
+| --- | --- |
+| `lirik` | Lirik/pesan. Alias `lyrics` atau `pesan`. Baris baru didukung; 1000 karakter. |
+| `music` | Nama musik. Default Good Days; alias `judul`, `title`, `lagu`. |
+| `artist` | Artis. Default SZA; alias `artis`. |
+| `bg` | `gradient` (default) atau `solid`. Alias `background`. |
+| `color1`, `color2` | Hex warna gradient, dengan/tanpa `#`. Gunakan URL encoding bila memakai `#`. |
+| `color` | Hex untuk mode solid. |
+| `angle` | Sudut gradient 0–360°, default 135. |
+| `time` | Label waktu, default 0:03, maksimum 10 karakter. |
+| `html` | `1` untuk template preview HTML; selain itu JPG. |
+
+`X-IQC-Variant: 3` dan `X-IQC-Source: reference-photo` / `dynamic-render` membedakan hasil. Error IQC3 berupa JSON + header `X-IQC-Error-Code`; sukses selalu JPG. Semua asset/template dikemas bersama fungsi Vercel; tidak perlu sumber gambar/font eksternal.
+
+Editor `/app3` menyediakan pratinjau browser instan lewat template HTML yang sama. Render server hanya diperlukan saat unduh/buka JPG. `api/iqc3-assets/` berisi JPEG referensi dan asset turunannya dari foto yang diberikan; `_template3.html` menanamkan asset/font sebagai data URI.

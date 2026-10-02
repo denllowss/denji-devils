@@ -36,6 +36,7 @@ const LINK = [
   { judul: "Media Downloader (TikTok & IG)", url: "/dl", gambar: "" },
   { judul: "Dokumentasi API & Playground", url: "/docs", gambar: "" },
   { judul: "IQC — Quote Card IG (JPG)", url: "/app", gambar: "" },
+  { judul: "IQC3 — iMessage Music & Lirik", url: "/app3", gambar: "" },
   { judul: "Channel Wa (koleksi sticker)", url: "https://whatsapp.com/channel/0029VbBDyGpEFeXu4KTwvo08", gambar: "" },
   { judul: "Nomor wa", url: "https://wa.me/18674678687", gambar: "" },
 ];
