@@ -1193,6 +1193,18 @@ svg{ display: block; flex-shrink: 0; }
   .btn-nav{ padding: 8px 10px; }
   .kbd{ display: none; }
 }
+
+/* Form IQC lengkap, tetap menyatu dengan Playground generik. */
+.iqc-lab[hidden],.iqc-learning[hidden],.iqc-lab [hidden],.iqc-response-details[hidden]{display:none!important}
+.iqc-lab{margin-bottom:18px;padding-bottom:18px;border-bottom:1.5px dashed rgba(50,60,31,.3);display:flex;flex-direction:column;gap:12px;min-width:0}
+.iqc-lab-head{display:flex;align-items:center;justify-content:space-between;gap:10px}.iqc-step{font:850 10px var(--font-mono);letter-spacing:1px;color:#667646}.iqc-lab-head h3{font-size:17px;line-height:1.35;margin:4px 0 0;letter-spacing:-.4px}.iqc-output-tag{font:800 10px var(--font-mono);border:1px solid var(--line);border-radius:7px;padding:4px 7px;background:#eff5d5;white-space:nowrap}
+.iqc-variants{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.iqc-variants button{display:flex;flex-direction:column;gap:2px;text-align:left;padding:9px 8px;border:1.5px solid var(--line);border-radius:10px;background:#f8faef;min-width:0}.iqc-variants strong{font:850 12px var(--font-mono)}.iqc-variants span{font-size:10px;line-height:1.35;color:#68724e}.iqc-variants button[aria-pressed=true]{background:#d8e8a4;box-shadow:2px 2px 0 var(--line)}
+.iqc-guide{font-size:11px;line-height:1.8;color:#566443;background:#f3f6e6;border-radius:9px;padding:9px 11px;margin:0}.iqc-field{min-width:0;margin-top:3px}.iqc-field label,.iqc-url-head label{display:block;font-size:11.5px;font-weight:850;margin:0 0 6px}.iqc-field code{font:10px var(--font-mono);background:#eef3da;border:1px solid #d1ddae;padding:1px 4px;border-radius:4px;margin-left:3px}.iqc-field input:not([type=range]):not([type=color]),.iqc-field select,.iqc-field textarea{width:100%;min-width:0;border:1.5px solid var(--line);border-radius:9px;padding:9px 10px;background:white;color:#263418;font:12px/1.5 var(--font-body,system-ui,sans-serif);outline:none}.iqc-field textarea{resize:vertical;min-height:96px}.iqc-field input:focus,.iqc-field select:focus,.iqc-field textarea:focus{box-shadow:0 0 0 3px #d8e8a4}.iqc-field input:invalid{border-color:#af3030}.iqc-label-row{display:flex;align-items:center;justify-content:space-between;gap:6px}.iqc-counter{font:10px var(--font-mono);color:#637445;white-space:nowrap}.iqc-help{font-size:10.5px;line-height:1.75;color:#647347;margin:6px 0 0}.iqc-columns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-bottom:8px}.iqc-inline{display:flex;align-items:center;gap:8px}.iqc-inline>input,.iqc-inline>select{flex:1;min-width:0}.iqc-inline>output{min-width:38px;font:11px var(--font-mono);color:#5e6e42}.iqc-dice{background:#e5edc8;border:1.5px solid var(--line);border-radius:9px;padding:8px 12px;font-weight:850;font-size:15px}.iqc-color{display:flex;align-items:center;gap:7px}.iqc-color input[type=color]{width:37px;height:37px;flex:0 0 37px;border:1px solid var(--line);border-radius:7px;padding:3px;background:white}.iqc-color input:not([type=color]){font-family:var(--font-mono)!important;font-size:11px!important}.iqc-format{display:flex;flex-wrap:wrap;gap:6px}.iqc-format button{font-size:10.5px;border:1px solid #b8c797;border-radius:7px;background:#f5f8e9;padding:4px 7px}.iqc-details{border:1px solid #d6dfbc;border-radius:9px;padding:9px 11px;margin:3px 0;background:#fcfdf6}.iqc-details summary,.iqc-code-details summary{font-size:11px;font-weight:850;cursor:pointer}.iqc-details summary:focus-visible{outline:2px solid #667e35;outline-offset:4px}.iqc-state-note{font-size:10.5px;line-height:1.7;color:#627043;padding-left:8px;border-left:3px solid #bdcf81}.iqc-learning{display:flex;flex-direction:column;gap:13px;margin-top:16px;min-width:0}.iqc-url-head{display:flex;align-items:center;justify-content:space-between;gap:8px}.iqc-url-head label{margin:0}.iqc-url{width:100%;font:10.5px/1.75 var(--font-mono);padding:10px;border:1.5px solid #b4c589;border-radius:9px;background:#f8faee;color:#43552c;resize:vertical;overflow-wrap:anywhere;word-break:break-all;min-width:0}.iqc-query-wrap{margin-top:10px;overflow:auto;max-height:250px}.iqc-query{width:100%;border-collapse:collapse;table-layout:fixed;font:10.5px/1.65 var(--font-mono)}.iqc-query th,.iqc-query td{text-align:left;vertical-align:top;padding:6px 7px;border-bottom:1px solid #e2e8cd;overflow-wrap:anywhere;white-space:pre-wrap}.iqc-query th:first-child,.iqc-query td:first-child{width:85px}.iqc-code-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;margin:11px 0 8px}.iqc-language-tabs{display:flex;flex-wrap:wrap;gap:5px}.iqc-language-tabs button{font-size:10px;font-weight:800;padding:5px 7px;border:1px solid #b8c894;border-radius:6px;background:#f4f7e8}.iqc-language-tabs button[aria-pressed=true]{background:#d9e7ae;border-color:var(--line)}.iqc-code-wrap{background:var(--code-bg);border:1.5px solid var(--line);border-radius:10px;padding:12px;max-height:300px;overflow:auto}.iqc-code-wrap pre{font:11px/1.75 var(--font-mono);color:var(--code-text);white-space:pre;margin:0}.iqc-code-details{min-width:0}.iqc-network-note{margin:0;padding-top:8px;border-top:1px solid #dde6c4}
+.iqc-response-details{padding:10px;border:1px solid #d4dfb5;border-radius:10px;background:#f9fbed;min-width:0}.iqc-response-details summary{font-size:11px;font-weight:850;cursor:pointer}.iqc-response-details[open] summary{margin-bottom:10px}.iqc-response-dl{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:6px 12px;font:10.5px/1.65 var(--font-mono);margin:0}.iqc-response-dl dt{color:#65784d}.iqc-response-dl dd{margin:0;overflow-wrap:anywhere;color:#384e26}.iqc-response-dl dd.bad{color:#a72f2f}.res-html{display:block;width:100%;height:680px;border:0;border-radius:10px;background:#050408}.iqc-response-help{font-size:11px;line-height:1.8;color:#6b7756;white-space:normal;margin:8px 0 0}
+#playground[data-iqc] .pg-panel-response{position:sticky;top:84px;max-height:calc(100vh - 110px);overflow:auto}#playground[data-iqc] .response-code-container{max-height:780px}#playground[data-iqc] .res-img{max-height:590px;height:auto;width:auto}#playground[data-iqc] .response-pre{white-space:normal}
+@media(max-width:1350px){#playground[data-iqc] .pg-panel-response{position:static;max-height:none;overflow:visible}}
+@media(max-width:680px){.iqc-lab-head{flex-wrap:wrap}.iqc-columns{gap:8px}.iqc-field label{font-size:10.5px}.iqc-field code{font-size:9px;margin-left:1px}.iqc-variants span{font-size:9px}.iqc-color{gap:4px}.iqc-color input[type=color]{width:32px;flex-basis:32px;height:35px}.iqc-color input:not([type=color]){padding:8px 6px!important}.iqc-url-head{flex-wrap:wrap}.iqc-response-dl{grid-template-columns:minmax(0,.8fr) minmax(0,1.4fr);gap:6px}.res-html{height:550px}#playground[data-iqc] .response-code-container{max-height:690px}.iqc-inline>.btn-res-action{padding:7px;flex-shrink:0}}
+
 </style>
 </head>
 <body>
@@ -1358,11 +1370,11 @@ svg{ display: block; flex-shrink: 0; }
             <span class="method-tag method-live" style="font-size: 12px; padding: 4px 10px;">LIVE</span>
             <h2 class="section-title">Interactive API Playground</h2>
           </div>
-          <span class="endpoint-badge">Realtime Client Tester</span>
+          <span class="endpoint-badge">Request · Parameter · Kode · Hasil</span>
         </div>
 
         <p class="section-desc">
-          Uji seluruh endpoint langsung dari browser tanpa instalasi tambahan. Panel kiri untuk menyusun request, panel kanan menampilkan respon, status, dan waktu eksekusi.
+          Uji seluruh endpoint langsung dari browser tanpa instalasi tambahan. Untuk IQC1, IQC2 dan IQC3 tersedia form seluruh parameter, contoh siap coba, URL otomatis dan kode dalam lima bahasa. Panel kanan menampilkan hasil, status, waktu, ukuran, serta header respons.
         </p>
 
         <div class="pg-grid">
@@ -1412,6 +1424,34 @@ svg{ display: block; flex-shrink: 0; }
             </div>
 
             <form id="playgroundForm" onsubmit="executePlayground(event)">
+              <section id="pgIqcControls" class="iqc-lab" hidden aria-label="Playground lengkap IQC">
+                <div class="iqc-lab-head"><div><span class="iqc-step">PLAYGROUND IQC</span><h3 id="pgIqcTitle">IQC1 · Instagram DM</h3></div><span class="iqc-output-tag" id="pgIqcOutput">JPG</span></div>
+                <div class="iqc-variants" aria-label="Pilih versi IQC">
+                  <button type="button" data-iqc-type="iqc" onclick="pgIqc.select('iqc')" aria-pressed="false"><strong>IQC1</strong><span>Instagram DM</span></button>
+                  <button type="button" data-iqc-type="iqc2" onclick="pgIqc.select('iqc2')" aria-pressed="false"><strong>IQC2</strong><span>WhatsApp</span></button>
+                  <button type="button" data-iqc-type="iqc3" onclick="pgIqc.select('iqc3')" aria-pressed="false"><strong>IQC3</strong><span>Music & lirik</span></button>
+                </div>
+                <p class="iqc-guide">1. Pilih contoh atau isi parameter. 2. Lihat URL dan kode otomatis. 3. Tekan <strong>Kirim</strong> untuk membuat hasil. Mengedit form tidak mengirim request.</p>
+                <div class="iqc-field"><label for="pgIqcPreset">Contoh siap coba</label><div class="iqc-inline"><select id="pgIqcPreset" onchange="pgIqc.preset(this.value)"></select><button type="button" class="btn-res-action" onclick="pgIqc.reset()">Reset</button></div><p class="iqc-help" id="pgIqcPresetHint"></p></div>
+                <div class="iqc-field"><div class="iqc-label-row"><label for="pgIqcText"><span id="pgIqcTextLabel">Pesan</span> <code id="pgIqcTextParam">pesan</code></label><span class="iqc-counter" id="pgIqcCount">0 / 1000</span></div><textarea id="pgIqcText" rows="4" maxlength="1000" placeholder="Tulis teks; Enter untuk baris baru."></textarea><p class="iqc-help" id="pgIqcTextHelp"></p></div>
+                <div class="iqc-format" id="pgIqcFormatting" aria-label="Format pesan"><button type="button" onclick="pgIqc.format('*')" title="*tebal*"><strong>B</strong> Tebal</button><button type="button" onclick="pgIqc.format('_')" title="_miring_"><em>I</em> Miring</button><button type="button" onclick="pgIqc.format('~')" title="~coret~"><s>Coret</s></button><button type="button" onclick="pgIqc.format('`')" title="`kode`">Kode</button></div>
+                <div class="iqc-field" id="pgIqcNameWrap" hidden><label for="pgIqcName">Nama di kartu <code>name</code></label><input id="pgIqcName" maxlength="30" placeholder="Jidar"><p class="iqc-help">Maks. 30 karakter. Kosongkan untuk Jidar. Nama hanya tersedia pada IQC2.</p></div>
+                <div id="pgIqcLegacy">
+                  <div class="iqc-columns"><div class="iqc-field"><label for="pgIqcMode">Tema <code>mode</code></label><select id="pgIqcMode"><option value="">Default</option><option value="light">Terang · light</option><option value="dark">Gelap · dark</option></select></div><div class="iqc-field"><label for="pgIqcSeed">Seed <code>seed</code></label><div class="iqc-inline"><input id="pgIqcSeed" type="number" min="0" max="4294967295" step="1" placeholder="Acak"><button type="button" class="iqc-dice" onclick="pgIqc.randomSeed()" aria-label="Buat seed acak" title="Buat seed acak">↻</button></div></div></div>
+                  <p class="iqc-help" id="pgIqcSeedHelp"></p>
+                </div>
+                <div id="pgIqcMusic" hidden>
+                  <div class="iqc-columns"><div class="iqc-field"><label for="pgIqcSong">Nama musik <code>music</code></label><input id="pgIqcSong" maxlength="100" placeholder="Good Days"></div><div class="iqc-field"><label for="pgIqcArtist">Artis <code>artist</code></label><input id="pgIqcArtist" maxlength="100" placeholder="SZA"></div></div>
+                  <div class="iqc-field"><label for="pgIqcBg">Latar kartu <code>bg</code></label><select id="pgIqcBg"><option value="gradient">Gradient · dua warna</option><option value="solid">Solid · satu warna</option></select><p class="iqc-help">Warna berlaku pada kartu lirik/musik. Latar layar blur tetap dari foto.</p></div>
+                  <div id="pgIqcGradient"><div class="iqc-columns"><div class="iqc-field"><label for="pgIqcHex1">Warna awal <code>color1</code></label><div class="iqc-color"><input type="color" id="pgIqcColor1" aria-label="Pilih warna awal"><input id="pgIqcHex1" maxlength="7" placeholder="#6b6040" aria-label="Hex warna awal" spellcheck="false"></div></div><div class="iqc-field"><label for="pgIqcHex2">Warna akhir <code>color2</code></label><div class="iqc-color"><input type="color" id="pgIqcColor2" aria-label="Pilih warna akhir"><input id="pgIqcHex2" maxlength="7" placeholder="#704600" aria-label="Hex warna akhir" spellcheck="false"></div></div></div><div class="iqc-field"><label for="pgIqcAngle">Arah gradient <code>angle</code></label><div class="iqc-inline"><input id="pgIqcAngle" type="range" min="0" max="360" step="1"><output id="pgIqcAngleValue">135°</output></div></div></div>
+                  <div class="iqc-field" id="pgIqcSolid" hidden><label for="pgIqcHexSolid">Warna solid <code>color</code></label><div class="iqc-color"><input id="pgIqcColor" type="color" aria-label="Pilih warna solid"><input id="pgIqcHexSolid" maxlength="7" placeholder="#66502d" aria-label="Hex warna solid" spellcheck="false"></div></div>
+                  <div class="iqc-columns"><div class="iqc-field"><label for="pgIqcTime">Label waktu <code>time</code></label><input id="pgIqcTime" maxlength="10" placeholder="0:03"></div><div class="iqc-field"><label for="pgIqcFormat">Keluaran <code>html</code></label><select id="pgIqcFormat"><option value="jpg">JPG · gambar</option><option value="html">HTML · template</option></select></div></div>
+                  <p class="iqc-help">Lirik maks. 1000; nama musik/artis maks. 100 karakter. Tinggi JPG menyesuaikan teks. Default menggunakan foto asli. Gambar statis, bukan audio.</p>
+                </div>
+                <details class="iqc-details"><summary>Endpoint & alias</summary><div class="iqc-field"><label for="pgIqcRoute">Rute API</label><select id="pgIqcRoute"></select><p class="iqc-help" id="pgIqcRouteHelp"></p></div></details>
+                <div class="iqc-state-note" id="pgIqcNote" role="status" aria-live="polite">URL siap dikirim.</div>
+              </section>
+
               <div class="request-config">
                 <select id="pgMethod" class="method-select" onchange="handleMethodChange()">
                   <option value="POST">POST</option>
@@ -1435,10 +1475,17 @@ svg{ display: block; flex-shrink: 0; }
   "url": "https://www.tiktok.com/@inidenjiww/video/738291029102"
 }</textarea>
               </div>
+
+              <div id="pgIqcLearning" class="iqc-learning" hidden>
+                <div class="iqc-url-head"><label for="pgIqcUrl">URL request lengkap</label><button type="button" class="btn-res-action" onclick="pgIqc.copyUrl()">Salin URL</button></div><textarea id="pgIqcUrl" class="iqc-url" rows="3" readonly spellcheck="false"></textarea>
+                <details class="iqc-details"><summary>Parameter yang dikirim <span id="pgIqcParamCount"></span></summary><div class="iqc-query-wrap scroller"><table class="iqc-query"><thead><tr><th>Parameter</th><th>Nilai</th></tr></thead><tbody id="pgIqcQuery"></tbody></table></div><p class="iqc-help">Spasi, emoji, baris baru, &amp; dan # di-encode otomatis. Nilai tetap utuh di server. Field yang tidak relevan tidak dikirim.</p></details>
+                <details class="iqc-code-details" open><summary>Contoh kode sesuai isian</summary><div class="iqc-code-head"><div class="iqc-language-tabs" aria-label="Bahasa contoh kode"><button type="button" data-iqc-lang="curl" onclick="pgIqc.language('curl')">cURL</button><button type="button" data-iqc-lang="javascript" onclick="pgIqc.language('javascript')">JavaScript</button><button type="button" data-iqc-lang="python" onclick="pgIqc.language('python')">Python</button><button type="button" data-iqc-lang="php" onclick="pgIqc.language('php')">PHP</button><button type="button" data-iqc-lang="go" onclick="pgIqc.language('go')">Go</button></div><button type="button" class="btn-res-action" onclick="pgIqc.copyCode()">Salin kode</button></div><div class="iqc-code-wrap scroller"><pre id="pgIqcCode"></pre></div></details>
+                <p class="iqc-help iqc-network-note">Kirim hanya saat ingin render. Cold start Chromium bisa beberapa detik. Unduh memakai respons yang sama, tanpa request kedua.</p>
+              </div>
             </form>
           </div>
 
-          <div class="pg-panel">
+          <div class="pg-panel pg-panel-response">
             <div class="panel-head">
               <span class="panel-title">Response</span>
               <div class="response-meta">
@@ -1450,7 +1497,7 @@ svg{ display: block; flex-shrink: 0; }
             <div class="response-actions">
               <button type="button" class="btn-res-action" onclick="copyResponse()">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                <span>Salin JSON</span>
+                <span>Salin info / respons</span>
               </button>
               <button type="button" class="btn-res-action" onclick="copyAsCurl()">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M16 18l6-6-6-6"></path><path d="M8 6l-6 6 6 6"></path></svg>
@@ -1462,8 +1509,9 @@ svg{ display: block; flex-shrink: 0; }
               </button>
             </div>
 
+            <details id="pgResponseDetails" class="iqc-response-details" hidden><summary>Header, ukuran &amp; info respons nyata</summary><dl id="pgResponseInfo" class="iqc-response-dl"></dl></details>
             <div class="response-code-container scroller">
-              <pre id="pgResponseCode" class="response-pre">Tekan tombol Kirim atau pilih salah satu preset di sebelah kiri untuk melihat respon JSON atau gambar JPG.</pre>
+              <pre id="pgResponseCode" class="response-pre">Pilih IQC1, IQC2, atau IQC3 untuk membuka form lengkap. Isi parameter dan tekan Kirim: gambar, unduhan, ukuran, serta header akan muncul di sini. Endpoint lain tetap dapat diuji dengan request manual.</pre>
             </div>
           </div>
         </div>
@@ -2160,7 +2208,7 @@ svg{ display: block; flex-shrink: 0; }
             </button>
           </div>
           <div class="section-actions">
-            <button type="button" class="btn-try-ep" onclick="setupPlayground('GET', '/iqc3?pesan=halo')">
+            <button type="button" class="btn-try-ep" onclick="setupPlayground('GET', '/iqc3')">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
               <span>Uji di Playground</span>
             </button>
@@ -3074,6 +3122,13 @@ window.addEventListener('pagehide', releasePlaygroundImage);
 
 
 function applyPreset(type){
+  if(['iqc','iqc2','iqc3'].includes(type)){
+    pgIqc.select(type);
+    pgIqc.preset(type==='iqc'?'light':type==='iqc2'?'dark':'default');
+    handleMethodChange();
+    showToast('Form lengkap '+type.toUpperCase()+' dibuka');
+    return;
+  }
   const p = presets[type];
   if(!p) return;
   document.getElementById('pgMethod').value = p.method;
@@ -3095,6 +3150,7 @@ function setupPlayground(method, endpoint, bodyObj){
 }
 
 function handleMethodChange(){
+  pgIqc.fromEndpoint();
   const method = document.getElementById('pgMethod').value;
   const bodyWrap = document.getElementById('pgBodyWrap');
   const hint = document.getElementById('pgHint');
@@ -3109,7 +3165,8 @@ function savePlayground(){
     localStorage.setItem(PG_KEY, JSON.stringify({
       method: document.getElementById('pgMethod').value,
       endpoint: document.getElementById('pgEndpoint').value,
-      body: document.getElementById('pgBody').value
+      body: document.getElementById('pgBody').value,
+      iqc: pgIqc.snapshot()
     }));
   } catch(e){}
 }
@@ -3119,107 +3176,107 @@ function loadPlayground(){
     const raw = localStorage.getItem(PG_KEY);
     if(!raw) return;
     const s = JSON.parse(raw);
+    pgIqc.restore(s.iqc);
     if(s.method) document.getElementById('pgMethod').value = s.method;
     if(s.endpoint) document.getElementById('pgEndpoint').value = s.endpoint;
     if(typeof s.body === 'string') document.getElementById('pgBody').value = s.body;
   } catch(e){}
 }
 
+let pgRequestId = 0;
+let pgAbortController = null;
+
+function responseDetails(res, endpoint, size, elapsed){
+  const holder=document.getElementById('pgResponseDetails');
+  const list=document.getElementById('pgResponseInfo');
+  holder.hidden=!pgIqc.info(endpoint);list.replaceChildren();
+  if(holder.hidden)return;
+  function row(label,value,bad){const dt=document.createElement('dt'),dd=document.createElement('dd');dt.textContent=label;dd.textContent=value;if(bad)dd.className='bad';list.append(dt,dd);}
+  row('HTTP',String(res.status),!res.ok);row('Content-Type',res.headers.get('content-type')||'—');
+  for(const header of ['X-IQC-Variant','X-IQC-Renderer','X-IQC-Cache','X-IQC-Source','X-IQC-Error-Code']){
+    const value=res.headers.get(header);if(value)row(header.replace('X-IQC-',''),value,header==='X-IQC-Error-Code');
+  }
+  row('Ukuran file',size+' bytes');row('Waktu',elapsed+' ms');row('URL request',new URL(endpoint,ORIGIN).href);
+  return {row};
+}
+
 async function executePlayground(e){
   e.preventDefault();
-  const method   = document.getElementById('pgMethod').value;
-  const endpoint = document.getElementById('pgEndpoint').value.trim();
-  const bodyText = document.getElementById('pgBody').value.trim();
-
-  const submitBtn   = document.getElementById('pgSubmitBtn');
-  const btnText     = document.getElementById('pgBtnText');
-  const statusBadge = document.getElementById('pgStatusBadge');
-  const timeBadge   = document.getElementById('pgTimeBadge');
-  const responsePre = document.getElementById('pgResponseCode');
-
-  submitBtn.classList.add('loading');
-  btnText.innerHTML = '<div class="spinner"></div> Memproses';
-  statusBadge.className = 'res-status-badge status-idle';
-  statusBadge.textContent = 'Fetching...';
-  timeBadge.textContent = '...';
-  releasePlaygroundImage();
-  responsePre.textContent = 'Menghubungi server...';
-
-  savePlayground();
-
-  const t0 = performance.now();
-
+  pgIqc.fromEndpoint();
+  if(!document.getElementById('playgroundForm').reportValidity())return;
+  const method=document.getElementById('pgMethod').value;
+  const endpoint=document.getElementById('pgEndpoint').value.trim();
+  const bodyText=document.getElementById('pgBody').value.trim();
+  const iqc=pgIqc.info(endpoint);
+  const submitBtn=document.getElementById('pgSubmitBtn'),btnText=document.getElementById('pgBtnText');
+  const statusBadge=document.getElementById('pgStatusBadge'),timeBadge=document.getElementById('pgTimeBadge'),responsePre=document.getElementById('pgResponseCode');
+  if(pgAbortController)pgAbortController.abort();
+  const id=++pgRequestId,controller=new AbortController();pgAbortController=controller;
+  const timeout=setTimeout(()=>controller.abort(),70000);
+  submitBtn.classList.add('loading');submitBtn.disabled=true;
+  btnText.innerHTML='<div class="spinner"></div> Memproses';
+  statusBadge.className='res-status-badge status-idle';statusBadge.textContent='Fetching...';timeBadge.textContent='...';
+  releasePlaygroundImage();responsePre.textContent='Menghubungi server…';
+  document.getElementById('pgResponseDetails').hidden=true;
+  if(iqc)document.getElementById('pgIqcNote').textContent='Render berjalan. Cold start dapat memerlukan beberapa detik.';
+  savePlayground();const t0=performance.now();
   try{
-    const options = { method: method, headers: {} };
-    if(method === 'POST'){
-      options.headers['Content-Type'] = 'application/json';
-      options.body = bodyText;
+    const options={method,headers:{},signal:controller.signal};
+    if(method==='POST'){
+      try{JSON.parse(bodyText);}catch(_){throw new Error('Request body bukan JSON valid. Periksa tanda kutip, koma dan kurung.');}
+      options.headers['Content-Type']='application/json';options.body=bodyText;
     }
-
-    const res  = await fetch(endpoint, options);
-    const ms   = Math.round(performance.now() - t0);
-    const ctype  = res.headers.get('content-type') || '';
-    const isJson = ctype.indexOf('application/json') !== -1;
-    const isImage = ctype.indexOf('image/') === 0;
-
-    timeBadge.textContent = ms + ' ms';
-    statusBadge.textContent = res.status + ' ' + (res.statusText || (res.status === 200 ? 'OK' : 'Error'));
-    statusBadge.className = 'res-status-badge ' + (res.status === 200 ? 'status-200' : 'status-400');
-
-    if(isImage){
-      // Gunakan blob respons yang sama: satu request, tidak merender JPG dua kali.
-      const blob = await res.blob();
-      const elapsed = Math.round(performance.now() - t0);
-      timeBadge.textContent = elapsed + ' ms';
-      const kb = (blob.size / 1024).toFixed(1);
-      pgImageURL = URL.createObjectURL(blob);
-
-      const img = document.createElement('img');
-      img.className = 'res-img';
-      img.src = pgImageURL;
-      img.alt = 'Hasil gambar dari ' + endpoint;
-
-      const note = document.createElement('span');
-      note.className = 'res-note';
-      note.textContent = ctype + ' · ' + kb + ' KB · ' + elapsed + ' ms';
-
-      const download = document.createElement('a');
-      download.className = 'res-download';
-      download.href = pgImageURL;
-      download.download = /\/iqc3(?:[/?]|$)/.test(endpoint) ? 'quote3.jpg' : /\/iqc2(?:[/?]|$)|[?&]v2=1(?:&|$)/.test(endpoint) ? 'quote2.jpg' : 'quote.jpg';
-      download.textContent = 'Unduh JPG';
-
-      responsePre.replaceChildren(img, note, download);
-      responsePre.dataset.imageInfo = 'HTTP ' + res.status + '\nContent-Type: ' + ctype +
-        '\nUkuran: ' + blob.size + ' bytes\nURL: ' + new URL(endpoint, ORIGIN).href;
-    } else {
-      const text = await res.text();
-      if(isJson){
-        try{
-          renderBox('pgResponseCode', JSON.stringify(JSON.parse(text), null, 2), 'json');
-        } catch(err){
-          renderBox('pgResponseCode', text, 'plain');
-        }
-      } else {
-        const preview = text.length > 4000 ? text.slice(0, 4000) + '\n\n... (respons biner / non-JSON dipotong)' : text;
-        renderBox('pgResponseCode', preview, 'plain');
+    const res=await fetch(endpoint,options);
+    if(id!==pgRequestId)return;
+    const ctype=res.headers.get('content-type')||'';
+    statusBadge.textContent=res.status+' '+(res.statusText||(res.ok?'OK':'Error'));
+    statusBadge.className='res-status-badge '+(res.ok?'status-200':'status-400');
+    const htmlPreview=iqc?.type==='iqc3'&&iqc.url.searchParams.get('html')==='1'&&ctype.includes('text/html');
+    if(ctype.startsWith('image/')||htmlPreview){
+      // Pratinjau + unduh memakai SATU respons. Tidak fetch ulang untuk src.
+      const blob=await res.blob();if(id!==pgRequestId)return;
+      const elapsed=Math.round(performance.now()-t0);timeBadge.textContent=elapsed+' ms';
+      pgImageURL=URL.createObjectURL(blob);
+      const detail=responseDetails(res,endpoint,blob.size,elapsed);
+      const view=document.createElement(htmlPreview?'iframe':'img');
+      view.className=htmlPreview?'res-html':'res-img';view.src=pgImageURL;
+      if(htmlPreview){view.setAttribute('sandbox','allow-scripts');view.title='Pratinjau HTML IQC3 terisolasi';}
+      else{
+        view.alt='Hasil request '+new URL(endpoint,ORIGIN).pathname;
+        view.onload=()=>{if(id!==pgRequestId)return;detail?.row('Dimensi',view.naturalWidth+' × '+view.naturalHeight+' px');};
       }
+      const note=document.createElement('span');note.className='res-note';note.textContent=ctype+' · '+(blob.size/1024).toFixed(1)+' KB · '+elapsed+' ms';
+      const download=document.createElement('a');download.className='res-download';download.href=pgImageURL;download.download=pgIqc.filename(iqc);download.textContent=htmlPreview?'Unduh HTML':'Unduh JPG';
+      responsePre.replaceChildren(view,note,download);
+      if(!res.ok){const error=document.createElement('p');error.className='iqc-response-help';error.textContent='Ini gambar fallback, bukan hasil sukses. Periksa status HTTP dan Error-Code pada info respons.';responsePre.append(error);}
+      responsePre.dataset.imageInfo='HTTP '+res.status+'\nContent-Type: '+ctype+'\nUkuran: '+blob.size+' bytes\nURL: '+new URL(endpoint,ORIGIN).href;
+    }else{
+      const text=await res.text();if(id!==pgRequestId)return;
+      const elapsed=Math.round(performance.now()-t0);timeBadge.textContent=elapsed+' ms';responseDetails(res,endpoint,new Blob([text]).size,elapsed);
+      if(ctype.includes('application/json')){try{renderBox('pgResponseCode',JSON.stringify(JSON.parse(text),null,2),'json');}catch(_){renderBox('pgResponseCode',text,'plain');}}
+      else renderBox('pgResponseCode',text.length>4000?text.slice(0,4000)+'\n\n... (respons non-JSON dipotong)':' '+text,'plain');
     }
-  } catch(err){
-    timeBadge.textContent = Math.round(performance.now() - t0) + ' ms';
-    statusBadge.textContent = 'Network Error';
-    statusBadge.className = 'res-status-badge status-500';
-    renderBox('pgResponseCode', JSON.stringify({
-      status: 'error',
-      message: err.message || 'Failed to fetch from server'
-    }, null, 2), 'json');
-  } finally{
-    submitBtn.classList.remove('loading');
-    btnText.textContent = 'Kirim';
+    if(iqc)document.getElementById('pgIqcNote').textContent=res.ok?'Request berhasil. Lihat hasil, header, ukuran dan unduh di panel respons.':'Request gagal. Periksa HTTP dan Error-Code; IQC1/IQC2 bisa mengembalikan gambar fallback.';
+  }catch(err){
+    if(id!==pgRequestId)return;
+    timeBadge.textContent=Math.round(performance.now()-t0)+' ms';statusBadge.textContent=err.name==='AbortError'?'Timeout / dibatalkan':'Request Error';statusBadge.className='res-status-badge status-500';
+    renderBox('pgResponseCode',JSON.stringify({status:'error',message:err.name==='AbortError'?'Request melewati 70 detik atau dibatalkan. Coba lagi.':err.message},null,2),'json');
+    if(iqc)document.getElementById('pgIqcNote').textContent='Gagal mengirim request. Periksa koneksi dan konfigurasi, lalu coba lagi.';
+  }finally{
+    clearTimeout(timeout);
+    if(id===pgRequestId){submitBtn.classList.remove('loading');submitBtn.disabled=false;btnText.textContent='Kirim';pgAbortController=null;}
   }
 }
 
+
 function clearPlayground(){
+  pgRequestId++;
+  if(pgAbortController)pgAbortController.abort();
+  pgAbortController=null;
+  document.getElementById('pgSubmitBtn').classList.remove('loading');
+  document.getElementById('pgSubmitBtn').disabled=false;
+  document.getElementById('pgBtnText').textContent='Kirim';
+  document.getElementById('pgResponseDetails').hidden=true;
   releasePlaygroundImage();
   renderBox('pgResponseCode', 'Respon dibersihkan.', 'plain');
   const statusBadge = document.getElementById('pgStatusBadge');
@@ -3230,6 +3287,9 @@ function clearPlayground(){
 }
 
 function copyAsCurl(){
+  if(pgIqc.info(document.getElementById('pgEndpoint').value.trim())){
+    copyText(pgIqc.generated('curl'),'Perintah cURL disalin');return;
+  }
   const method   = document.getElementById('pgMethod').value;
   const endpoint = document.getElementById('pgEndpoint').value.trim();
   const bodyText = document.getElementById('pgBody').value.trim();
@@ -3242,6 +3302,198 @@ function copyAsCurl(){
   if(/\/(?:api\/)?iqc[23]?(?:[/?]|$)/.test(url)) cmd += ' -o quote.jpg';
   copyText(cmd, 'Perintah cURL disalin');
 }
+
+/* Playground IQC: form -> URL -> contoh kode. Tidak ada auto-fetch. */
+const pgIqc = (function(){
+  const $ = id => document.getElementById(id);
+  const originalLyrics = "I don't regret, just pretend shit never happened";
+  const models = {
+    iqc: {title:'IQC1 · Instagram DM',output:'1350 × 2400 JPG',routes:['/iqc','/api/iqc'],textHelp:'Maks. 1000 karakter. Emoji, baris baru, *tebal*, _miring_, ~coret~, `kode`, daftar dan kutipan didukung.',seedHelp:'Default terang. Seed mengunci wallpaper + baterai dalam menit WIB yang sama; jam tetap berjalan. Kosongkan seed untuk acak.',presets:[
+      {id:'default',name:'Default API',help:'Tanpa parameter: pesan bawaan, tema terang, wallpaper dan baterai acak.',value:{text:'',mode:'',seed:''}},
+      {id:'light',name:'Pesan singkat · terang',help:'Contoh dasar pesan, mode light dan seed 42.',value:{text:'Halo, ini quote pertamaku ❤',mode:'light',seed:'42'}},
+      {id:'dark',name:'Pesan singkat · gelap',help:'Parameter mode=dark memaksa tampilan gelap.',value:{text:'Sampai bertemu lagi 🌙',mode:'dark',seed:'42'}},
+      {id:'multiline',name:'Baris baru & emoji',help:'Enter menjadi baris baru. URLSearchParams mengubahnya menjadi %0A.',value:{text:'Halo, Denji! 💕\nSemoga harimu menyenangkan.\nSampai bertemu lagi ✨',mode:'light',seed:'42'}},
+      {id:'format',name:'Format teks lengkap',help:'Tebal, miring, coret, kode, daftar dan kutipan bisa digabung.',value:{text:'*Tebal* · _miring_ · ~coret~ · `kode`\n- Poin pertama\n- Poin kedua\n1. Langkah satu\n2. Langkah dua\n> Kutipan favorit',mode:'dark',seed:'42'}},
+      {id:'random',name:'Wallpaper & baterai acak',help:'Tanpa seed, hasil dapat berbeda pada setiap request.',value:{text:'Setiap hari punya cerita baru ✨',mode:'light',seed:''}}
+    ]},
+    iqc2: {title:'IQC2 · WhatsApp iOS',output:'1350 × 2400 JPG',routes:['/iqc2','/api/iqc2','/iqc?v2=1','/api/iqc?v2=1'],textHelp:'Maks. 1000 karakter. Format teks sama seperti IQC1. Nama di kartu diatur lewat name.',seedHelp:'Default gelap. Seed mengunci baterai; latar WhatsApp tetap. Jam WIB berjalan, jadi gambar dapat berubah saat menit berganti.',presets:[
+      {id:'default',name:'Default API · Jidar',help:'Tanpa parameter: nama Jidar, tema gelap dan pesan bawaan.',value:{text:'',name:'',mode:'',seed:''}},
+      {id:'dark',name:'Nama Denji · gelap',help:'Contoh lengkap pesan, name, mode dan seed.',value:{text:'Halo ges, ini IQC2 👋',name:'Denji',mode:'dark',seed:'42'}},
+      {id:'light',name:'Nama khusus · terang',help:'Nama bisa diubah, maksimal 30 karakter.',value:{text:'Pesanmu layak diingat ❤',name:'Sahabat',mode:'light',seed:'42'}},
+      {id:'multiline',name:'Nama + baris baru + emoji',help:'Gabungkan name dengan pesan multibaris dan emoji.',value:{text:'Halo, Denji! 💕\nJangan lupa istirahat.\nKamu sudah berusaha hari ini ✨',name:'Denji',mode:'dark',seed:'42'}},
+      {id:'format',name:'Format teks & daftar',help:'Format WhatsApp: *tebal*, _miring_, ~coret~, kode dan daftar.',value:{text:'*Catatan hari ini*\n- Minum air\n- _Istirahat cukup_\n> Pelan-pelan juga sampai.',name:'Denji',mode:'dark',seed:'42'}},
+      {id:'alias',name:'Alias /iqc?v2=1',help:'v2=1 pada /iqc menghasilkan IQC2; seluruh field IQC2 tetap tersedia.',value:{route:'/iqc?v2=1',text:'Versi WhatsApp lewat alias v2=1',name:'Denji',mode:'dark',seed:'42'}}
+    ]},
+    iqc3: {title:'IQC3 · iMessage Music',output:'736 px · tinggi otomatis',routes:['/iqc3','/api/iqc3'],textHelp:'Maks. 1000 karakter. Lirik berupa teks biasa (bukan markup WhatsApp). Baris baru didukung; tinggi gambar mengikuti teks.',presets:[
+      {id:'default',name:'Foto referensi · persis',help:'Nilai default sama dengan foto asli; hasil JPEG identik dengan referensi.',value:{}},
+      {id:'gradient',name:'Gradient biru–ungu',help:'Latar gradient memakai color1, color2 dan angle. Musik/artis ikut berubah.',value:{text:'Langit sore dan lagu favorit kita.',music:'Blue Hour',artist:'Denji',bg:'gradient',color1:'#2e617b',color2:'#312553',angle:'135'}},
+      {id:'solid',name:'Warna solid',help:'bg=solid menggunakan color. Field gradient tidak dikirim.',value:{text:'Pesanmu di sini.',music:'Our Song',artist:'Denji',bg:'solid',color:'#1f4260'}},
+      {id:'long',name:'Lirik panjang · tinggi otomatis',help:'Kartu dan posisi menu bertambah tinggi; lirik tidak dipotong secara visual.',value:{text:'Ada lagu yang selalu mengingatkanku padamu.\n\n'+('Di antara hari yang ramai, suara kita masih menemukan jalan pulang. '.repeat(8)),music:'Our Song',artist:'Denji',bg:'gradient',color1:'#6b6040',color2:'#704600'}},
+      {id:'metadata',name:'Nama lagu, artis & waktu',help:'music, artist dan time mengganti label di kartu.',value:{text:'Bagian favorit dari sebuah cerita.',music:'Cerita Kita',artist:'Nama Artismu',time:'1:24',bg:'gradient',color1:'#8a4161',color2:'#34315c',angle:'90'}},
+      {id:'html',name:'Template HTML',help:'html=1 menghasilkan template HTML, bukan JPG. Pratinjau dibuka terisolasi.',value:{format:'html',text:'Pratinjau template yang sama dengan renderer JPG.',music:'Good Days',artist:'SZA'}}
+    ]}
+  };
+  const forms = {};
+  let active=null,lang='curl',currentCode='',timer;
+  function defaults(type){return {route:models[type].routes[0],text:type==='iqc3'?originalLyrics:'',name:'',mode:'',seed:'',music:'Good Days',artist:'SZA',time:'0:03',bg:'gradient',color1:'#6b6040',color2:'#704600',color:'#66502d',angle:'135',format:'jpg',preset:'custom',extra:[]};}
+  function info(endpoint){
+    try{
+      const url=new URL(endpoint,ORIGIN),m=url.pathname.match(/^\/(?:api\/)?iqc([23])?\/?$/);
+      if(!m)return null;
+      const type=m[1]==='3'?'iqc3':m[1]==='2'||url.searchParams.get('v2')==='1'?'iqc2':'iqc';
+      let route=url.pathname.replace(/\/$/,'');
+      if(type==='iqc2'&&!m[1])route+='?v2=1';
+      return {type,url,route};
+    }catch(e){return null;}
+  }
+  function color(value,fallback){const v=String(value||'').replace(/^#/,'');return /^[\da-f]{6}$/i.test(v)?'#'+v.toLowerCase():fallback;}
+  function value(key,fallback,limit){return String(key??fallback).slice(0,limit||1000);}
+  function fromEndpoint(){
+    const i=info($('pgEndpoint').value.trim());
+    $('pgIqcControls').hidden=!i;$('pgIqcLearning').hidden=!i;
+    $('playground').toggleAttribute('data-iqc',!!i);
+    $('pgMethod').disabled=!!i;
+    $('pgIqcControls').querySelectorAll('input,textarea,select').forEach(e=>e.disabled=!i);
+    if(!i){active=null;return;}
+    active=i.type;$('pgMethod').value='GET';
+    const s=defaults(active),q=i.url.searchParams,old=forms[active]||s;s.route=i.route;
+    s.text=value(active==='iqc3'?(q.get('lirik')??q.get('lyrics')??q.get('pesan')):q.get('pesan'),s.text,1000);
+    s.mode=['light','dark'].includes((q.get('mode')||'').toLowerCase())?q.get('mode').toLowerCase():'';
+    s.seed=/^\d+$/.test(q.get('seed')||'')?String(Number(q.get('seed'))>>>0):'';
+    s.name=value(q.get('name'),' ',30).trim();
+    if(active==='iqc3'){
+      s.music=value(q.get('music')??q.get('judul')??q.get('title')??q.get('lagu'),s.music,100);
+      s.artist=value(q.get('artist')??q.get('artis'),s.artist,100);s.time=value(q.get('time'),s.time,10);
+      s.bg=(q.get('bg')||q.get('background'))==='solid'?'solid':'gradient';
+      s.color1=color(q.get('color1'),s.bg==='solid'?old.color1:s.color1);
+      s.color2=color(q.get('color2'),s.bg==='solid'?old.color2:s.color2);
+      s.color=color(q.get('color'),s.bg==='gradient'?old.color:s.color);
+      s.angle=q.has('angle')&&Number.isFinite(Number(q.get('angle')))?String(Math.max(0,Math.min(360,Number(q.get('angle'))))):s.angle;
+      s.format=q.get('html')==='1'?'html':'jpg';
+    }
+    const known=new Set(active==='iqc3'?['lirik','lyrics','pesan','music','judul','title','lagu','artist','artis','time','bg','background','color1','color2','color','angle','html']:['pesan','mode','seed','name','v2']);
+    s.extra=[...q].filter(([key])=>!known.has(key));s.preset=old.preset||'custom';forms[active]=s;
+    paint();learning();
+  }
+  function paint(){
+    if(!active)return;const model=models[active],s=forms[active];
+    $('pgIqcControls').querySelectorAll('input,textarea,select').forEach(e=>e.disabled=false);
+    $('pgIqcTitle').textContent=model.title;$('pgIqcOutput').textContent=model.output;
+    document.querySelectorAll('[data-iqc-type]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.iqcType===active)));
+    $('pgIqcNameWrap').hidden=active!=='iqc2';$('pgIqcLegacy').hidden=active==='iqc3';$('pgIqcMusic').hidden=active!=='iqc3';$('pgIqcFormatting').hidden=active==='iqc3';
+    $('pgIqcTextLabel').textContent=active==='iqc3'?'Lirik / pesan':'Isi pesan';$('pgIqcTextParam').textContent=active==='iqc3'?'lirik':'pesan';$('pgIqcTextHelp').textContent=model.textHelp;
+    $('pgIqcSeedHelp').textContent=model.seedHelp||'';
+    $('pgIqcMode').options[0].textContent=active==='iqc'?'Default · terang':'Default · gelap';
+    const route=$('pgIqcRoute');route.replaceChildren();model.routes.forEach(v=>route.add(new Option(v,v)));
+    if(!model.routes.includes(s.route))route.add(new Option(s.route,s.route));route.value=s.route;
+    $('pgIqcRouteHelp').textContent=active==='iqc2'?'Alias /iqc?v2=1 dan /api/iqc?v2=1 juga menghasilkan WhatsApp. /iqc2 selalu versi 2.':'Rute /api/... adalah alias fungsi serverless; hasilnya sama.';
+    const preset=$('pgIqcPreset');preset.replaceChildren();preset.add(new Option('Isian khusus','custom'));model.presets.forEach(p=>preset.add(new Option(p.name,p.id)));
+    preset.value=s.preset;const p=model.presets.find(p=>p.id===s.preset);$('pgIqcPresetHint').textContent=p?p.help:'Ubah setiap parameter di bawah. URL dan contoh kode mengikuti isian.';
+    const ids={text:'Text',name:'Name',mode:'Mode',seed:'Seed',music:'Song',artist:'Artist',time:'Time',bg:'Bg',angle:'Angle',format:'Format'};
+    Object.entries(ids).forEach(([key,id])=>$('pgIqc'+id).value=s[key]);
+    [['color1','Color1','Hex1'],['color2','Color2','Hex2'],['color','Color','HexSolid']].forEach(([key,picker,hex])=>{$('pgIqc'+picker).value=s[key];$('pgIqc'+hex).value=s[key];$('pgIqc'+hex).setCustomValidity('');});
+    visibility();
+  }
+  function visibility(){
+    const three=active==='iqc3',solid=$('pgIqcBg').value==='solid';
+    $('pgIqcGradient').hidden=solid;$('pgIqcSolid').hidden=!solid;
+    $('pgIqcCount').textContent=$('pgIqcText').value.length+' / 1000';$('pgIqcAngleValue').textContent=$('pgIqcAngle').value+'°';
+    ['Hex1','Hex2','Color1','Color2','Angle'].forEach(id=>$('pgIqc'+id).disabled=!three||solid);
+    ['HexSolid','Color'].forEach(id=>$('pgIqc'+id).disabled=!three||!solid);
+    $('pgIqcSeed').disabled=three;
+  }
+  function read(){
+    const s=forms[active];const ids={text:'Text',name:'Name',mode:'Mode',seed:'Seed',music:'Song',artist:'Artist',time:'Time',bg:'Bg',angle:'Angle',format:'Format',route:'Route'};
+    Object.entries(ids).forEach(([key,id])=>s[key]=$('pgIqc'+id).value);
+    s.color1=$('pgIqcColor1').value;s.color2=$('pgIqcColor2').value;s.color=$('pgIqcColor').value;return s;
+  }
+  function endpoint(s){
+    const url=new URL(s.route,ORIGIN),q=url.searchParams;
+    for(const [key,v] of s.extra||[])q.append(key,v);
+    const text=s.text.trim();if(text)q.set(active==='iqc3'?'lirik':'pesan',text);
+    if(active==='iqc3'){
+      if(s.music.trim())q.set('music',s.music.trim());if(s.artist.trim())q.set('artist',s.artist.trim());if(s.time.trim())q.set('time',s.time.trim());
+      q.set('bg',s.bg);
+      if(s.bg==='solid'){q.set('color',s.color);}else{q.set('color1',s.color1);q.set('color2',s.color2);q.set('angle',s.angle);}
+      if(s.format==='html')q.set('html','1');
+    }else{
+      if(s.mode)q.set('mode',s.mode);if(s.seed!=='')q.set('seed',s.seed);
+      if(active==='iqc2'&&s.name.trim())q.set('name',s.name.trim());
+    }
+    return url.pathname+(q.toString()?'?'+q.toString():'');
+  }
+  function changed(event){
+    if(!active)return;
+    const target=event&&event.target;
+    const links=[['pgIqcColor1','pgIqcHex1'],['pgIqcColor2','pgIqcHex2'],['pgIqcColor','pgIqcHexSolid']];
+    for(const [picker,hex] of links){
+      if(target?.id===picker)$(hex).value=$(picker).value;
+      if(target?.id===hex){const v=color($(hex).value,null);$(hex).setCustomValidity(v?'':'Gunakan 6 digit hex, dengan atau tanpa #.');if(!v)return;$(picker).value=v;}
+    }
+    read();forms[active].preset='custom';$('pgIqcPreset').value='custom';$('pgIqcPresetHint').textContent='Isian khusus. Pilih contoh lagi untuk membandingkan parameter.';
+    visibility();$('pgEndpoint').value=endpoint(forms[active]);learning();savePlayground();
+    $('pgIqcNote').textContent='Parameter berubah. Tekan Kirim untuk hasil baru; belum ada request otomatis.';
+  }
+  function select(type){
+    if(!models[type])return;
+    if(active)read();active=type;forms[type] ||= defaults(type);
+    $('pgMethod').value='GET';$('pgBody').value='';$('pgIqcControls').hidden=false;$('pgIqcLearning').hidden=false;$('pgMethod').disabled=true;$('playground').setAttribute('data-iqc','');
+    paint();$('pgEndpoint').value=endpoint(forms[active]);$('pgBodyWrap').style.display='none';$('pgHint').textContent='GET · parameter form';learning();savePlayground();
+    $('pgIqcNote').textContent='Isi parameter, lalu tekan Kirim. Tidak ada auto-fetch.';
+  }
+  function preset(id){
+    if(!active||id==='custom')return;const p=models[active].presets.find(p=>p.id===id);if(!p)return;
+    forms[active]=Object.assign(defaults(active),p.value,{preset:id});paint();$('pgEndpoint').value=endpoint(forms[active]);learning();savePlayground();$('pgIqcNote').textContent=p.help;
+  }
+  function reset(){preset('default');showToast('Parameter '+models[active].title+' direset');}
+  function randomSeed(){if(!active||active==='iqc3')return;const a=new Uint32Array(1);if(globalThis.crypto?.getRandomValues)crypto.getRandomValues(a);else a[0]=Math.random()*4294967296;$('pgIqcSeed').value=String(a[0]);changed();}
+  function format(mark){
+    const e=$('pgIqcText'),start=e.selectionStart,end=e.selectionEnd,text=e.value.slice(start,end)||'teks';
+    e.setRangeText(mark+text+mark,start,end,'select');if(e.value.length>1000)e.value=e.value.slice(0,1000);e.focus();changed();
+  }
+  function filename(i){return (i?.type==='iqc3'&&i.url.searchParams.get('html')==='1')?'iqc3.html':i?.type==='iqc3'?'iqc3.jpg':i?.type==='iqc2'?'iqc2.jpg':'iqc.jpg';}
+  const shell=s=>"'"+String(s).replace(/'/g,"'\\''")+"'";
+  const php=s=>"'"+String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'")+"'";
+  function generated(language){
+    const i=info($('pgEndpoint').value.trim());if(!i)return '';
+    const url=i.url,entries=[...url.searchParams],baseUrl=url.origin+url.pathname,file=filename(i);
+    if(language==='curl')return '# Sukses: '+(file.endsWith('.html')?'template HTML':'gambar JPG')+'\ncurl --fail --show-error --location '+shell(url.href)+' \\\n  -o '+shell(file);
+    if(language==='javascript'){
+      const params=entries.length===new Set(entries.map(v=>v[0])).size?Object.fromEntries(entries):entries;
+      return 'const params = '+JSON.stringify(params,null,2)+';\nconst url = new URL('+JSON.stringify(baseUrl)+');\nurl.search = new URLSearchParams(params).toString();\n\nconst response = await fetch(url);\nif (!response.ok) throw new Error("HTTP " + response.status);\nconst blob = await response.blob();\nconst fileURL = URL.createObjectURL(blob);\n// '+(file.endsWith('.html')?'Gunakan sebagai src iframe terisolasi.':'Gunakan sebagai src gambar atau tautan unduh.')+'\nconst link = document.createElement("a");\nlink.href = fileURL;\nlink.download = '+JSON.stringify(file)+';\nlink.click();\nsetTimeout(() => URL.revokeObjectURL(fileURL), 30000);';
+    }
+    if(language==='python')return 'import requests\n\nparams = '+JSON.stringify(Object.fromEntries(entries),null,2)+'\nres = requests.get('+JSON.stringify(baseUrl)+', params=params, timeout=70)\nres.raise_for_status()\nwith open('+JSON.stringify(file)+', "wb") as f:\n    f.write(res.content)';
+    if(language==='php')return '<?php\n$params = [\n'+entries.map(([k,v])=>'  '+php(k)+' => '+php(v)+',').join('\n')+'\n];\n$url = '+php(baseUrl)+' . "?" . http_build_query($params);\n$content = file_get_contents($url);\nif ($content === false) throw new Exception("Request gagal");\nfile_put_contents('+php(file)+', $content);';
+    return 'package main\n\nimport (\n  "io"\n  "net/http"\n  "net/url"\n  "os"\n  "time"\n)\n\nfunc main() {\n  q := url.Values{}\n'+entries.map(([k,v])=>'  q.Add('+JSON.stringify(k)+', '+JSON.stringify(v)+')').join('\n')+'\n  client := &http.Client{Timeout: 70 * time.Second}\n  res, err := client.Get('+JSON.stringify(baseUrl)+' + "?" + q.Encode())\n  if err != nil { panic(err) }\n  defer res.Body.Close()\n  if res.StatusCode != 200 { panic(res.Status) }\n  f, err := os.Create('+JSON.stringify(file)+')\n  if err != nil { panic(err) }\n  defer f.Close()\n  if _, err := io.Copy(f, res.Body); err != nil { panic(err) }\n}';
+  }
+  function learning(){
+    const i=info($('pgEndpoint').value.trim());if(!i)return;
+    $('pgIqcUrl').value=i.url.href;
+    const entries=[...i.url.searchParams];$('pgIqcParamCount').textContent='('+entries.length+')';
+    const table=$('pgIqcQuery');table.replaceChildren();
+    if(!entries.length){const tr=document.createElement('tr'),td=document.createElement('td');td.colSpan=2;td.textContent='Tidak ada query — API memakai nilai default.';tr.append(td);table.append(tr);}
+    entries.forEach(([key,v])=>{const row=document.createElement('tr');[key,v].forEach(text=>{const td=document.createElement('td');td.textContent=text;row.append(td);});table.append(row);});
+    currentCode=generated(lang);$('pgIqcCode').innerHTML=highlight(currentCode,LANG_MAP[lang]);
+    document.querySelectorAll('[data-iqc-lang]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.iqcLang===lang)));
+    $('pgBtnText').textContent='Kirim';
+  }
+  function language(v){if(!['curl','javascript','python','php','go'].includes(v))return;lang=v;learning();savePlayground();}
+  function init(){
+    $('pgIqcControls').addEventListener('input',e=>{if(e.target.id==='pgIqcPreset')return;changed(e);});
+    $('pgEndpoint').addEventListener('input',()=>{clearTimeout(timer);timer=setTimeout(()=>{fromEndpoint();savePlayground();},350);});
+    $('pgEndpoint').addEventListener('change',()=>{clearTimeout(timer);fromEndpoint();savePlayground();});
+  }
+  function restore(saved){
+    if(!saved||typeof saved!=='object')return;
+    if(['curl','javascript','python','php','go'].includes(saved.lang))lang=saved.lang;
+    for(const type of Object.keys(models))if(saved.forms?.[type]&&typeof saved.forms[type]==='object'){
+      const s=defaults(type),raw=saved.forms[type];for(const k of Object.keys(s))if(k!=='extra'&&typeof raw[k]==='string')s[k]=raw[k].slice(0,1000);
+      ['color1','color2','color'].forEach(k=>s[k]=color(s[k],defaults(type)[k]));if(!models[type].routes.includes(s.route))s.route=models[type].routes[0];forms[type]=s;
+    }
+  }
+  return {info,select,preset,reset,randomSeed,format,language,fromEndpoint,init,learning,filename,generated,restore,snapshot:()=>({forms,lang}),copyUrl:()=>copyText($('pgIqcUrl').value,'URL lengkap disalin'),copyCode:()=>copyText(currentCode,'Contoh kode disalin')};
+})();
+
 
 /* =========================================================
    7. Clipboard & toast
@@ -3434,8 +3686,15 @@ document.addEventListener('DOMContentLoaded', function(){
 
   ['dl', 'stream', 'health', 'profile', 'iqc', 'iqc2', 'iqc3'].forEach(renderSection);
 
+  pgIqc.init();
   loadPlayground();
   handleMethodChange();
+  const launch = new URLSearchParams(window.location.search);
+  const launchType = launch.get('playground');
+  if(['iqc','iqc2','iqc3'].includes(launchType)){
+    applyPreset(launchType);
+    if(launch.get('preset')) pgIqc.preset(launch.get('preset'));
+  }
   initNav();
 
   const epInput = document.getElementById('pgEndpoint');

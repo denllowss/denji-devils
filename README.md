@@ -147,3 +147,17 @@ curl --get 'http://localhost:3000/iqc3' \
 `X-IQC-Variant: 3` dan `X-IQC-Source: reference-photo` / `dynamic-render` membedakan hasil. Error IQC3 berupa JSON + header `X-IQC-Error-Code`; sukses selalu JPG. Semua asset/template dikemas bersama fungsi Vercel; tidak perlu sumber gambar/font eksternal.
 
 Editor `/app3` menyediakan pratinjau browser instan lewat template HTML yang sama. Render server hanya diperlukan saat unduh/buka JPG. `api/iqc3-assets/` berisi JPEG referensi dan asset turunannya dari foto yang diberikan; `_template3.html` menanamkan asset/font sebagai data URI.
+
+
+## Playground IQC lengkap
+
+Buka `/docs#playground`, kemudian pilih IQC1, IQC2, atau IQC3. Tiap versi mempunyai form khusus seluruh parameter yang didukung, 6 contoh siap coba (18 total), penjelasan batas/default, alias endpoint, URL dan inspector query, serta contoh cURL/JavaScript/Python/PHP/Go yang mengikuti isian.
+
+- IQC1: pesan (baris baru/emoji/format WhatsApp), mode, seed, `/iqc` / `/api/iqc`.
+- IQC2: semua field IQC1 + nama, alias `/iqc2`, `/api/iqc2`, `/iqc?v2=1`, `/api/iqc?v2=1`.
+- IQC3: lirik, musik, artis, gradient/solid, warna hex, sudut, label waktu, JPG/HTML, dan alias API.
+- Klik **Kirim** untuk render. Tidak ada auto-fetch saat mengedit; pratinjau dan unduhan menggunakan satu respons yang sama. HTML IQC3 dipratinjau dalam iframe terisolasi.
+- Status HTTP, ukuran, dimensi, renderer, cache/source dan kode error tersedia di detail respons. Gambar fallback IQC1/IQC2 tidak dianggap sebagai HTTP sukses.
+- Isian disimpan per versi di browser; bisa kembali ke contoh default lewat Reset. URL manual dapat mengisi form kembali.
+
+Tautan langsung: `/docs?playground=iqc#playground`, `/docs?playground=iqc2#playground`, `/docs?playground=iqc3#playground`. Contoh spesifik: `/docs?playground=iqc3&preset=solid#playground`.
