@@ -33,9 +33,10 @@ Buka `http://localhost:3000`. Port dapat diatur dengan variabel lingkungan `PORT
 | GET | `/iqc2`, `/api/iqc2` | JPG quote menu konteks WhatsApp |
 | GET | `/iqc3`, `/api/iqc3` | JPG iMessage / Apple Music, lirik dan warna dinamis |
 | GET | `/iqc4`, `/api/iqc4`, `/qc4`, `/api/qc4` | WhatsApp iOS reaksi + pesan + menu dari foto |
+| GET / POST | `/iqc5`, `/api/iqc5`, `/qc5`, `/api/qc5` | WhatsApp profil/nama, PNG default identik foto, JPG opsional |
 | GET / POST | `/lowquality`, `/api/lowquality` | Kompresi JPEG berulang dari URL/upload |
 
-Halaman: `/` (linktree), `/dl` (downloader), `/docs` (dokumentasi + playground), `/app` (editor quote Instagram), `/app3` (editor musik/lirik IQC3).
+Halaman: `/` (linktree), `/dl` (downloader), `/docs` (dokumentasi + playground), `/app` (editor quote Instagram), `/app3` (editor musik/lirik IQC3), `/app4` (editor reaksi IQC4), `/app5` (editor profil/nama IQC5).
 
 ## IQC
 
@@ -244,3 +245,59 @@ Uji: jalankan server, lalu `npm run test:iqc4`. Deployment: `BASE_URL=https://do
 Bar reaksi dan badge memakai PNG RGBA asli dengan tepi anti-alias transparan, bukan potongan JPEG berlatar putih. Keenam glyph dinormalisasi agar rata dan memakai sumber yang sama pada light/dark, editor, template HTML, dan JPEG API. Foto default tetap byte-identik.
 
 Uji regresi semua 6 reaksi × 2 tema: `npm run test:iqc4:emoji`. Untuk membuat ulang asset/template secara offline (Pillow): `python3 scripts/build-iqc4-emoji-assets.py`. Jangan threshold/salin ulang emoji dari JPEG referensi karena akan menimbulkan halo putih.
+
+
+## IQC5 / QC5 — Nama & Foto Profil
+
+V5 menggunakan screenshot WhatsApp 736×1308 yang disediakan pengguna. **`GET /iqc5` mengembalikan PNG asli byte-identik**, bukan hasil render ulang. Pada render kustom, geometri mengikuti foto, font Roboto disertakan offline, nama berwarna dan avatar bulat dapat diubah, dan bubble/avatar/menu menyesuaikan tinggi pesan. Render edit tidak diklaim pixel-identik. Bintang pink **★** pada foto adalah nama pengirim default, terpisah dari opsi `star` pesan.
+
+- Rute: `/iqc5`, `/api/iqc5`, `/qc5`, `/api/qc5` (GET, POST, HEAD, OPTIONS).
+- Editor semua field + preview langsung: `/app5`.
+- Playground lengkap, 9 contoh, kode lima bahasa, URL/parameter/header/unduhan: `/docs?playground=iqc5#playground`.
+- Dokumentasi GET/POST, profil URL/upload, default dan error: `/docs#ep-iqc5`.
+- Output default **PNG**; `format=jpg` / `format=jpeg` untuk JPEG; `html=1` untuk template HTML offline.
+
+```bash
+# PNG asli, default persis
+curl --fail 'http://localhost:3000/iqc5' -o iqc5.png
+
+# Nama dan pesan sendiri
+curl --get --fail 'http://localhost:3000/iqc5' \
+  --data-urlencode 'name=Denji' \
+  --data-urlencode 'pesan=Halo, ini namaku. ❤' \
+  -o iqc5.png
+
+# Upload profil sendiri
+curl --fail 'http://localhost:3000/iqc5' \
+  -F 'name=Denji' \
+  -F 'pesan=Halo, ini nama dan profilku. ❤' \
+  -F 'profile=@foto.png' \
+  -o iqc5.png
+```
+
+| Parameter | Default / perilaku |
+| --- | --- |
+| `pesan`, alias `message` / `text` | `dikasih muka cakep , ngapain harus faker? 🤣🤤`; maks. 1000, Enter/emoji/format WhatsApp |
+| `name`, alias `nama` | `★`; maks. 30 karakter |
+| `nameColor`, alias `warnaNama` | `#b83e91`; hex 6 digit |
+| `profile`, alias `avatar` / `pp` | `default` avatar bawaan; `none` tanpa avatar; atau URL gambar publik |
+| `profileColor` | `#8f0835`, untuk avatar bawaan |
+| `mode` / `time` (alias `waktu`) | `dark` / `10:00`; jam HH:mm atau HH.mm |
+| `reaction` (alias `emoji` / `reaksi`) | `none`; 👍 ❤️ 😂 😮 😢 🙏, alias like/heart/haha/wow/sad/pray |
+| `star` / `menu` / `reactions` | `0` / `1` / `1`; bintang pesan, menu konteks, bar emoji |
+| `lang`, alias `language` | `id`; `en` untuk label Inggris |
+| `format` / `html` | `png` / tanpa HTML; JPEG opsional / `html=1` untuk template |
+
+POST mendukung multipart (satu file `profile`, alias file `avatar` / `image`), JSON `profileData` base64/data URI, atau body `image/*` mentah. Parameter query mengoverride body, termasuk alias. Profil maksimal **2 MB / 4 MP**, body JSON maksimal 3 MB; JPEG/PNG/WebP/GIF/AVIF/BMP, bukan SVG. URL menggunakan downloader DNS-pinned yang sama dengan Lowquality; private/localhost/metadata, redirect berbahaya, kredensial URL dan port khusus ditolak. Foto tidak ditulis ke disk; cache hasil terbatas 10 entry di memori. Error JSON memiliki status HTTP dan `X-IQC-Error-Code`; `X-IQC-Source`, width/height membedakan foto asli dan hasil render.
+
+Emoji toolbar dan badge menggunakan keenam PNG RGBA native IQC4 yang sudah diperbaiki, **bukan threshold/crop JPEG**; tidak menambahkan halo putih. Pesan V5 menambahkan emoji native 🤣 dan 🤤. Font Roboto berlisensi OFL tersedia di `licenses/Roboto-OFL.txt`.
+
+```bash
+# Server aktif untuk pengujian API/UI (BASE_URL dapat menunjuk produksi)
+npm run test:iqc5
+npm run test:iqc5:ui
+
+# Template dan editor offline dapat dibangun ulang tanpa network
+python3 scripts/build-iqc5-template.py
+python3 scripts/build-iqc5-editor.py
+```

@@ -17,6 +17,7 @@ const { downloadVideo } = require('./src/services/video');
 const IQC_PATH = path.join(__dirname, 'api', 'iqc.js');
 const IQC3_PATH = path.join(__dirname, 'api', 'iqc3.js');
 const IQC4_PATH = path.join(__dirname, 'api', 'iqc4.js');
+const IQC5_PATH = path.join(__dirname, 'api', 'iqc5.js');
 let iqcHandler = null;
 
 function loadIqc() {
@@ -53,6 +54,13 @@ app.all(['/lowquality', '/api/lowquality'], async (req, res) => {
 });
 app.get('/lowquality-app', (req, res) => res.sendFile(path.join(__dirname, 'public', 'lowquality.html')));
 
+
+// Raw profile upload must reach IQC5 before the general JSON limit.
+app.all(['/iqc5', '/api/iqc5', '/qc5', '/api/qc5'], async (req, res) => {
+  try { await require(IQC5_PATH)(req, res); }
+  catch (error) { console.error('[iqc5]', error.message); if (!res.headersSent) res.status(500).json({status:'error',message:'IQC5 tidak tersedia'}); }
+});
+app.get('/app5', (req, res) => res.sendFile(path.join(__dirname, 'public', 'app5.html')));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

@@ -259,9 +259,18 @@ async function renderJpg(html, options = {}) {
       deviceScaleFactor: options.scale || SCALE
     });
 
+    if (options.variant === 5) {
+      await page.setRequestInterception(true);
+      page.on('request', r => /^(data:|about:|blob:)/.test(r.url()) ? r.continue() : r.abort());
+    }
+
     // muat dokumen; emoji CDN ditunggu lewat waitForFunction di bawah
     await page.setContent(html, { waitUntil: 'domcontentloaded', timeout: 10000 });
-    if (options.variant === 4) {
+    if (options.variant === 5) {
+      await page.waitForFunction(() => window.__iqc5Ready === true || window.__iqc5Error, { timeout: 8000 });
+      const code = await page.evaluate(() => window.__iqc5Error);
+      if (code) { const e = new Error('Foto profil tidak dapat didekode.'); e.code = code; e.status = 415; throw e; }
+    } else if (options.variant === 4) {
       await page.waitForFunction(() => window.__iqc4Ready === true, { timeout: 7000 });
     } else if (options.variant === 3) {
       await page.waitForFunction(() => window.__iqc3Ready === true, { timeout: 7000 });
@@ -290,8 +299,9 @@ async function renderJpg(html, options = {}) {
     ]).catch(() => {});
     await new Promise((r) => setTimeout(r, 120)); // buffer singkat paint akhir
 
-    if (options.variant === 3) await page.evaluate(() => window.dispatchEvent(new Event('resize')));
-    return await page.screenshot({ type: 'jpeg', quality: options.quality || 90, fullPage: !!options.fullPage });
+    if (options.variant === 3 || options.variant === 5) await page.evaluate(() => window.dispatchEvent(new Event('resize')));
+    return await page.screenshot({ type: options.format === 'png' ? 'png' : 'jpeg',
+      ...(options.format === 'png' ? {} : { quality: options.quality || 90 }), fullPage: !!options.fullPage });
   } catch (e) {
     // browser/tab mati (crash, OOM) -> buang instance hangat, request berikutnya launch baru
     const msg = String((e && e.message) || e);
