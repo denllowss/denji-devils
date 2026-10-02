@@ -261,7 +261,9 @@ async function renderJpg(html, options = {}) {
 
     // muat dokumen; emoji CDN ditunggu lewat waitForFunction di bawah
     await page.setContent(html, { waitUntil: 'domcontentloaded', timeout: 10000 });
-    if (options.variant === 3) {
+    if (options.variant === 4) {
+      await page.waitForFunction(() => window.__iqc4Ready === true, { timeout: 7000 });
+    } else if (options.variant === 3) {
       await page.waitForFunction(() => window.__iqc3Ready === true, { timeout: 7000 });
     } else {
     // pastikan wallpaper final (render ulang setelah emoji termuat) & emoji bubble siap

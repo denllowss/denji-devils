@@ -32,6 +32,7 @@ Buka `http://localhost:3000`. Port dapat diatur dengan variabel lingkungan `PORT
 | GET | `/iqc`, `/api/iqc` | JPG quote Instagram |
 | GET | `/iqc2`, `/api/iqc2` | JPG quote menu konteks WhatsApp |
 | GET | `/iqc3`, `/api/iqc3` | JPG iMessage / Apple Music, lirik dan warna dinamis |
+| GET | `/iqc4`, `/api/iqc4`, `/qc4`, `/api/qc4` | WhatsApp iOS reaksi + pesan + menu dari foto |
 | GET / POST | `/lowquality`, `/api/lowquality` | Kompresi JPEG berulang dari URL/upload |
 
 Halaman: `/` (linktree), `/dl` (downloader), `/docs` (dokumentasi + playground), `/app` (editor quote Instagram), `/app3` (editor musik/lirik IQC3).
@@ -152,12 +153,13 @@ Editor `/app3` menyediakan pratinjau browser instan lewat template HTML yang sam
 
 ## Playground IQC lengkap
 
-Buka `/docs#playground`, kemudian pilih IQC1, IQC2, atau IQC3. Tiap versi mempunyai form khusus seluruh parameter yang didukung, 6 contoh siap coba (18 total), penjelasan batas/default, alias endpoint, URL dan inspector query, serta contoh cURL/JavaScript/Python/PHP/Go yang mengikuti isian.
+Buka `/docs#playground`, kemudian pilih IQC1, IQC2, IQC3, atau IQC4. Tiap versi mempunyai form khusus seluruh parameter yang didukung, 6 contoh siap coba (24 total), penjelasan batas/default, alias endpoint, URL dan inspector query, serta contoh cURL/JavaScript/Python/PHP/Go yang mengikuti isian.
 
 - IQC1: pesan (baris baru/emoji/format WhatsApp), mode, seed, `/iqc` / `/api/iqc`.
 - IQC2: semua field IQC1 + nama, alias `/iqc2`, `/api/iqc2`, `/iqc?v2=1`, `/api/iqc?v2=1`.
 - IQC3: lirik, musik, artis, gradient/solid, warna hex, sudut, label waktu, JPG/HTML, dan alias API.
-- Klik **Kirim** untuk render. Tidak ada auto-fetch saat mengedit; pratinjau dan unduhan menggunakan satu respons yang sama. HTML IQC3 dipratinjau dalam iframe terisolasi.
+- IQC4: pesan, tema, reaksi, dua jam, bintang/menu/bar reaksi, baterai, jaringan, bahasa menu dan JPG/HTML.
+- Klik **Kirim** untuk render. Tidak ada auto-fetch saat mengedit; pratinjau dan unduhan menggunakan satu respons yang sama. HTML IQC3/IQC4 dipratinjau dalam iframe terisolasi.
 - Status HTTP, ukuran, dimensi, renderer, cache/source dan kode error tersedia di detail respons. Gambar fallback IQC1/IQC2 tidak dianggap sebagai HTTP sukses.
 - Isian disimpan per versi di browser; bisa kembali ke contoh default lewat Reset. URL manual dapat mengisi form kembali.
 
@@ -201,3 +203,38 @@ Format JPEG, PNG, WebP, GIF, AVIF, BMP didukung; SVG tidak. JPEG memakai latar p
 URL hanya HTTP/HTTPS publik tanpa kredensial/port nonstandar. DNS diperiksa dan dipin ke IP publik, setiap redirect divalidasi, dan alamat private/loopback/link-local/reserved/metadata diblokir. Browser renderer tidak mengakses resource eksternal. Gambar hanya diproses di memori, tidak disimpan atau diunggah ke THE JPEG ZONE.
 
 Uji lowquality setelah server berjalan: `npm run test:lowquality`. Untuk deployment: `BASE_URL=https://domain-anda.vercel.app npm run test:lowquality`.
+
+## IQC4 — WhatsApp iOS dari foto
+
+Endpoint `/iqc4`, alias `/api/iqc4`, `/qc4`, `/api/qc4`. Editor `/app4`; Playground lengkap `/docs?playground=iqc4#playground`. IQC1/2/3 dan lowquality tidak diganti.
+
+**Cara ubah sama seperti IQC/IQC2:** `?pesan=teks`. Alias `message` / `text` juga didukung. Foto asli 555×1200 dipakai tanpa re-encode jika seluruh parameter default; hasil byte-identik. Setelah diubah, teks menggunakan Inter dan ikon/latar blur berasal dari foto; bukan klaim font iOS pixel-identik. Bubble membungkus otomatis dan menu bergerak ke bawah, sehingga pesan panjang tidak dipotong.
+
+```bash
+curl --get 'https://denji-devils.vercel.app/iqc4' \
+  --data-urlencode 'pesan=note: kamu tidak gagal, kamu sedang belajar.' \
+  --data-urlencode 'reaction=👍' \
+  --data 'mode=dark&time=21.30&statusTime=21.32' \
+  -o iqc4.jpg
+```
+
+| Parameter | Nilai / default |
+|---|---|
+| `pesan` | Maks. 1000 karakter; alias `message` / `text`. Default `note: ga ada yang namanya manusia gagal`. |
+| `mode` | `light` (default) / `dark`. |
+| `time` | Jam pesan HH.mm / HH:mm; default 20.15; alias `waktu`. |
+| `statusTime` | Jam status bar; default 07.54; alias `jam` / `status_time`. |
+| `reaction` | ❤️ (default), 👍, 😂, 😮, 😢, 🙏 atau `none`; alias `emoji` / `reaksi`. Nama heart/like/haha/wow/sad/pray diterima. |
+| `star` | `1` (default) / `0`; label menu ikut berubah Unstar / Star. |
+| `menu` | `1` (default) / `0` untuk popup menu. |
+| `reactions` | `1` (default) / `0` untuk bar reaksi; terpisah dari badge reaction. |
+| `battery` | 0–100%, default 90; alias `baterai`. ≤20% berwarna merah. |
+| `network` | 4G (default), 5G, LTE, 3G, WIFI. |
+| `lang` | `en` (default) / `id` untuk bahasa label menu. |
+| `html` | `1` untuk template HTML; selain itu JPEG. |
+
+Format pesan mengikuti IQC/IQC2: Enter, *tebal*, _miring_, ~coret~, kode, daftar, dan kutipan. Emoji umum disematkan sebagai PNG; karakter/emoji lain mengikuti font browser. Tidak ada `name` atau `seed` karena foto tidak menampilkan nama dan latarnya tetap. Jam IQC4 eksplisit, tidak berubah mengikuti WIB. Menu statis ini tidak melakukan aksi pada WhatsApp asli.
+
+Template/font/ikon tersimpan sebagai data URI, tanpa mengambil asset saat request. Bootstrap Chromium153 + Node24 sama dengan renderer lama; tidak menggunakan Chromium lain. `X-IQC-Variant: 4`, `X-IQC-Source: reference-photo/dynamic-render`, serta `X-IQC-Width/Height` memberi metadata. Error aman berupa JSON 405/500 dengan `X-IQC-Error-Code`. GET, HEAD dan CORS OPTIONS didukung.
+
+Uji: jalankan server, lalu `npm run test:iqc4`. Deployment: `BASE_URL=https://domain-anda.vercel.app npm run test:iqc4`.

@@ -16,6 +16,7 @@ const { downloadVideo } = require('./src/services/video');
    ------------------------------------------------------------------ */
 const IQC_PATH = path.join(__dirname, 'api', 'iqc.js');
 const IQC3_PATH = path.join(__dirname, 'api', 'iqc3.js');
+const IQC4_PATH = path.join(__dirname, 'api', 'iqc4.js');
 let iqcHandler = null;
 
 function loadIqc() {
@@ -209,6 +210,11 @@ app.get(['/iqc3', '/api/iqc3'], async (req, res) => {
 });
 app.options(['/iqc3', '/api/iqc3'], (req, res) => require(IQC3_PATH)(req, res));
 app.get('/app3', (req, res) => res.sendFile(path.join(__dirname, 'public', 'app3.html')));
+app.all(['/iqc4', '/api/iqc4', '/qc4', '/api/qc4'], async (req, res) => {
+  try { await require(IQC4_PATH)(req, res); }
+  catch (error) { console.error('[iqc4]', error.message); if (!res.headersSent) res.status(500).json({status:'error',message:'IQC4 tidak tersedia'}); }
+});
+app.get('/app4', (req, res) => res.sendFile(path.join(__dirname, 'public', 'app4.html')));
 
 
 app.get('/dl', (req, res) => {
