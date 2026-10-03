@@ -343,6 +343,8 @@ Model tersendiri (bukan IQC6), dari JPEG pengguna 739 × 1600. API `/ssgc` / `/a
 - **Default JPG byte-identik** dengan foto asli yang disimpan di `api/ssgc-assets/reference.jpg`. `format=png` adalah konversi lossless dari gambar JPEG, bukan file asli.
 - **Edit nama / deskripsi / profil:** nama maks. 64 grapheme, deskripsi maks. 2000. Nama/deskripsi panjang menggeser menu ke bawah dan memperbesar tinggi output. Font `serif` default; `titleFont=sans` memakai Roboto.
 - **Baca selengkapnya:** `limit` (alias `batas`) 0–2000, default 44. Link hijau hanya muncul jika teks benar-benar terpotong. Emoji ZWJ/flag/combining mark dihitung sebagai satu grapheme, tidak dipotong di tengah. `full=1` atau `limit=0` menampilkan semua teks tanpa link.
+- **Tatanan mode full:** deskripsi inline di header info grup, rata tengah dengan inset kiri/kanan seimbang, wrap per kata dan line-height 36 px pada kanvas 739 px. Enter/baris kosong dipertahankan; blok panjang mendapat jarak 28 px sebelum menu. Format `*tebal*`, `_miring_`, `~coret~`, backtick monospace serta URL hijau tersedia di mode full. Link hanya berupa span inert, tidak mengirim request jaringan. Metadata jumlah karakter menghitung input setelah normalisasi, termasuk marker format. Mode ringkas/default tidak diubah.
+- **Acuan UI:** header info grup iOS pada WABetaInfo [1](https://wabetainfo.com/whatsapp-is-updating-the-group-chat-info-interface-on-ios/). Redesign itu dilaporkan rollout bertahap; ini adaptasi tatanan deskripsi, bukan klaim salinan pixel-identik seluruh versi terbaru atau penggantian footer/tabs pada foto asli.
 - **Tidak mengarang bagian tersembunyi:** deskripsi default hanya teks yang terlihat pada screenshot (`WELCOME TO—VOXEN FIGHTER\n#VOXEN ANTI-DIMMING...`). Bagian setelah link tidak diketahui; masukkan sendiri teks lengkap untuk mode full.
 - **Profil:** `profile=default` / `none` / URL gambar HTTP(S) publik; upload lewat POST multipart field `profile` (alias file `avatar` / `image`), POST JSON `profileData` base64/data URI, atau body `image/*` mentah. Maks. 2 MB / 4 MP. Query mengoverride body, termasuk alias.
 - **Input aman:** DNS downloader di-pin ke IP publik; tiap redirect diperiksa. URL private/localhost/metadata, kredensial, port khusus, SVG dan raster rusak ditolak. Template memakai font/emoji RGBA transparan offline; renderer tidak mengakses jaringan. Body maks. 3 MB, field multipart maks. 8192 byte, gambar hasil maks. 4 MB / tinggi 20000 px.
@@ -382,6 +384,7 @@ npm run build:ssgc
 # Server harus berjalan. BASE_URL dapat diubah ke deployment produksi.
 npm run test:ssgc
 npm run test:ssgc:ui
+npm run test:ssgc:full
 npm run test:vercel
 ```
 
