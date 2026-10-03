@@ -211,12 +211,11 @@ app.get('/app', (req, res) => {
 });
 
 /* IQC: /iqc?pesan=halo -> foto JPG 1350x2400, /iqc2 -> versi menu konteks */
-app.get(['/iqc', '/iqc2', '/api/iqc', '/api/iqc2'], handleIqc);
-app.get(['/iqc3', '/api/iqc3'], async (req, res) => {
+app.all(['/iqc', '/iqc2', '/api/iqc', '/api/iqc2'], handleIqc);
+app.all(['/iqc3', '/api/iqc3'], async (req, res) => {
   try { await require(IQC3_PATH)(req, res); }
   catch (error) { console.error('[iqc3]', error.message); if (!res.headersSent) res.status(500).json({status:'error',message:'IQC3 tidak tersedia'}); }
 });
-app.options(['/iqc3', '/api/iqc3'], (req, res) => require(IQC3_PATH)(req, res));
 app.get('/app3', (req, res) => res.sendFile(path.join(__dirname, 'public', 'app3.html')));
 app.all(['/iqc4', '/api/iqc4', '/qc4', '/api/qc4'], async (req, res) => {
   try { await require(IQC4_PATH)(req, res); }

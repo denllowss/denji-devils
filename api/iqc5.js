@@ -1,4 +1,5 @@
 // IQC5 — WhatsApp profile/name quote, based on the supplied 736×1308 PNG.
+const exposedHeaders = require('../src/shared/iqc-header-reference.json').exposed.join(', ');
 const fs = require("node:fs");
 const path = require("node:path");
 const crypto = require("node:crypto");
@@ -349,10 +350,7 @@ module.exports = async (req, res) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, HEAD, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-  res.setHeader(
-    "Access-Control-Expose-Headers",
-    "X-IQC-Variant, X-IQC-Renderer, X-IQC-Source, X-IQC-Width, X-IQC-Height, X-IQC-Error-Code",
-  );
+  res.setHeader('Access-Control-Expose-Headers', exposedHeaders);
   res.setHeader("X-IQC-Variant", "5");
   res.setHeader("X-IQC-Renderer", "chromium-153-node24");
   res.setHeader("Cache-Control", "no-store");

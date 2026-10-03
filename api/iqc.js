@@ -8,6 +8,8 @@
 //
 //  Dependensi: puppeteer-core + @sparticuz/chromium (ramah serverless)
 // ============================================================
+const exposedHeaders = require('../src/shared/iqc-header-reference.json').exposed.join(', ');
+const { imageSize } = require('image-size');
 const fs = require('fs');
 const path = require('path');
 const { prepareChromium, errorCode } = require('../src/services/iqc-runtime');
@@ -329,6 +331,9 @@ function kirimJpg(res, jpg, status) {
   res.statusCode = status || 200;
   res.setHeader('Content-Type', 'image/jpeg');
   res.setHeader('Content-Length', String(jpg.length));
+  const size = imageSize(jpg);
+  res.setHeader('X-IQC-Width', String(size.width));
+  res.setHeader('X-IQC-Height', String(size.height));
   res.setHeader('Cache-Control', 'no-store');
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.end(jpg);
@@ -369,8 +374,9 @@ async function renderSelaluFoto(req, res, params) {
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, HEAD, OPTIONS');
-  res.setHeader('Access-Control-Expose-Headers', 'X-IQC-Renderer, X-IQC-Variant, X-IQC-Cache, X-IQC-Error-Code');
+  res.setHeader('Access-Control-Expose-Headers', exposedHeaders);
   res.setHeader('X-IQC-Renderer', 'chromium-153-node24');
+  res.setHeader('Content-Disposition', 'inline; filename="iqc.jpg"');
   if (req.method === 'OPTIONS') { res.statusCode = 204; res.end(); return; }
   if (req.method && req.method !== 'GET' && req.method !== 'HEAD') {
     res.setHeader('Allow', 'GET, HEAD, OPTIONS');
@@ -380,6 +386,7 @@ module.exports = async (req, res) => {
   }
   const params = bacaParams(req);
   res.setHeader('X-IQC-Variant', params.isV2 ? '2' : '1');
+  res.setHeader('Content-Disposition', 'inline; filename="'+(params.isV2?'iqc2':'iqc')+'.jpg"');
   try {
     await renderSelaluFoto(req, res, params);
   } catch (error) {

@@ -1205,6 +1205,8 @@ svg{ display: block; flex-shrink: 0; }
 @media(max-width:1350px){#playground[data-iqc] .pg-panel-response{position:static;max-height:none;overflow:visible}}
 @media(max-width:680px){.iqc-variants{grid-template-columns:repeat(2,minmax(0,1fr))}.iqc-lab-head{flex-wrap:wrap}.iqc-columns{gap:8px}.iqc-field label{font-size:10.5px}.iqc-field code{font-size:9px;margin-left:1px}.iqc-variants span{font-size:9px}.iqc-color{gap:4px}.iqc-color input[type=color]{width:32px;flex-basis:32px;height:35px}.iqc-color input:not([type=color]){padding:8px 6px!important}.iqc-url-head{flex-wrap:wrap}.iqc-response-dl{grid-template-columns:minmax(0,.8fr) minmax(0,1.4fr);gap:6px}.res-html{height:550px}#playground[data-iqc] .response-code-container{max-height:690px}.iqc-inline>.btn-res-action{padding:7px;flex-shrink:0}}
 
+
+.iqc-live-controls{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:7px;border:1px solid #bbce8c;background:#e8f2c9;padding:9px 11px;border-radius:9px;font-size:11px}.iqc-live-controls label{display:flex;align-items:center;gap:7px;font-weight:850;cursor:pointer}.iqc-live-controls input{accent-color:#536d26}.iqc-live-controls span{font-size:10px;color:#607043}.iqc-howto{background:#edf4d9;border-left:3px solid #7e963f;padding:9px 11px;font-size:11px;line-height:1.75}.iqc-howto p{margin:4px 0 0;overflow-wrap:anywhere}.iqc-default-actions{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin-top:10px;font-size:11px}.iqc-default-actions a{overflow-wrap:anywhere}.iqc-live-status{font-size:11px;line-height:1.7;color:#526936;border:1px dashed #c8d7a1;border-radius:8px;padding:8px 10px;background:#f3f8e5;margin:12px 0}.iqc-image-error{font-size:11px;line-height:1.7;padding:9px 11px;border-radius:8px;background:#fff0ec;color:#942d26;border:1px solid #e4b3a8;overflow-wrap:anywhere}.res-download[aria-disabled=true]{opacity:.5}.iqc-query td:first-child{overflow-wrap:anywhere}.iqc-header-ref .param-name{white-space:normal;overflow-wrap:anywhere}
 </style>
 </head>
 <body>
@@ -1353,6 +1355,7 @@ svg{ display: block; flex-shrink: 0; }
           <a href="#ep-lowquality" class="toc-link" data-title="/lowquality jpeg gambar low quality deep fried kompresi upload"><span class="toc-link-label">/lowquality</span><span class="method-tag method-get">GET</span></a>
 
           <span class="toc-group-title">Referensi</span>
+          <a href="#iqc-headers-reference" class="toc-link" data-title="header headers iqc1 iqc2 iqc3 iqc4 iqc5 response cara penggunaan"><span class="toc-link-label">Headers IQC1–5</span><span class="method-tag method-ref">REF</span></a>
           <a href="#ep-status-codes" class="toc-link" data-title="status codes error handling referensi">
             <span class="toc-link-label">Status Codes</span>
             <span class="method-tag method-ref">REF</span>
@@ -1381,7 +1384,7 @@ svg{ display: block; flex-shrink: 0; }
         </div>
 
         <p class="section-desc">
-          Uji seluruh endpoint langsung dari browser tanpa instalasi tambahan. Untuk IQC1, IQC2, IQC3, IQC4 dan IQC5 tersedia form seluruh parameter, contoh siap coba, URL otomatis dan kode dalam lima bahasa. Panel kanan menampilkan hasil, status, waktu, ukuran, serta header respons.
+          Uji IQC1–IQC5 sebagai gambar langsung. Isian default sudah terisi; edit parameter untuk memperbarui gambar otomatis. URL, parameter dan kode lima bahasa mengikuti input Anda. Panel hasil menampilkan gambar, unduhan dan seluruh header respons nyata. Endpoint lain tetap bisa diuji manual.
         </p>
 
         <div class="pg-grid">
@@ -1443,7 +1446,8 @@ svg{ display: block; flex-shrink: 0; }
                   <button type="button" data-iqc-type="iqc4" onclick="pgIqc.select('iqc4')" aria-pressed="false"><strong>IQC4</strong><span>Reaksi & menu</span></button>
                   <button type="button" data-iqc-type="iqc5" onclick="pgIqc.select('iqc5')" aria-pressed="false"><strong>IQC5</strong><span>Nama & profil</span></button>
                 </div>
-                <p class="iqc-guide">1. Pilih contoh atau isi parameter. 2. Lihat URL dan kode otomatis. 3. Tekan <strong>Kirim</strong> untuk membuat hasil. Mengedit form tidak mengirim request.</p>
+                <p class="iqc-guide">1. Pilih model: nilai default dan gambar tersedia. 2. Edit isian: URL/kode langsung mengikuti, gambar diperbarui setelah jeda. 3. Unduh gambar dari respons yang sama. Otomatis dapat dijeda; tombol <strong>Kirim</strong> tetap tersedia.</p>
+                <div class="iqc-live-controls"><label for="pgIqcAuto"><input type="checkbox" id="pgIqcAuto" checked> Pratinjau gambar otomatis</label><span>jeda 850 ms · satu render aktif · <a href="#pgImageResult">Lihat gambar ↓</a></span></div>
                 <div class="iqc-field"><label for="pgIqcPreset">Contoh siap coba</label><div class="iqc-inline"><select id="pgIqcPreset" onchange="pgIqc.preset(this.value)"></select><button type="button" class="btn-res-action" onclick="pgIqc.reset()">Reset</button></div><p class="iqc-help" id="pgIqcPresetHint"></p></div>
                 <div class="iqc-field"><div class="iqc-label-row"><label for="pgIqcText"><span id="pgIqcTextLabel">Pesan</span> <code id="pgIqcTextParam">pesan</code></label><span class="iqc-counter" id="pgIqcCount">0 / 1000</span></div><textarea id="pgIqcText" rows="4" maxlength="1000" placeholder="Tulis teks; Enter untuk baris baru."></textarea><p class="iqc-help" id="pgIqcTextHelp"></p></div>
                 <div class="iqc-format" id="pgIqcFormatting" aria-label="Format pesan"><button type="button" onclick="pgIqc.format('*')" title="*tebal*"><strong>B</strong> Tebal</button><button type="button" onclick="pgIqc.format('_')" title="_miring_"><em>I</em> Miring</button><button type="button" onclick="pgIqc.format('~')" title="~coret~"><s>Coret</s></button><button type="button" onclick="pgIqc.format('`')" title="`kode`">Kode</button></div>
@@ -1452,7 +1456,7 @@ svg{ display: block; flex-shrink: 0; }
                   <div class="iqc-columns"><div class="iqc-field"><label for="pgIqcNameColor">Warna nama <code>nameColor</code></label><input type="color" id="pgIqcNameColor" value="#b83e91" style="width:100%;height:38px"></div><div class="iqc-field"><label for="pgIqcProfileColor">Warna avatar bawaan <code>profileColor</code></label><input type="color" id="pgIqcProfileColor" value="#8f0835" style="width:100%;height:38px"></div></div>
                   <div class="iqc-field"><label for="pgIqcProfileSource">Foto profil <code>profile</code></label><select id="pgIqcProfileSource"><option value="default">Bawaan · sesuai foto</option><option value="url">URL gambar publik</option><option value="upload">Upload gambar · POST multipart</option><option value="none">Tanpa avatar</option></select></div>
                   <div class="iqc-field" id="pgIqcProfileUrlWrap" hidden><label for="pgIqcProfileUrl">URL gambar publik <code>profile / avatar / pp</code></label><input type="url" id="pgIqcProfileUrl" maxlength="2048" placeholder="https://.../foto.png"><p class="iqc-help">HTTP/HTTPS publik. Alamat localhost/private, SVG dan URL berkredensial diblokir. Gambar maksimum 2 MB / 4 MP.</p></div>
-                  <div class="iqc-field" id="pgIqcProfileFileWrap" hidden><label for="pgIqcProfileFile">Upload foto <code>profile</code></label><input type="file" id="pgIqcProfileFile" accept="image/jpeg,image/png,image/webp,image/gif,image/avif,image/bmp"><p class="iqc-help" id="pgIqcProfileFileHelp">Maks. 2 MB / 4 MP. File hanya dikirim saat Kirim, tidak disimpan ke localStorage. URL tetap memuat parameter; foto dikirim lewat multipart.</p></div>
+                  <div class="iqc-field" id="pgIqcProfileFileWrap" hidden><label for="pgIqcProfileFile">Upload foto <code>profile</code></label><input type="file" id="pgIqcProfileFile" accept="image/jpeg,image/png,image/webp,image/gif,image/avif,image/bmp"><p class="iqc-help" id="pgIqcProfileFileHelp">Maks. 2 MB / 4 MP. File dikirim untuk preview/unduh, tidak disimpan ke localStorage. URL tetap memuat parameter; foto dikirim lewat multipart.</p></div>
                   <p class="iqc-help"><strong>PNG default = file foto asli 100% identik.</strong> ★ pink adalah nama default, bukan opsi bintang pesan. Profil dan menu mengikuti tinggi bubble. <a href="/app5">Buka editor V5 dengan preview langsung ↗</a>.</p>
                 </div>
                 <div id="pgIqcLegacy">
@@ -1464,7 +1468,7 @@ svg{ display: block; flex-shrink: 0; }
                   <div class="iqc-field"><label for="pgIqcBg">Latar kartu <code>bg</code></label><select id="pgIqcBg"><option value="gradient">Gradient · dua warna</option><option value="solid">Solid · satu warna</option></select><p class="iqc-help">Warna berlaku pada kartu lirik/musik. Latar layar blur tetap dari foto.</p></div>
                   <div id="pgIqcGradient"><div class="iqc-columns"><div class="iqc-field"><label for="pgIqcHex1">Warna awal <code>color1</code></label><div class="iqc-color"><input type="color" id="pgIqcColor1" aria-label="Pilih warna awal"><input id="pgIqcHex1" maxlength="7" placeholder="#6b6040" aria-label="Hex warna awal" spellcheck="false"></div></div><div class="iqc-field"><label for="pgIqcHex2">Warna akhir <code>color2</code></label><div class="iqc-color"><input type="color" id="pgIqcColor2" aria-label="Pilih warna akhir"><input id="pgIqcHex2" maxlength="7" placeholder="#704600" aria-label="Hex warna akhir" spellcheck="false"></div></div></div><div class="iqc-field"><label for="pgIqcAngle">Arah gradient <code>angle</code></label><div class="iqc-inline"><input id="pgIqcAngle" type="range" min="0" max="360" step="1"><output id="pgIqcAngleValue">135°</output></div></div></div>
                   <div class="iqc-field" id="pgIqcSolid" hidden><label for="pgIqcHexSolid">Warna solid <code>color</code></label><div class="iqc-color"><input id="pgIqcColor" type="color" aria-label="Pilih warna solid"><input id="pgIqcHexSolid" maxlength="7" placeholder="#66502d" aria-label="Hex warna solid" spellcheck="false"></div></div>
-                  <div class="iqc-columns"><div class="iqc-field"><label for="pgIqcTime">Label waktu <code>time</code></label><input id="pgIqcTime" maxlength="10" placeholder="0:03"></div><div class="iqc-field"><label for="pgIqcFormat">Keluaran <code>html</code></label><select id="pgIqcFormat"><option value="jpg">JPG · gambar</option><option value="html">HTML · template</option></select></div></div>
+                  <div class="iqc-columns"><div class="iqc-field"><label for="pgIqcTime">Label waktu <code>time</code></label><input id="pgIqcTime" maxlength="10" placeholder="0:03"></div><div class="iqc-field"><label for="pgIqcFormat">Keluaran <code>JPG</code></label><select id="pgIqcFormat"><option value="jpg">JPG · gambar</option></select></div></div>
                   <p class="iqc-help">Lirik maks. 1000; nama musik/artis maks. 100 karakter. Tinggi JPG menyesuaikan teks. Default menggunakan foto asli. Gambar statis, bukan audio.</p>
                 </div>
                 <div id="pgIqcWa" hidden>
@@ -1473,7 +1477,7 @@ svg{ display: block; flex-shrink: 0; }
                   <div class="iqc-columns"><div class="iqc-field"><label for="pgIqcBattery">Baterai <code>battery</code></label><input id="pgIqcBattery" type="number" min="0" max="100" step="1"></div><div class="iqc-field"><label for="pgIqcNetwork">Jaringan <code>network</code></label><select id="pgIqcNetwork"><option>4G</option><option>5G</option><option>LTE</option><option>3G</option><option value="WIFI">Wi-Fi</option></select></div></div>
                   <div class="iqc-columns"><div class="iqc-field"><label for="pgIqcStar">Bintang <code>star</code></label><select id="pgIqcStar"><option value="1">Aktif · Unstar</option><option value="0">Nonaktif · Star</option></select></div><div class="iqc-field"><label for="pgIqcMenu">Menu <code>menu</code></label><select id="pgIqcMenu"><option value="1">Tampilkan</option><option value="0">Sembunyikan</option></select></div></div>
                   <div class="iqc-columns"><div class="iqc-field"><label for="pgIqcReactions">Bar reaksi <code>reactions</code></label><select id="pgIqcReactions"><option value="1">Tampilkan</option><option value="0">Sembunyikan</option></select></div><div class="iqc-field"><label for="pgIqcLanguage">Bahasa menu <code>lang</code></label><select id="pgIqcLanguage"><option value="en">English · sesuai foto</option><option value="id">Bahasa Indonesia</option></select></div></div>
-                  <div class="iqc-field"><label for="pgIqcWaFormat">Keluaran <code id="pgIqcWaOutputParam">html</code></label><select id="pgIqcWaFormat"><option value="jpg">JPG · gambar</option><option value="html">HTML · template</option></select></div>
+                  <div class="iqc-field"><label for="pgIqcWaFormat">Keluaran <code id="pgIqcWaOutputParam">html</code></label><select id="pgIqcWaFormat"><option value="jpg">JPG · gambar</option></select></div>
                   <p class="iqc-help" id="pgIqcWaHelp">Jam HH.mm / HH:mm. Default memakai foto asli. Teks panjang menambah tinggi. Tidak menggunakan name atau seed. <a href="/app4">Buka editor pratinjau langsung</a>.</p>
                 </div>
                 <details class="iqc-details"><summary>Endpoint & alias</summary><div class="iqc-field"><label for="pgIqcRoute">Rute API</label><select id="pgIqcRoute"></select><p class="iqc-help" id="pgIqcRouteHelp"></p></div></details>
@@ -1486,7 +1490,7 @@ svg{ display: block; flex-shrink: 0; }
                   <option value="GET">GET</option>
                 </select>
                 <div class="url-input-wrap">
-                  <input type="text" id="pgEndpoint" class="endpoint-input" value="/api/dl" placeholder="/api/dl" spellcheck="false" required>
+                  <input type="text" id="pgEndpoint" class="endpoint-input" value="/iqc" placeholder="/api/dl" spellcheck="false" required>
                 </div>
                 <button type="submit" id="pgSubmitBtn" class="btn-send-req">
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
@@ -1508,12 +1512,15 @@ svg{ display: block; flex-shrink: 0; }
                 <div class="iqc-url-head"><label for="pgIqcUrl">URL request lengkap</label><button type="button" class="btn-res-action" onclick="pgIqc.copyUrl()">Salin URL</button></div><textarea id="pgIqcUrl" class="iqc-url" rows="3" readonly spellcheck="false"></textarea>
                 <details class="iqc-details"><summary>Parameter yang dikirim <span id="pgIqcParamCount"></span></summary><div class="iqc-query-wrap scroller"><table class="iqc-query"><thead><tr><th>Parameter</th><th>Nilai</th></tr></thead><tbody id="pgIqcQuery"></tbody></table></div><p class="iqc-help">Spasi, emoji, baris baru, &amp; dan # di-encode otomatis. Nilai tetap utuh di server. Field yang tidak relevan tidak dikirim.</p></details>
                 <details class="iqc-code-details" open><summary>Contoh kode sesuai isian</summary><div class="iqc-code-head"><div class="iqc-language-tabs" aria-label="Bahasa contoh kode"><button type="button" data-iqc-lang="curl" onclick="pgIqc.language('curl')">cURL</button><button type="button" data-iqc-lang="javascript" onclick="pgIqc.language('javascript')">JavaScript</button><button type="button" data-iqc-lang="python" onclick="pgIqc.language('python')">Python</button><button type="button" data-iqc-lang="php" onclick="pgIqc.language('php')">PHP</button><button type="button" data-iqc-lang="go" onclick="pgIqc.language('go')">Go</button></div><button type="button" class="btn-res-action" onclick="pgIqc.copyCode()">Salin kode</button></div><div class="iqc-code-wrap scroller"><pre id="pgIqcCode"></pre></div></details>
-                <p class="iqc-help iqc-network-note">Kirim hanya saat ingin render. Cold start Chromium bisa beberapa detik. Unduh memakai respons yang sama, tanpa request kedua.</p>
+                <div class="iqc-howto"><strong>Cara pakai sesuai isian</strong><p id="pgIqcHowTo"></p></div>
+                <details class="iqc-details"><summary id="pgIqcDefaultTitle">Default model</summary><div class="iqc-query-wrap"><table class="iqc-query"><thead><tr><th>Parameter</th><th>Nilai default</th></tr></thead><tbody id="pgIqcDefaultValues"></tbody></table></div><p class="iqc-help" id="pgIqcDefaultNote"></p><div class="iqc-default-actions"><button type="button" class="btn-res-action" onclick="pgIqc.reset()">Lihat / pakai default</button><a id="pgIqcDefaultUrl" target="_blank" rel="noopener">Buka gambar default API ↗</a></div></details>
+                <details class="iqc-details"><summary id="pgIqcHeadersTitle">Header tersedia</summary><div class="table-wrap"><table class="iqc-query"><thead><tr><th>Header</th><th>Arti / ketersediaan</th></tr></thead><tbody id="pgIqcHeaderReference"></tbody></table></div><p class="iqc-help">Nilai asli terlihat pada panel hasil. Header error hanya muncul saat gagal. <a href="#iqc-headers-reference">Referensi semua model ↗</a>.</p></details>
+                <p class="iqc-help iqc-network-note">Hasil selalu gambar JPG (IQC1–4) atau PNG/JPG (IQC5), bukan template HTML. Auto merender setelah jeda dan tidak mengirim request paralel. Matikan otomatis saat ingin menyiapkan isian tanpa request.</p>
               </div>
             </form>
           </div>
 
-          <div class="pg-panel pg-panel-response">
+          <div class="pg-panel pg-panel-response" id="pgImageResult">
             <div class="panel-head">
               <span class="panel-title">Response</span>
               <div class="response-meta">
@@ -1537,13 +1544,19 @@ svg{ display: block; flex-shrink: 0; }
               </button>
             </div>
 
+            <p class="iqc-live-status" id="pgIqcLiveStatus" role="status" aria-live="polite">Pilih model untuk melihat gambar default.</p>
+            <p class="iqc-image-error" id="pgImageError" role="alert" hidden></p>
             <details id="pgResponseDetails" class="iqc-response-details" hidden><summary>Header, ukuran &amp; info respons nyata</summary><dl id="pgResponseInfo" class="iqc-response-dl"></dl></details>
             <div class="response-code-container scroller">
-              <pre id="pgResponseCode" class="response-pre">Pilih IQC1, IQC2, IQC3, IQC4, atau IQC5 untuk membuka form lengkap. Isi parameter dan tekan Kirim: gambar, unduhan, ukuran, serta header akan muncul di sini. Endpoint lain tetap dapat diuji dengan request manual.</pre>
+              <pre id="pgResponseCode" class="response-pre">Gambar default dan hasil edit IQC akan muncul di sini. URL/kode mengikuti input; satu respons dipakai untuk preview dan unduh. Endpoint non-IQC tetap dapat diuji manual.</pre>
             </div>
           </div>
         </div>
       </section>
+
+<!-- IQC_HEADERS_REFERENCE_START -->
+<section class="section-card iqc-header-ref" id="iqc-headers-reference"><div class="section-head"><div class="section-title-wrap"><span class="method-tag method-ref">REF</span><h2 class="section-title">Headers &amp; cara pakai IQC1–5</h2></div></div><p class="section-desc">GET IQC tanpa body JSON; baca respons sebagai gambar/blob/binary. IQC1–4 memakai JPG; IQC5 default PNG dan mendukung format=jpg. Untuk profil upload IQC5 gunakan POST multipart dengan field profile, jangan menetapkan boundary sendiri di browser. URL/kode Playground mengikuti semua input, dan preview/unduh memakai satu respons.</p><div class="table-wrap scroller"><table class="doc-table"><thead><tr><th>Header</th><th>Model</th><th>Arti / kapan tersedia</th></tr></thead><tbody><tr><td><span class="param-name">Content-Type</span></td><td>IQC1–5</td><td>image/jpeg; khusus IQC5 default image/png. Error IQC3–5 memakai application/json. IQC1/2 dapat mengirim JPEG fallback dengan HTTP error.</td></tr><tr><td><span class="param-name">Content-Length</span></td><td>IQC1–5</td><td>Jumlah byte respons gambar, bukan jumlah karakter pesan. Header transport dapat berbeda pada respons error/HTML.</td></tr><tr><td><span class="param-name">Content-Disposition</span></td><td>IQC1–5</td><td>inline; filename=... untuk gambar. Playground memilih nama unduhan sesuai model dan format.</td></tr><tr><td><span class="param-name">Cache-Control</span></td><td>IQC1–5</td><td>no-store: respons tidak disimpan browser/CDN. Cache renderer IQC1/2 terpisah dari cache HTTP.</td></tr><tr><td><span class="param-name">X-Content-Type-Options</span></td><td>IQC1–5</td><td>nosniff; browser tidak menebak tipe file.</td></tr><tr><td><span class="param-name">X-IQC-Variant</span></td><td>IQC1–5</td><td>Nomor model 1–5; tersedia pada request model yang valid.</td></tr><tr><td><span class="param-name">X-IQC-Renderer</span></td><td>IQC1–5</td><td>chromium-153-node24; runtime renderer project.</td></tr><tr><td><span class="param-name">X-IQC-Width</span></td><td>IQC1–5</td><td>Lebar gambar yang benar-benar dikirim, dalam px.</td></tr><tr><td><span class="param-name">X-IQC-Height</span></td><td>IQC1–5</td><td>Tinggi gambar yang benar-benar dikirim. IQC3–5 bertambah untuk teks panjang.</td></tr><tr><td><span class="param-name">X-IQC-Error-Code</span></td><td>IQC1–5</td><td>Hanya jika ada error. Periksa bersama HTTP status; gambar fallback tidak berarti sukses.</td></tr><tr><td><span class="param-name">Access-Control-Allow-Origin</span></td><td>IQC1–5</td><td>*; API dapat dipanggil dari origin lain.</td></tr><tr><td><span class="param-name">Access-Control-Allow-Methods</span></td><td>IQC1–5</td><td>IQC1–4: GET, HEAD, OPTIONS. IQC5 juga POST untuk profil upload.</td></tr><tr><td><span class="param-name">Access-Control-Expose-Headers</span></td><td>IQC1–5</td><td>Daftar header yang boleh dibaca JavaScript melalui CORS; mencakup metadata gambar di atas.</td></tr><tr><td><span class="param-name">Allow</span></td><td>IQC1–5</td><td>Hanya pada HTTP 405, menunjukkan metode yang didukung.</td></tr><tr><td><span class="param-name">X-IQC-Cache</span></td><td>IQC1 / IQC2</td><td>HIT / MISS. Seed eksplisit memakai cache per menit WIB; jam di gambar tetap WIB.</td></tr><tr><td><span class="param-name">X-IQC-Source</span></td><td>IQC3 / IQC4</td><td>reference-photo (default) / dynamic-render (hasil edit).</td></tr><tr><td><span class="param-name">X-IQC-Source</span></td><td>IQC5</td><td>reference-photo (PNG asli), reference-converted (default JPG), dynamic-render (hasil edit).</td></tr><tr><td><span class="param-name">Access-Control-Allow-Headers</span></td><td>IQC5</td><td>Content-Type; mendukung POST profil multipart / JSON / image body.</td></tr></tbody></table></div><p class="block-note">Metadata dimensi / filename / Content-Length merujuk respons gambar. Header error / Allow bersifat kondisional. Nilai asli, HTTP status dan semua header fetch yang terbaca tersedia pada panel hasil Playground; header transport tambahan seperti Date/Server dari platform dapat berbeda. Template HTML tetap tersedia melalui API lanjutan, tetapi Playground IQC selalu menghasilkan gambar.</p></section>
+<!-- IQC_HEADERS_REFERENCE_END -->
 
       <!-- ============ /api/dl ============ -->
       <section class="section-card endpoint" id="ep-dl" data-keywords="/api/dl post tiktok instagram extractor download media video slide foto carousel mp3 audio">
@@ -1986,6 +1999,7 @@ svg{ display: block; flex-shrink: 0; }
           Mengubah teks menjadi <strong>foto JPG</strong> berupa tangkapan layar obrolan Instagram DM — lengkap dengan emoji gaya iPhone, wallpaper percakapan blur acak, jam WIB otomatis, dan indikator baterai.
         </p>
 
+        <p class="block-note"><a href="#iqc-headers-reference">Lihat seluruh header IQC dan cara pakai ↗</a>. Preview Playground selalu berupa gambar; URL dan contoh kode mengikuti isian Anda.</p>
         <div class="ep-grid">
           <div class="ep-col">
             <div class="ep-block">
@@ -2121,6 +2135,7 @@ svg{ display: block; flex-shrink: 0; }
           Varian kedua: replika <strong>menu konteks WhatsApp iOS</strong> — kartu preview berisi nama, tujuh menu lengkap, latar ruangan blur, dan bubble pesan yang sama dengan <code>/iqc</code>. Identik dengan memanggil <code>/iqc?v2=1</code>.
         </p>
 
+        <p class="block-note"><a href="#iqc-headers-reference">Lihat seluruh header IQC2 dan cara pakai ↗</a>. Preview Playground selalu berupa gambar; URL dan contoh kode mengikuti isian Anda.</p>
         <div class="ep-grid">
           <div class="ep-col">
             <div class="ep-block">
@@ -2248,6 +2263,7 @@ svg{ display: block; flex-shrink: 0; }
           Quote <strong>iMessage × Apple Music</strong> dari foto referensi: lirik, nama musik, artis, gradient/solid, dan waktu bisa diubah. Tanpa parameter, hasil memakai <strong>foto asli yang identik</strong>. Setelah diedit, tinggi kartu dan gambar mengikuti teks secara otomatis.
         </p>
 
+        <p class="block-note"><a href="#iqc-headers-reference">Lihat seluruh header IQC3 dan cara pakai ↗</a>. Preview Playground selalu berupa gambar; URL dan contoh kode mengikuti isian Anda.</p>
         <div class="ep-grid">
           <div class="ep-col">
             <div class="ep-block">
@@ -2360,6 +2376,7 @@ svg{ display: block; flex-shrink: 0; }
           Quote <strong>WhatsApp iOS</strong> dari foto: pesan, reaksi, tema, jam pesan/status bar, baterai dan menu bisa diubah. Cara ubah teks sama dengan IQC/IQC2: <code>pesan</code>, dengan alias <code>message</code> / <code>text</code>. Default memakai <strong>JPEG foto asli identik</strong>. Teks panjang menambah tinggi tanpa terpotong.
         </p>
 
+        <p class="block-note"><a href="#iqc-headers-reference">Lihat seluruh header IQC4 dan cara pakai ↗</a>. Preview Playground selalu berupa gambar; URL dan contoh kode mengikuti isian Anda.</p>
         <div class="ep-grid">
           <div class="ep-col">
             <div class="ep-block">
@@ -2456,6 +2473,7 @@ svg{ display: block; flex-shrink: 0; }
       <section class="section-card endpoint" id="ep-iqc5" data-keywords="/iqc5 /qc5 whatsapp profil avatar nama name png jpg upload pesan reaksi menu">
         <div class="section-head"><div class="section-title-wrap"><span class="method-tag method-get">GET</span><span class="method-tag method-post">POST</span><h2 class="section-title">/iqc5</h2><button class="btn-icon-copy" type="button" title="Salin path" aria-label="Salin path IQC5" onclick="copyText('/iqc5')">⧉</button></div><div class="section-title-actions"><button type="button" class="btn-try-ep" onclick="setupPlayground('GET','/iqc5')">Uji di Playground</button><span class="endpoint-badge">WhatsApp · Profil & Nama</span></div></div>
         <p class="section-desc">V5 dari foto WhatsApp 736 × 1308: nama berwarna, foto profil bulat, pesan tebal, bar emoji dan menu Indonesia. <strong>PNG default memakai file asli 100% identik.</strong> Nama, profil, teks, warna, tema dan menu bisa diubah; tinggi otomatis mengikuti pesan.</p>
+        <p class="block-note"><a href="#iqc-headers-reference">Lihat seluruh header IQC5 dan cara pakai ↗</a>. Preview Playground selalu berupa gambar; URL dan contoh kode mengikuti isian Anda.</p>
         <div class="ep-grid"><div class="ep-col"><div class="ep-block"><h3 class="block-title">Query Parameters · semuanya opsional</h3><div class="table-wrap scroller"><table class="doc-table"><thead><tr><th>Parameter</th><th>Tipe</th><th>Keterangan</th></tr></thead><tbody><tr><td><span class="param-name">pesan / message / text</span></td><td><span class="param-type">string</span></td><td>Pesan maks. 1000 karakter; Enter, emoji dan format WhatsApp. Default: <code>dikasih muka cakep , ngapain harus faker? 🤣🤤</code>.</td></tr><tr><td><span class="param-name">name / nama</span></td><td><span class="param-type">string</span></td><td>Nama pengirim maks. 30 karakter. Default <code>★</code> (bintang pink di atas pesan).</td></tr><tr><td><span class="param-name">nameColor / warnaNama</span></td><td><span class="param-type">hex</span></td><td>Warna nama, enam digit hex; default <code>#b83e91</code>.</td></tr><tr><td><span class="param-name">profile / avatar / pp</span></td><td><span class="param-type">URL / string</span></td><td>URL gambar HTTP/HTTPS publik, <code>default</code> untuk avatar bawaan, atau <code>none</code> tanpa avatar. URL harus tanpa kredensial/port khusus. SSRF/private/local diblokir.</td></tr><tr><td><span class="param-name">profileColor</span></td><td><span class="param-type">hex</span></td><td>Warna avatar bawaan; default <code>#8f0835</code>. Tidak mengubah warna foto upload.</td></tr><tr><td><span class="param-name">mode</span></td><td><span class="param-type">string</span></td><td><code>dark</code> (default seperti foto) atau <code>light</code>.</td></tr><tr><td><span class="param-name">time / waktu</span></td><td><span class="param-type">HH:mm</span></td><td>Jam pesan; default <code>10:00</code>. HH.mm juga diterima.</td></tr><tr><td><span class="param-name">reaction / emoji / reaksi</span></td><td><span class="param-type">string</span></td><td>👍, ❤️, 😂, 😮, 😢, 🙏 atau <code>none</code> (default). Alias heart/like/haha/wow/sad/pray. Bar emoji dan badge memakai PNG alpha asli, tanpa halo putih.</td></tr><tr><td><span class="param-name">star</span></td><td><span class="param-type">boolean</span></td><td><code>0</code> default: menu Beri Bintang. <code>1</code>: bintang metadata + Hapus Bintang. Terpisah dari nama ★.</td></tr><tr><td><span class="param-name">menu / reactions</span></td><td><span class="param-type">boolean</span></td><td>Keduanya default <code>1</code>. <code>menu=0</code> menyembunyikan menu; <code>reactions=0</code> menyembunyikan bar emoji.</td></tr><tr><td><span class="param-name">lang / language</span></td><td><span class="param-type">string</span></td><td><code>id</code> (default, Indonesia seperti foto) atau <code>en</code>.</td></tr><tr><td><span class="param-name">format</span></td><td><span class="param-type">string</span></td><td><code>png</code> (default, lossless) atau <code>jpg</code> / <code>jpeg</code>. File default PNG byte-identik; JPG adalah konversi lossy.</td></tr><tr><td><span class="param-name">html</span></td><td><span class="param-type">boolean</span></td><td><code>1</code> untuk template HTML lengkap offline, termasuk font dan foto. Jika aktif, mengoverride format gambar.</td></tr></tbody></table></div><div class="chip-row"><span class="chip">736 px lebar</span><span class="chip">min. 1308 px</span><span class="chip">PNG / JPG / HTML</span><span class="chip">GET / POST</span></div></div>
         <div class="ep-block"><h3 class="block-title">Upload foto profil · POST</h3><p class="block-note">POST multipart dengan satu file <code>profile</code> (alias <code>avatar</code> / <code>image</code>); JSON dengan <code>profileData</code> base64/data URI; atau body gambar mentah dengan Content-Type image/*. Field teks dapat dikirim dalam body/query. Query mengoverride body. Jangan gabungkan URL profil dan file upload.</p><ul class="note-list"><li>Foto maks. <strong>2 MB / 4 MP</strong>; body JSON maks. 3 MB. JPEG, PNG, WebP, GIF, AVIF, BMP. SVG tidak diterima.</li><li>URL hanya alamat publik: DNS dipin, setiap redirect diperiksa. Download URL juga tetap dibatasi 2 MB untuk profil akhir.</li><li>Hasil tidak menyimpan upload ke disk; cache terbatas di memori proses. Preview/unduh memakai respons yang sama.</li></ul></div>
         <div class="ep-block"><h3 class="block-title">Respons & catatan</h3><p class="block-note">200: image/png (default), image/jpeg (format=jpg), atau text/html (html=1). Lebar 736; tinggi minimal 1308. Header <code>X-IQC-Source</code>: reference-photo / reference-converted / dynamic-render; <code>X-IQC-Width</code> dan <code>X-IQC-Height</code> untuk gambar. Error JSON 400/405/413/415/422/500/502/504 dengan X-IQC-Error-Code.</p><ul class="note-list"><li>Default PNG asli byte-identik. Render edit mendekati foto dengan Roboto, latar/menu sumber dan emoji transparan; tidak diklaim pixel-identik setelah edit.</li><li>★ adalah <strong>nama default</strong>, bukan status bintang pesan. Kartu/menu statis, tidak menjalankan aksi WhatsApp.</li><li>Alias <code>/api/iqc5</code>, <code>/qc5</code>, <code>/api/qc5</code>. <a href="/app5">Editor IQC5</a> menyediakan nama, upload/URL profil dan preview langsung.</li><li>URLSearchParams / --data-urlencode menjaga emoji, #, &amp; dan Enter. HEAD dan preflight CORS didukung. Jam dari parameter, bukan WIB otomatis.</li></ul></div></div>
@@ -3397,7 +3415,7 @@ window.addEventListener('pagehide', releasePlaygroundImage);
 function applyPreset(type){
   if(['iqc','iqc2','iqc3','iqc4','iqc5'].includes(type)){
     pgIqc.select(type);
-    pgIqc.preset(type==='iqc'?'light':type==='iqc2'?'dark':'default');
+    pgIqc.preset('default');
     handleMethodChange();
     showToast('Form lengkap '+type.toUpperCase()+' dibuka');
     return;
@@ -3460,108 +3478,299 @@ function loadPlayground(){
 let pgRequestId = 0;
 let pgAbortController = null;
 
-function responseDetails(res, endpoint, size, elapsed){
-  const holder=document.getElementById('pgResponseDetails');
-  const list=document.getElementById('pgResponseInfo');
-  const lowquality=/^\/(?:api\/)?lowquality\/?$/.test(new URL(endpoint,ORIGIN).pathname);
-  holder.hidden=!pgIqc.info(endpoint)&&!lowquality;list.replaceChildren();
-  if(holder.hidden)return;
-  function row(label,value,bad){const dt=document.createElement('dt'),dd=document.createElement('dd');dt.textContent=label;dd.textContent=value;if(bad)dd.className='bad';list.append(dt,dd);}
-  row('HTTP',String(res.status),!res.ok);row('Content-Type',res.headers.get('content-type')||'—');
-  for(const header of lowquality?['X-Lowquality-Iterations','X-Lowquality-Quality','X-Lowquality-Resolution','X-Lowquality-Source','X-Lowquality-Error-Code']:['X-IQC-Variant','X-IQC-Renderer','X-IQC-Cache','X-IQC-Source','X-IQC-Error-Code']){
-    const value=res.headers.get(header);if(value)row(header.replace(/^X-(?:IQC|Lowquality)-/,''),value,header.endsWith('Error-Code'));
+/* IQC_RESPONSE_START */
+// One response is used for the picture, headers and download. Never refetch an img src.
+function responseDetails(res, endpoint, size, elapsed, method = "GET") {
+  const holder = document.getElementById("pgResponseDetails");
+  const list = document.getElementById("pgResponseInfo");
+  const lowquality = /^\/(?:api\/)?lowquality\/?$/.test(
+    new URL(endpoint, ORIGIN).pathname,
+  );
+  holder.hidden = !pgIqc.info(endpoint) && !lowquality;
+  list.replaceChildren();
+  if (holder.hidden) return;
+  function row(label, value, bad) {
+    const dt = document.createElement("dt"),
+      dd = document.createElement("dd");
+    dt.textContent = label;
+    dd.textContent = value;
+    if (bad) dd.className = "bad";
+    list.append(dt, dd);
   }
-  row('Ukuran file',size+' bytes');row('Waktu',elapsed+' ms');row('URL request',new URL(endpoint,ORIGIN).href);
-  return {row};
+  row("HTTP", String(res.status), !res.ok);
+  row("Metode request", method);
+  // All headers actually readable by fetch, not guessed from documentation.
+  res.headers.forEach((value, name) =>
+    row(name, value, name.endsWith("error-code")),
+  );
+  row("Ukuran file", size + " bytes");
+  row("Waktu", elapsed + " ms");
+  row("URL request", new URL(endpoint, ORIGIN).href);
+  return { row };
 }
 
-async function executePlayground(e){
+async function executePlayground(e, settings = {}) {
   e.preventDefault();
-  pgIqc.fromEndpoint();
-  if(!document.getElementById('playgroundForm').reportValidity())return;
-  const method=document.getElementById('pgMethod').value;
-  const endpoint=document.getElementById('pgEndpoint').value.trim();
-  const bodyText=document.getElementById('pgBody').value.trim();
-  const iqc=pgIqc.info(endpoint);
-  const submitBtn=document.getElementById('pgSubmitBtn'),btnText=document.getElementById('pgBtnText');
-  const statusBadge=document.getElementById('pgStatusBadge'),timeBadge=document.getElementById('pgTimeBadge'),responsePre=document.getElementById('pgResponseCode');
-  if(pgAbortController)pgAbortController.abort();
-  const id=++pgRequestId,controller=new AbortController();pgAbortController=controller;
-  const timeout=setTimeout(()=>controller.abort(),70000);
-  submitBtn.classList.add('loading');submitBtn.disabled=true;
-  btnText.innerHTML='<div class="spinner"></div> Memproses';
-  statusBadge.className='res-status-badge status-idle';statusBadge.textContent='Fetching...';timeBadge.textContent='...';
-  releasePlaygroundImage();responsePre.textContent='Menghubungi server…';
-  document.getElementById('pgResponseDetails').hidden=true;
-  if(iqc)document.getElementById('pgIqcNote').textContent='Render berjalan. Cold start dapat memerlukan beberapa detik.';
-  savePlayground();const t0=performance.now();
-  try{
-    const options={method,headers:{},signal:controller.signal};
-    const upload=pgIqc.upload();
-    if(upload){if(!upload.file)throw new Error('Pilih foto profil untuk upload terlebih dahulu.');options.method='POST';options.body=new FormData();options.body.append('profile',upload.file);}
-    else if(method==='POST'){
-      try{JSON.parse(bodyText);}catch(_){throw new Error('Request body bukan JSON valid. Periksa tanda kutip, koma dan kurung.');}
-      options.headers['Content-Type']='application/json';options.body=bodyText;
-    }
-    const res=await fetch(endpoint,options);
-    if(id!==pgRequestId)return;
-    const ctype=res.headers.get('content-type')||'';
-    statusBadge.textContent=res.status+' '+(res.statusText||(res.ok?'OK':'Error'));
-    statusBadge.className='res-status-badge '+(res.ok?'status-200':'status-400');
-    const htmlPreview=['iqc3','iqc4','iqc5'].includes(iqc?.type)&&iqc.url.searchParams.get('html')==='1'&&ctype.includes('text/html');
-    if(ctype.startsWith('image/')||htmlPreview){
-      // Pratinjau + unduh memakai SATU respons. Tidak fetch ulang untuk src.
-      const blob=await res.blob();if(id!==pgRequestId)return;
-      const elapsed=Math.round(performance.now()-t0);timeBadge.textContent=elapsed+' ms';
-      pgImageURL=URL.createObjectURL(blob);
-      const detail=responseDetails(res,endpoint,blob.size,elapsed);
-      const view=document.createElement(htmlPreview?'iframe':'img');
-      view.className=htmlPreview?'res-html':'res-img';view.src=pgImageURL;
-      if(htmlPreview){view.setAttribute('sandbox','allow-scripts');view.title='Pratinjau HTML '+iqc.type.toUpperCase()+' terisolasi';}
-      else{
-        view.alt='Hasil request '+new URL(endpoint,ORIGIN).pathname;
-        view.onload=()=>{if(id!==pgRequestId)return;detail?.row('Dimensi',view.naturalWidth+' × '+view.naturalHeight+' px');};
+  pgIqc.fromEndpoint({ quiet: true });
+  const form = document.getElementById("playgroundForm");
+  if (!(settings.automatic ? form.checkValidity() : form.reportValidity()))
+    return;
+  const method = document.getElementById("pgMethod").value;
+  const endpoint = document.getElementById("pgEndpoint").value.trim();
+  const bodyText = document.getElementById("pgBody").value.trim();
+  const iqc = pgIqc.info(endpoint),
+    key = iqc ? pgIqc.requestKey() : "";
+  if (iqc && pgIqc.busy()) {
+    pgIqc.schedule(0);
+    return;
+  }
+  const upload = pgIqc.upload();
+  if (upload && !upload.file) {
+    document.getElementById("pgIqcLiveStatus").textContent =
+      "Pilih foto profil sebelum membuat gambar.";
+    return;
+  }
+  const submitBtn = document.getElementById("pgSubmitBtn"),
+    btnText = document.getElementById("pgBtnText");
+  const statusBadge = document.getElementById("pgStatusBadge"),
+    timeBadge = document.getElementById("pgTimeBadge");
+  const responsePre = document.getElementById("pgResponseCode"),
+    live = document.getElementById("pgIqcLiveStatus");
+  const errorBox = document.getElementById("pgImageError");
+  if (pgAbortController) pgAbortController.abort();
+  const id = ++pgRequestId,
+    controller = new AbortController();
+  pgAbortController = controller;
+  if (iqc) pgIqc.beginRequest();
+  const timeout = setTimeout(() => controller.abort(), 70000);
+  submitBtn.classList.add("loading");
+  submitBtn.disabled = true;
+  btnText.innerHTML = '<div class="spinner"></div> Memproses';
+  statusBadge.className = "res-status-badge status-idle";
+  statusBadge.textContent = "Memuat gambar…";
+  timeBadge.textContent = "…";
+  errorBox.hidden = true;
+  errorBox.textContent = "";
+  if (!iqc) {
+    releasePlaygroundImage();
+    responsePre.textContent = "Menghubungi server…";
+    document.getElementById("pgResponseDetails").hidden = true;
+  } else {
+    live.textContent =
+      "Membuat " +
+      iqc.type.toUpperCase() +
+      " dari isian terbaru. Gambar sebelumnya belum diperbarui.";
+    if (!responsePre.querySelector("img"))
+      responsePre.textContent = "Menyiapkan gambar…";
+    document.getElementById("pgIqcNote").textContent =
+      "Render gambar berjalan. Cold start Chromium dapat memerlukan beberapa detik.";
+  }
+  savePlayground();
+  const t0 = performance.now();
+  try {
+    const options = { method, headers: {}, signal: controller.signal };
+    if (upload) {
+      options.method = "POST";
+      options.body = new FormData();
+      options.body.append("profile", upload.file);
+    } else if (method === "POST") {
+      try {
+        JSON.parse(bodyText);
+      } catch (_) {
+        throw new Error(
+          "Request body bukan JSON valid. Periksa tanda kutip, koma dan kurung.",
+        );
       }
-      const note=document.createElement('span');note.className='res-note';note.textContent=ctype+' · '+(blob.size/1024).toFixed(1)+' KB · '+elapsed+' ms';
-      const download=document.createElement('a');download.className='res-download';download.href=pgImageURL;download.download=/\/(?:api\/)?lowquality(?:[/?]|$)/.test(endpoint)?'lowquality.'+(ctype.includes('png')?'png':ctype.includes('webp')?'webp':ctype.includes('gif')?'gif':ctype.includes('avif')?'avif':ctype.includes('bmp')?'bmp':'jpg'):pgIqc.filename(iqc);download.textContent=htmlPreview?'Unduh HTML':ctype.includes('png')?'Unduh PNG':'Unduh JPG';
-      responsePre.replaceChildren(view,note,download);
-      if(!res.ok){const error=document.createElement('p');error.className='iqc-response-help';error.textContent='Ini gambar fallback, bukan hasil sukses. Periksa status HTTP dan Error-Code pada info respons.';responsePre.append(error);}
-      responsePre.dataset.imageInfo='HTTP '+res.status+'\nContent-Type: '+ctype+'\nUkuran: '+blob.size+' bytes\nURL: '+new URL(endpoint,ORIGIN).href;
-    }else{
-      const text=await res.text();if(id!==pgRequestId)return;
-      const elapsed=Math.round(performance.now()-t0);timeBadge.textContent=elapsed+' ms';responseDetails(res,endpoint,new Blob([text]).size,elapsed);
-      if(ctype.includes('application/json')){try{renderBox('pgResponseCode',JSON.stringify(JSON.parse(text),null,2),'json');}catch(_){renderBox('pgResponseCode',text,'plain');}}
-      else renderBox('pgResponseCode',text.length>4000?text.slice(0,4000)+'\n\n... (respons non-JSON dipotong)':' '+text,'plain');
+      options.headers["Content-Type"] = "application/json";
+      options.body = bodyText;
     }
-    if(iqc)document.getElementById('pgIqcNote').textContent=res.ok?'Request berhasil. Lihat hasil, header, ukuran dan unduh di panel respons.':'Request gagal. Periksa HTTP dan Error-Code; IQC1/IQC2 bisa mengembalikan gambar fallback.';
-  }catch(err){
-    if(id!==pgRequestId)return;
-    timeBadge.textContent=Math.round(performance.now()-t0)+' ms';statusBadge.textContent=err.name==='AbortError'?'Timeout / dibatalkan':'Request Error';statusBadge.className='res-status-badge status-500';
-    renderBox('pgResponseCode',JSON.stringify({status:'error',message:err.name==='AbortError'?'Request melewati 70 detik atau dibatalkan. Coba lagi.':err.message},null,2),'json');
-    if(iqc)document.getElementById('pgIqcNote').textContent='Gagal mengirim request. Periksa koneksi dan konfigurasi, lalu coba lagi.';
-  }finally{
+    const res = await fetch(endpoint, options);
+    if (id !== pgRequestId) return;
+    const ctype = res.headers.get("content-type") || "";
+    const blob = await res.blob();
+    if (id !== pgRequestId) return;
+    if (iqc && key !== pgIqc.requestKey()) {
+      live.textContent =
+        "Isian berubah saat render. Hasil lama tidak ditampilkan; menunggu gambar terbaru.";
+      return;
+    }
+    const elapsed = Math.round(performance.now() - t0);
+    timeBadge.textContent = elapsed + " ms";
+    statusBadge.textContent =
+      res.status + " " + (res.statusText || (res.ok ? "OK" : "Error"));
+    statusBadge.className =
+      "res-status-badge " + (res.ok ? "status-200" : "status-400");
+    const detail = responseDetails(
+      res,
+      endpoint,
+      blob.size,
+      elapsed,
+      options.method,
+    );
+    const image = ctype.startsWith("image/");
+    if (iqc && !/^image\/(?:jpeg|png)(?:;|$)/i.test(ctype)) {
+      const text = await blob.text();
+      let message;
+      try {
+        message = JSON.parse(text).message;
+      } catch (_) {}
+      throw new Error(
+        message ||
+          "Endpoint " +
+            iqc.type.toUpperCase() +
+            " mengirim " +
+            (ctype || "tipe kosong") +
+            ", bukan gambar. Periksa URL / deployment API.",
+      );
+    }
+    if (image) {
+      releasePlaygroundImage();
+      pgImageURL = URL.createObjectURL(blob);
+      const view = document.createElement("img");
+      view.className = "res-img";
+      view.src = pgImageURL;
+      view.alt =
+        "Hasil gambar " +
+        (iqc ? iqc.type.toUpperCase() : new URL(endpoint, ORIGIN).pathname);
+      view.dataset.endpoint = endpoint;
+      view.dataset.requestKey = key;
+      view.onload = () => {
+        if (id !== pgRequestId) return;
+        detail?.row(
+          "Dimensi gambar",
+          view.naturalWidth + " × " + view.naturalHeight + " px",
+        );
+        if (iqc && key === pgIqc.requestKey())
+          live.textContent =
+            (res.ok
+              ? "Gambar sesuai isian terbaru · "
+              : "Gambar fallback / error · ") +
+            iqc.type.toUpperCase() +
+            " · " +
+            view.naturalWidth +
+            " × " +
+            view.naturalHeight +
+            " px";
+      };
+      const note = document.createElement("span");
+      note.className = "res-note";
+      note.textContent =
+        ctype +
+        " · " +
+        (blob.size / 1024).toFixed(1) +
+        " KB · " +
+        elapsed +
+        " ms";
+      const download = document.createElement("a");
+      download.className = "res-download";
+      download.href = pgImageURL;
+      download.download = /\/(?:api\/)?lowquality(?:[/?]|$)/.test(endpoint)
+        ? "lowquality." +
+          (ctype.includes("png")
+            ? "png"
+            : ctype.includes("webp")
+              ? "webp"
+              : ctype.includes("gif")
+                ? "gif"
+                : ctype.includes("avif")
+                  ? "avif"
+                  : ctype.includes("bmp")
+                    ? "bmp"
+                    : "jpg")
+        : pgIqc.filename(iqc);
+      download.textContent =
+        "Unduh " + download.download.split(".").pop().toUpperCase();
+      responsePre.replaceChildren(view, note, download);
+      if (!res.ok) {
+        errorBox.hidden = false;
+        errorBox.textContent =
+          "HTTP " +
+          res.status +
+          ": ini gambar fallback, bukan render sukses. Lihat X-IQC-Error-Code pada header.";
+      }
+      responsePre.dataset.imageInfo =
+        "HTTP " +
+        res.status +
+        "\nContent-Type: " +
+        ctype +
+        "\nUkuran: " +
+        blob.size +
+        " bytes\nMetode: " +
+        options.method +
+        "\nURL: " +
+        new URL(endpoint, ORIGIN).href;
+    } else {
+      releasePlaygroundImage();
+      const text = await blob.text();
+      if (ctype.includes("application/json")) {
+        try {
+          renderBox(
+            "pgResponseCode",
+            JSON.stringify(JSON.parse(text), null, 2),
+            "json",
+          );
+        } catch (_) {
+          renderBox("pgResponseCode", text, "plain");
+        }
+      } else renderBox("pgResponseCode", text, "plain");
+    }
+    if (iqc)
+      document.getElementById("pgIqcNote").textContent = res.ok
+        ? "Gambar, kode dan parameter mengikuti isian. Unduh memakai respons yang sama; tidak ada request kedua."
+        : "Request gagal. Periksa HTTP dan header error; gambar fallback bukan sukses.";
+  } catch (error) {
+    if (id !== pgRequestId || (iqc && key !== pgIqc.requestKey())) return;
+    const message =
+      error.name === "AbortError"
+        ? "Request dibatalkan / melewati 70 detik. Coba Kirim lagi."
+        : error.message;
+    statusBadge.textContent = "Error";
+    statusBadge.className = "res-status-badge status-400";
+    timeBadge.textContent = Math.round(performance.now() - t0) + " ms";
+    if (iqc) {
+      errorBox.hidden = false;
+      errorBox.textContent = message;
+      live.textContent =
+        "Gambar terbaru gagal dibuat. Jika ada gambar di bawah, itu hasil sebelumnya.";
+      if (!responsePre.querySelector("img"))
+        responsePre.textContent =
+          "Belum ada gambar sukses. Periksa pesan error dan header di atas.";
+      document.getElementById("pgIqcNote").textContent =
+        "Gagal membuat gambar: " + message;
+    } else renderBox("pgResponseCode", "Request gagal: " + message, "plain");
+  } finally {
     clearTimeout(timeout);
-    if(id===pgRequestId){submitBtn.classList.remove('loading');submitBtn.disabled=false;btnText.textContent='Kirim';pgAbortController=null;}
+    if (id === pgRequestId) {
+      submitBtn.classList.remove("loading");
+      submitBtn.disabled = false;
+      btnText.textContent = "Kirim";
+      pgAbortController = null;
+      if (iqc) pgIqc.finishRequest(key);
+    }
   }
 }
 
-
-function clearPlayground(){
+function clearPlayground() {
+  pgIqc.pause();
   pgRequestId++;
-  if(pgAbortController)pgAbortController.abort();
-  pgAbortController=null;
-  document.getElementById('pgSubmitBtn').classList.remove('loading');
-  document.getElementById('pgSubmitBtn').disabled=false;
-  document.getElementById('pgBtnText').textContent='Kirim';
-  document.getElementById('pgResponseDetails').hidden=true;
+  if (pgAbortController) pgAbortController.abort();
+  pgAbortController = null;
+  document.getElementById("pgSubmitBtn").classList.remove("loading");
+  document.getElementById("pgSubmitBtn").disabled = false;
+  document.getElementById("pgBtnText").textContent = "Kirim";
+  document.getElementById("pgResponseDetails").hidden = true;
+  document.getElementById("pgImageError").hidden = true;
+  document.getElementById("pgIqcLiveStatus").textContent =
+    "Respons dibersihkan; otomatis dijeda. Aktifkan pratinjau atau tekan Kirim.";
   releasePlaygroundImage();
-  renderBox('pgResponseCode', 'Respon dibersihkan.', 'plain');
-  const statusBadge = document.getElementById('pgStatusBadge');
-  statusBadge.className = 'res-status-badge status-idle';
-  statusBadge.textContent = 'Ready';
-  document.getElementById('pgTimeBadge').textContent = '0 ms';
-  showToast('Playground dibersihkan');
+  renderBox("pgResponseCode", "Respons dibersihkan.", "plain");
+  const badge = document.getElementById("pgStatusBadge");
+  badge.className = "res-status-badge status-idle";
+  badge.textContent = "Ready";
+  document.getElementById("pgTimeBadge").textContent = "0 ms";
+  showToast("Playground dibersihkan");
 }
+/* IQC_RESPONSE_END */
 
 function copyAsCurl(){
   if(pgIqc.info(document.getElementById('pgEndpoint').value.trim())){
@@ -3581,261 +3790,1526 @@ function copyAsCurl(){
   copyText(cmd, 'Perintah cURL disalin');
 }
 
-/* Playground IQC: form -> URL -> contoh kode. Tidak ada auto-fetch. */
-const pgIqc = (function(){
-  const $ = id => document.getElementById(id);
+/* Playground IQC: form -> kode -> gambar; debounce dan antrian satu render. */
+/* IQC_CONTROLLER_START */
+const pgIqc = (function () {
+  const $ = (id) => document.getElementById(id);
+  const headerReference = {
+  "exposed": ["Content-Type", "Content-Length", "Content-Disposition", "Cache-Control", "X-Content-Type-Options", "X-IQC-Variant", "X-IQC-Renderer", "X-IQC-Cache", "X-IQC-Source", "X-IQC-Width", "X-IQC-Height", "X-IQC-Error-Code", "Allow", "Access-Control-Allow-Origin", "Access-Control-Allow-Methods", "Access-Control-Allow-Headers", "Access-Control-Expose-Headers"],
+  "common": [
+    ["Content-Type", "image/jpeg; khusus IQC5 default image/png. Error IQC3–5 memakai application/json. IQC1/2 dapat mengirim JPEG fallback dengan HTTP error."],
+    ["Content-Length", "Jumlah byte respons gambar, bukan jumlah karakter pesan. Header transport dapat berbeda pada respons error/HTML."],
+    ["Content-Disposition", "inline; filename=... untuk gambar. Playground memilih nama unduhan sesuai model dan format."],
+    ["Cache-Control", "no-store: respons tidak disimpan browser/CDN. Cache renderer IQC1/2 terpisah dari cache HTTP."],
+    ["X-Content-Type-Options", "nosniff; browser tidak menebak tipe file."],
+    ["X-IQC-Variant", "Nomor model 1–5; tersedia pada request model yang valid."],
+    ["X-IQC-Renderer", "chromium-153-node24; runtime renderer project."],
+    ["X-IQC-Width", "Lebar gambar yang benar-benar dikirim, dalam px."],
+    ["X-IQC-Height", "Tinggi gambar yang benar-benar dikirim. IQC3–5 bertambah untuk teks panjang."],
+    ["X-IQC-Error-Code", "Hanya jika ada error. Periksa bersama HTTP status; gambar fallback tidak berarti sukses."],
+    ["Access-Control-Allow-Origin", "*; API dapat dipanggil dari origin lain."],
+    ["Access-Control-Allow-Methods", "IQC1–4: GET, HEAD, OPTIONS. IQC5 juga POST untuk profil upload."],
+    ["Access-Control-Expose-Headers", "Daftar header yang boleh dibaca JavaScript melalui CORS; mencakup metadata gambar di atas."],
+    ["Allow", "Hanya pada HTTP 405, menunjukkan metode yang didukung."]
+  ],
+  "models": {
+    "iqc": [["X-IQC-Cache", "HIT / MISS. Seed eksplisit memakai cache per menit WIB; tanpa seed hasil acak. Jam tetap mengikuti WIB."]],
+    "iqc2": [["X-IQC-Cache", "HIT / MISS. Seed eksplisit memakai cache per menit WIB; tanpa seed baterai acak. Jam tetap mengikuti WIB."]],
+    "iqc3": [["X-IQC-Source", "reference-photo untuk default, dynamic-render setelah isian berubah."]],
+    "iqc4": [["X-IQC-Source", "reference-photo untuk default, dynamic-render setelah isian berubah."]],
+    "iqc5": [["X-IQC-Source", "reference-photo (PNG asli), reference-converted (default JPG), atau dynamic-render."], ["Access-Control-Allow-Headers", "Content-Type; untuk POST JSON/raster dan preflight upload profil."]]
+  }
+}
+;
+  const originalMessage = "see u, hopefully we will meet in the next life.";
   const originalLyrics = "I don't regret, just pretend shit never happened";
   const models = {
-    iqc: {title:'IQC1 · Instagram DM',output:'1350 × 2400 JPG',routes:['/iqc','/api/iqc'],textHelp:'Maks. 1000 karakter. Emoji, baris baru, *tebal*, _miring_, ~coret~, `kode`, daftar dan kutipan didukung.',seedHelp:'Default terang. Seed mengunci wallpaper + baterai dalam menit WIB yang sama; jam tetap berjalan. Kosongkan seed untuk acak.',presets:[
-      {id:'default',name:'Default API',help:'Tanpa parameter: pesan bawaan, tema terang, wallpaper dan baterai acak.',value:{text:'',mode:'',seed:''}},
-      {id:'light',name:'Pesan singkat · terang',help:'Contoh dasar pesan, mode light dan seed 42.',value:{text:'Halo, ini quote pertamaku ❤',mode:'light',seed:'42'}},
-      {id:'dark',name:'Pesan singkat · gelap',help:'Parameter mode=dark memaksa tampilan gelap.',value:{text:'Sampai bertemu lagi 🌙',mode:'dark',seed:'42'}},
-      {id:'multiline',name:'Baris baru & emoji',help:'Enter menjadi baris baru. URLSearchParams mengubahnya menjadi %0A.',value:{text:'Halo, Denji! 💕\nSemoga harimu menyenangkan.\nSampai bertemu lagi ✨',mode:'light',seed:'42'}},
-      {id:'format',name:'Format teks lengkap',help:'Tebal, miring, coret, kode, daftar dan kutipan bisa digabung.',value:{text:'*Tebal* · _miring_ · ~coret~ · `kode`\n- Poin pertama\n- Poin kedua\n1. Langkah satu\n2. Langkah dua\n> Kutipan favorit',mode:'dark',seed:'42'}},
-      {id:'random',name:'Wallpaper & baterai acak',help:'Tanpa seed, hasil dapat berbeda pada setiap request.',value:{text:'Setiap hari punya cerita baru ✨',mode:'light',seed:''}}
-    ]},
-    iqc2: {title:'IQC2 · WhatsApp iOS',output:'1350 × 2400 JPG',routes:['/iqc2','/api/iqc2','/iqc?v2=1','/api/iqc?v2=1'],textHelp:'Maks. 1000 karakter. Format teks sama seperti IQC1. Nama di kartu diatur lewat name.',seedHelp:'Default gelap. Seed mengunci baterai; latar WhatsApp tetap. Jam WIB berjalan, jadi gambar dapat berubah saat menit berganti.',presets:[
-      {id:'default',name:'Default API · Jidar',help:'Tanpa parameter: nama Jidar, tema gelap dan pesan bawaan.',value:{text:'',name:'',mode:'',seed:''}},
-      {id:'dark',name:'Nama Denji · gelap',help:'Contoh lengkap pesan, name, mode dan seed.',value:{text:'Halo ges, ini IQC2 👋',name:'Denji',mode:'dark',seed:'42'}},
-      {id:'light',name:'Nama khusus · terang',help:'Nama bisa diubah, maksimal 30 karakter.',value:{text:'Pesanmu layak diingat ❤',name:'Sahabat',mode:'light',seed:'42'}},
-      {id:'multiline',name:'Nama + baris baru + emoji',help:'Gabungkan name dengan pesan multibaris dan emoji.',value:{text:'Halo, Denji! 💕\nJangan lupa istirahat.\nKamu sudah berusaha hari ini ✨',name:'Denji',mode:'dark',seed:'42'}},
-      {id:'format',name:'Format teks & daftar',help:'Format WhatsApp: *tebal*, _miring_, ~coret~, kode dan daftar.',value:{text:'*Catatan hari ini*\n- Minum air\n- _Istirahat cukup_\n> Pelan-pelan juga sampai.',name:'Denji',mode:'dark',seed:'42'}},
-      {id:'alias',name:'Alias /iqc?v2=1',help:'v2=1 pada /iqc menghasilkan IQC2; seluruh field IQC2 tetap tersedia.',value:{route:'/iqc?v2=1',text:'Versi WhatsApp lewat alias v2=1',name:'Denji',mode:'dark',seed:'42'}}
-    ]},
-    iqc5: {title:'IQC5 · WhatsApp Profil & Nama',output:'736 px · PNG/JPG · tinggi otomatis',routes:['/iqc5','/api/iqc5','/qc5','/api/qc5'],textHelp:'Maks. 1000 karakter. pesan/message/text, Enter, emoji dan format WhatsApp. Nama maks. 30; avatar URL/upload; tinggi mengikuti teks.',presets:[
-      {id:'default',name:'Foto referensi · PNG persis',help:'Semua nilai sesuai foto. Nama ★, avatar bawaan, dark, menu Indonesia, tanpa badge. PNG asli byte-identik.',value:{}},
-      {id:'name',name:'Nama & warna khusus',help:'name dan nameColor mengganti nama. Avatar bawaan tetap sesuai foto.',value:{name:'Denji',nameColor:'#63c5a4',text:'Halo, ini nama dan ceritaku. ❤'}},
-      {id:'profile',name:'Foto profil URL · gelap',help:'URL gambar publik diambil lewat downloader aman. Tidak ada request sampai Kirim.',value:{name:'Denji',text:'Halo, ini profil dan namaku. ❤',profileSource:'url',profileUrl:'https://jpeg.wavebeem.com/icon.jpg'}},
-      {id:'light',name:'Terang · reaksi 👍',help:'Tema terang, badge reaksi dan pilihan bintang dapat diubah.',value:{name:'Sahabat',mode:'light',reaction:'👍',text:'Hari ini juga punya cerita baik. ✨'}},
-      {id:'long',name:'Pesan panjang · autoheight',help:'Bubble bertambah tinggi; avatar dan menu bergeser tanpa terpotong.',value:{name:'Sahabat',text:'*Catatan untuk diri sendiri*\n'+('Kamu sudah berusaha, tetap berjalan pelan-pelan. '.repeat(15))}},
-      {id:'minimal',name:'Tanpa profil / menu / reaksi',help:'profile=none, menu=0 dan reactions=0 untuk tampilan minimal.',value:{name:'Denji',text:'Pesan singkat tanpa menu.',profileSource:'none',menu:'0',reactions:'0'}},
-      {id:'upload',name:'Upload foto sendiri',help:'Pilih satu foto di field upload. Kirim menggunakan POST multipart; kode lima bahasa mengikuti metode ini.',value:{name:'Denji',text:'Ini foto profilku. ❤',profileSource:'upload'}},
-      {id:'html',name:'Template HTML · preview',help:'html=1 membalas template lengkap offline, bukan PNG. Preview terisolasi.',value:{name:'Denji',format:'html',text:'Pratinjau HTML IQC5.'}},
-      {id:'jpg',name:'Ekspor JPG',help:'format=jpg membuat JPEG yang lebih kecil. Default persis berlaku pada PNG, bukan JPEG.',value:{format:'jpg'}}
-    ]},
-    iqc4: {title:'IQC4 · WhatsApp Reaksi',output:'555 px · tinggi otomatis',routes:['/iqc4','/api/iqc4','/qc4','/api/qc4'],textHelp:'Maks. 1000 karakter. Cara ubah sama seperti IQC1/IQC2: pesan. Alias message/text didukung. Emoji, Enter dan format WhatsApp; tinggi otomatis.',presets:[
-      {id:'default',name:'Foto referensi · persis',help:'Semua default sama dengan foto; JPEG asli byte-identik.',value:{}},
-      {id:'light',name:'Pesan khusus · terang',help:'Cukup ubah pesan; mode light, love, bintang dan menu sesuai foto.',value:{text:'note: kamu tidak gagal, kamu sedang belajar.'}},
-      {id:'dark',name:'Gelap · reaksi 👍',help:'Tema, reaksi, dua jam, baterai dan jaringan dapat diganti.',value:{text:'Pelan-pelan juga sampai. ✨',mode:'dark',reaction:'👍',time:'21.30',statusTime:'21.32',battery:'67',network:'5G'}},
-      {id:'format',name:'Format, Enter & menu Indonesia',help:'Tebal, miring, daftar, kutipan dan emoji. lang=id untuk label menu.',value:{text:'*Catatan hari ini* 💕\n- Minum air\n- _Istirahat cukup_\n> Kamu sudah berusaha. ❤',language:'id',reaction:'🙏'}},
-      {id:'minimal',name:'Tanpa popup & reaksi',help:'menu=0 dan reactions=0 menyembunyikan popup; reaction=none tanpa badge.',value:{text:'Kamu sudah cukup. ❤',star:'0',menu:'0',reactions:'0',reaction:'none'}},
-      {id:'html',name:'Template HTML',help:'html=1 membalas template; preview terisolasi. Kosongkan untuk JPEG.',value:{format:'html',text:'Pratinjau HTML IQC4.'}}
-    ]},
-    iqc3: {title:'IQC3 · iMessage Music',output:'736 px · tinggi otomatis',routes:['/iqc3','/api/iqc3'],textHelp:'Maks. 1000 karakter. Lirik berupa teks biasa (bukan markup WhatsApp). Baris baru didukung; tinggi gambar mengikuti teks.',presets:[
-      {id:'default',name:'Foto referensi · persis',help:'Nilai default sama dengan foto asli; hasil JPEG identik dengan referensi.',value:{}},
-      {id:'gradient',name:'Gradient biru–ungu',help:'Latar gradient memakai color1, color2 dan angle. Musik/artis ikut berubah.',value:{text:'Langit sore dan lagu favorit kita.',music:'Blue Hour',artist:'Denji',bg:'gradient',color1:'#2e617b',color2:'#312553',angle:'135'}},
-      {id:'solid',name:'Warna solid',help:'bg=solid menggunakan color. Field gradient tidak dikirim.',value:{text:'Pesanmu di sini.',music:'Our Song',artist:'Denji',bg:'solid',color:'#1f4260'}},
-      {id:'long',name:'Lirik panjang · tinggi otomatis',help:'Kartu dan posisi menu bertambah tinggi; lirik tidak dipotong secara visual.',value:{text:'Ada lagu yang selalu mengingatkanku padamu.\n\n'+('Di antara hari yang ramai, suara kita masih menemukan jalan pulang. '.repeat(8)),music:'Our Song',artist:'Denji',bg:'gradient',color1:'#6b6040',color2:'#704600'}},
-      {id:'metadata',name:'Nama lagu, artis & waktu',help:'music, artist dan time mengganti label di kartu.',value:{text:'Bagian favorit dari sebuah cerita.',music:'Cerita Kita',artist:'Nama Artismu',time:'1:24',bg:'gradient',color1:'#8a4161',color2:'#34315c',angle:'90'}},
-      {id:'html',name:'Template HTML',help:'html=1 menghasilkan template HTML, bukan JPG. Pratinjau dibuka terisolasi.',value:{format:'html',text:'Pratinjau template yang sama dengan renderer JPG.',music:'Good Days',artist:'SZA'}}
-    ]}
+    iqc: {
+      title: "IQC1 · Instagram DM",
+      output: "1350 × 2400 JPG",
+      routes: ["/iqc", "/api/iqc"],
+      textHelp:
+        "Maks. 1000 karakter. Emoji, baris baru, *tebal*, _miring_, ~coret~, `kode`, daftar dan kutipan didukung.",
+      seedHelp:
+        "Default terang. Seed mengunci wallpaper + baterai dalam menit WIB yang sama; jam tetap berjalan. Kosongkan seed untuk acak.",
+      presets: [
+        {
+          id: "default",
+          name: "Default API",
+          help: "Nilai default diisi eksplisit: pesan bawaan, tema terang; seed kosong untuk wallpaper/baterai acak.",
+          value: {},
+        },
+        {
+          id: "light",
+          name: "Pesan singkat · terang",
+          help: "Contoh dasar pesan, mode light dan seed 42.",
+          value: {
+            text: "Halo, ini quote pertamaku ❤",
+            mode: "light",
+            seed: "42",
+          },
+        },
+        {
+          id: "dark",
+          name: "Pesan singkat · gelap",
+          help: "Parameter mode=dark memaksa tampilan gelap.",
+          value: { text: "Sampai bertemu lagi 🌙", mode: "dark", seed: "42" },
+        },
+        {
+          id: "multiline",
+          name: "Baris baru & emoji",
+          help: "Enter menjadi baris baru. URLSearchParams mengubahnya menjadi %0A.",
+          value: {
+            text: "Halo, Denji! 💕\nSemoga harimu menyenangkan.\nSampai bertemu lagi ✨",
+            mode: "light",
+            seed: "42",
+          },
+        },
+        {
+          id: "format",
+          name: "Format teks lengkap",
+          help: "Tebal, miring, coret, kode, daftar dan kutipan bisa digabung.",
+          value: {
+            text: "*Tebal* · _miring_ · ~coret~ · `kode`\n- Poin pertama\n- Poin kedua\n1. Langkah satu\n2. Langkah dua\n> Kutipan favorit",
+            mode: "dark",
+            seed: "42",
+          },
+        },
+        {
+          id: "random",
+          name: "Wallpaper & baterai acak",
+          help: "Tanpa seed, hasil dapat berbeda pada setiap request.",
+          value: {
+            text: "Setiap hari punya cerita baru ✨",
+            mode: "light",
+            seed: "",
+          },
+        },
+      ],
+    },
+    iqc2: {
+      title: "IQC2 · WhatsApp iOS",
+      output: "1350 × 2400 JPG",
+      routes: ["/iqc2", "/api/iqc2", "/iqc?v2=1", "/api/iqc?v2=1"],
+      textHelp:
+        "Maks. 1000 karakter. Format teks sama seperti IQC1. Nama di kartu diatur lewat name.",
+      seedHelp:
+        "Default gelap. Seed mengunci baterai; latar WhatsApp tetap. Jam WIB berjalan, jadi gambar dapat berubah saat menit berganti.",
+      presets: [
+        {
+          id: "default",
+          name: "Default API · Jidar",
+          help: "Default terisi: nama Jidar, tema gelap dan pesan bawaan; seed tetap opsional.",
+          value: {},
+        },
+        {
+          id: "dark",
+          name: "Nama Denji · gelap",
+          help: "Contoh lengkap pesan, name, mode dan seed.",
+          value: {
+            text: "Halo ges, ini IQC2 👋",
+            name: "Denji",
+            mode: "dark",
+            seed: "42",
+          },
+        },
+        {
+          id: "light",
+          name: "Nama khusus · terang",
+          help: "Nama bisa diubah, maksimal 30 karakter.",
+          value: {
+            text: "Pesanmu layak diingat ❤",
+            name: "Sahabat",
+            mode: "light",
+            seed: "42",
+          },
+        },
+        {
+          id: "multiline",
+          name: "Nama + baris baru + emoji",
+          help: "Gabungkan name dengan pesan multibaris dan emoji.",
+          value: {
+            text: "Halo, Denji! 💕\nJangan lupa istirahat.\nKamu sudah berusaha hari ini ✨",
+            name: "Denji",
+            mode: "dark",
+            seed: "42",
+          },
+        },
+        {
+          id: "format",
+          name: "Format teks & daftar",
+          help: "Format WhatsApp: *tebal*, _miring_, ~coret~, kode dan daftar.",
+          value: {
+            text: "*Catatan hari ini*\n- Minum air\n- _Istirahat cukup_\n> Pelan-pelan juga sampai.",
+            name: "Denji",
+            mode: "dark",
+            seed: "42",
+          },
+        },
+        {
+          id: "alias",
+          name: "Alias /iqc?v2=1",
+          help: "v2=1 pada /iqc menghasilkan IQC2; seluruh field IQC2 tetap tersedia.",
+          value: {
+            route: "/iqc?v2=1",
+            text: "Versi WhatsApp lewat alias v2=1",
+            name: "Denji",
+            mode: "dark",
+            seed: "42",
+          },
+        },
+      ],
+    },
+    iqc5: {
+      title: "IQC5 · WhatsApp Profil & Nama",
+      output: "736 px · PNG/JPG · tinggi otomatis",
+      routes: ["/iqc5", "/api/iqc5", "/qc5", "/api/qc5"],
+      textHelp:
+        "Maks. 1000 karakter. pesan/message/text, Enter, emoji dan format WhatsApp. Nama maks. 30; avatar URL/upload; tinggi mengikuti teks.",
+      presets: [
+        {
+          id: "default",
+          name: "Foto referensi · PNG persis",
+          help: "Semua nilai sesuai foto. Nama ★, avatar bawaan, dark, menu Indonesia, tanpa badge. PNG asli byte-identik.",
+          value: {},
+        },
+        {
+          id: "name",
+          name: "Nama & warna khusus",
+          help: "name dan nameColor mengganti nama. Avatar bawaan tetap sesuai foto.",
+          value: {
+            name: "Denji",
+            nameColor: "#63c5a4",
+            text: "Halo, ini nama dan ceritaku. ❤",
+          },
+        },
+        {
+          id: "profile",
+          name: "Foto profil URL · gelap",
+          help: "URL gambar publik diambil lewat downloader aman setelah isian valid dan jeda edit. Jeda otomatis dapat dimatikan.",
+          value: {
+            name: "Denji",
+            text: "Halo, ini profil dan namaku. ❤",
+            profileSource: "url",
+            profileUrl: "https://jpeg.wavebeem.com/icon.jpg",
+          },
+        },
+        {
+          id: "light",
+          name: "Terang · reaksi 👍",
+          help: "Tema terang, badge reaksi dan pilihan bintang dapat diubah.",
+          value: {
+            name: "Sahabat",
+            mode: "light",
+            reaction: "👍",
+            text: "Hari ini juga punya cerita baik. ✨",
+          },
+        },
+        {
+          id: "long",
+          name: "Pesan panjang · autoheight",
+          help: "Bubble bertambah tinggi; avatar dan menu bergeser tanpa terpotong.",
+          value: {
+            name: "Sahabat",
+            text:
+              "*Catatan untuk diri sendiri*\n" +
+              "Kamu sudah berusaha, tetap berjalan pelan-pelan. ".repeat(15),
+          },
+        },
+        {
+          id: "minimal",
+          name: "Tanpa profil / menu / reaksi",
+          help: "profile=none, menu=0 dan reactions=0 untuk tampilan minimal.",
+          value: {
+            name: "Denji",
+            text: "Pesan singkat tanpa menu.",
+            profileSource: "none",
+            menu: "0",
+            reactions: "0",
+          },
+        },
+        {
+          id: "upload",
+          name: "Upload foto sendiri",
+          help: "Pilih satu foto. Preview/unduh memakai POST multipart; seluruh parameter dan kode lima bahasa mengikuti isian.",
+          value: {
+            name: "Denji",
+            text: "Ini foto profilku. ❤",
+            profileSource: "upload",
+          },
+        },
+        {
+          id: "image",
+          name: "Pratinjau gambar · PNG",
+          help: "PNG hasil edit dengan header asli. Template HTML tetap dapat diminta melalui API lanjutan.",
+          value: {
+            name: "Denji",
+            format: "png",
+            text: "Pratinjau gambar IQC5.",
+          },
+        },
+        {
+          id: "jpg",
+          name: "Ekspor JPG",
+          help: "format=jpg membuat JPEG yang lebih kecil. Default persis berlaku pada PNG, bukan JPEG.",
+          value: { format: "jpg" },
+        },
+      ],
+    },
+    iqc4: {
+      title: "IQC4 · WhatsApp Reaksi",
+      output: "555 px · tinggi otomatis",
+      routes: ["/iqc4", "/api/iqc4", "/qc4", "/api/qc4"],
+      textHelp:
+        "Maks. 1000 karakter. Cara ubah sama seperti IQC1/IQC2: pesan. Alias message/text didukung. Emoji, Enter dan format WhatsApp; tinggi otomatis.",
+      presets: [
+        {
+          id: "default",
+          name: "Foto referensi · persis",
+          help: "Semua default sama dengan foto; JPEG asli byte-identik.",
+          value: {},
+        },
+        {
+          id: "light",
+          name: "Pesan khusus · terang",
+          help: "Cukup ubah pesan; mode light, love, bintang dan menu sesuai foto.",
+          value: { text: "note: kamu tidak gagal, kamu sedang belajar." },
+        },
+        {
+          id: "dark",
+          name: "Gelap · reaksi 👍",
+          help: "Tema, reaksi, dua jam, baterai dan jaringan dapat diganti.",
+          value: {
+            text: "Pelan-pelan juga sampai. ✨",
+            mode: "dark",
+            reaction: "👍",
+            time: "21.30",
+            statusTime: "21.32",
+            battery: "67",
+            network: "5G",
+          },
+        },
+        {
+          id: "format",
+          name: "Format, Enter & menu Indonesia",
+          help: "Tebal, miring, daftar, kutipan dan emoji. lang=id untuk label menu.",
+          value: {
+            text: "*Catatan hari ini* 💕\n- Minum air\n- _Istirahat cukup_\n> Kamu sudah berusaha. ❤",
+            language: "id",
+            reaction: "🙏",
+          },
+        },
+        {
+          id: "minimal",
+          name: "Tanpa popup & reaksi",
+          help: "menu=0 dan reactions=0 menyembunyikan popup; reaction=none tanpa badge.",
+          value: {
+            text: "Kamu sudah cukup. ❤",
+            star: "0",
+            menu: "0",
+            reactions: "0",
+            reaction: "none",
+          },
+        },
+        {
+          id: "image",
+          name: "Pratinjau gambar",
+          help: "JPG hasil isian sendiri. Template HTML tetap tersedia melalui API lanjutan; Playground menampilkan gambar.",
+          value: { format: "jpg", text: "Pratinjau gambar IQC4." },
+        },
+      ],
+    },
+    iqc3: {
+      title: "IQC3 · iMessage Music",
+      output: "736 px · tinggi otomatis",
+      routes: ["/iqc3", "/api/iqc3"],
+      textHelp:
+        "Maks. 1000 karakter. Lirik berupa teks biasa (bukan markup WhatsApp). Baris baru didukung; tinggi gambar mengikuti teks.",
+      presets: [
+        {
+          id: "default",
+          name: "Foto referensi · persis",
+          help: "Nilai default sama dengan foto asli; hasil JPEG identik dengan referensi.",
+          value: {},
+        },
+        {
+          id: "gradient",
+          name: "Gradient biru–ungu",
+          help: "Latar gradient memakai color1, color2 dan angle. Musik/artis ikut berubah.",
+          value: {
+            text: "Langit sore dan lagu favorit kita.",
+            music: "Blue Hour",
+            artist: "Denji",
+            bg: "gradient",
+            color1: "#2e617b",
+            color2: "#312553",
+            angle: "135",
+          },
+        },
+        {
+          id: "solid",
+          name: "Warna solid",
+          help: "bg=solid menggunakan color. Field gradient tidak dikirim.",
+          value: {
+            text: "Pesanmu di sini.",
+            music: "Our Song",
+            artist: "Denji",
+            bg: "solid",
+            color: "#1f4260",
+          },
+        },
+        {
+          id: "long",
+          name: "Lirik panjang · tinggi otomatis",
+          help: "Kartu dan posisi menu bertambah tinggi; lirik tidak dipotong secara visual.",
+          value: {
+            text:
+              "Ada lagu yang selalu mengingatkanku padamu.\n\n" +
+              "Di antara hari yang ramai, suara kita masih menemukan jalan pulang. ".repeat(
+                8,
+              ),
+            music: "Our Song",
+            artist: "Denji",
+            bg: "gradient",
+            color1: "#6b6040",
+            color2: "#704600",
+          },
+        },
+        {
+          id: "metadata",
+          name: "Nama lagu, artis & waktu",
+          help: "music, artist dan time mengganti label di kartu.",
+          value: {
+            text: "Bagian favorit dari sebuah cerita.",
+            music: "Cerita Kita",
+            artist: "Nama Artismu",
+            time: "1:24",
+            bg: "gradient",
+            color1: "#8a4161",
+            color2: "#34315c",
+            angle: "90",
+          },
+        },
+        {
+          id: "image",
+          name: "Pratinjau gambar",
+          help: "JPG dari seluruh isian musik/lirik. Lihat header dan unduh respons gambar yang sama.",
+          value: {
+            format: "jpg",
+            text: "Pratinjau gambar dari isian Playground.",
+            music: "Good Days",
+            artist: "SZA",
+          },
+        },
+      ],
+    },
   };
   const forms = {};
-  let active=null,lang='curl',currentCode='',timer,profileFile=null;
-  function defaults(type){return {route:models[type].routes[0],text:type==='iqc3'?originalLyrics:'',name:'',mode:'',seed:'',music:'Good Days',artist:'SZA',time:'0:03',bg:'gradient',color1:'#6b6040',color2:'#704600',color:'#66502d',angle:'135',format:'jpg',preset:'custom',extra:[],statusTime:'07.54',reaction:'❤️',star:'1',menu:'1',reactions:'1',battery:'90',network:'4G',language:'en',...(type==='iqc4'?{text:'note: ga ada yang namanya manusia gagal',time:'20.15',mode:'light'}:{}),profileSource:'default',profileUrl:'',nameColor:'#b83e91',profileColor:'#8f0835',...(type==='iqc5'?{text:'dikasih muka cakep , ngapain harus faker? 🤣🤤',name:'★',time:'10:00',mode:'dark',reaction:'none',star:'0',language:'id',format:'png'}:{})};}
-  function info(endpoint){
-    try{
-      const url=new URL(endpoint,ORIGIN),m=url.pathname.match(/^\/(?:api\/)?(?:iqc([2345])?|qc([45]))\/?$/);
-      if(!m)return null;
-      const type=(m[1]||m[2])==='5'?'iqc5':(m[1]||m[2])==='4'?'iqc4':m[1]==='3'?'iqc3':m[1]==='2'||url.searchParams.get('v2')==='1'?'iqc2':'iqc';
-      let route=url.pathname.replace(/\/$/,'');
-      if(type==='iqc2'&&!m[1])route+='?v2=1';
-      return {type,url,route};
-    }catch(e){return null;}
+  let autoEnabled = true,
+    busy = false,
+    pending = false,
+    renderTimer,
+    lastCompletedKey = "";
+  let active = null,
+    lang = "curl",
+    currentCode = "",
+    timer,
+    profileFile = null;
+  function defaults(type) {
+    return {
+      route: models[type].routes[0],
+      text:
+        type === "iqc3"
+          ? originalLyrics
+          : ["iqc", "iqc2"].includes(type)
+            ? originalMessage
+            : "",
+      name: type === "iqc2" ? "Jidar" : "",
+      mode: type === "iqc" ? "light" : type === "iqc2" ? "dark" : "",
+      seed: "",
+      music: "Good Days",
+      artist: "SZA",
+      time: "0:03",
+      bg: "gradient",
+      color1: "#6b6040",
+      color2: "#704600",
+      color: "#66502d",
+      angle: "135",
+      format: "jpg",
+      preset: "custom",
+      extra: [],
+      statusTime: "07.54",
+      reaction: "❤️",
+      star: "1",
+      menu: "1",
+      reactions: "1",
+      battery: "90",
+      network: "4G",
+      language: "en",
+      ...(type === "iqc4"
+        ? {
+            text: "note: ga ada yang namanya manusia gagal",
+            time: "20.15",
+            mode: "light",
+          }
+        : {}),
+      profileSource: "default",
+      profileUrl: "",
+      nameColor: "#b83e91",
+      profileColor: "#8f0835",
+      ...(type === "iqc5"
+        ? {
+            text: "dikasih muka cakep , ngapain harus faker? 🤣🤤",
+            name: "★",
+            time: "10:00",
+            mode: "dark",
+            reaction: "none",
+            star: "0",
+            language: "id",
+            format: "png",
+          }
+        : {}),
+    };
   }
-  function color(value,fallback){const v=String(value||'').replace(/^#/,'');return /^[\da-f]{6}$/i.test(v)?'#'+v.toLowerCase():fallback;}
-  function value(key,fallback,limit){return String(key??fallback).slice(0,limit||1000);}
-  function fromEndpoint(){
-    const i=info($('pgEndpoint').value.trim());
-    $('pgIqcControls').hidden=!i;$('pgIqcLearning').hidden=!i;
-    $('playground').toggleAttribute('data-iqc',!!i);
-    $('pgMethod').disabled=!!i;
-    $('pgIqcControls').querySelectorAll('input,textarea,select').forEach(e=>e.disabled=!i);
-    if(!i){active=null;return;}
-    active=i.type;$('pgMethod').value='GET';
-    const s=defaults(active),q=i.url.searchParams,old=forms[active]||s;s.route=i.route;
-    s.text=value(active==='iqc3'?(q.get('lirik')??q.get('lyrics')??q.get('pesan')):(q.get('pesan')??(['iqc4','iqc5'].includes(active)?(q.get('message')??q.get('text')):null)),s.text,1000);
-    s.mode=['light','dark'].includes((q.get('mode')||'').toLowerCase())?q.get('mode').toLowerCase():'';
-    s.seed=/^\d+$/.test(q.get('seed')||'')?String(Number(q.get('seed'))>>>0):'';
-    s.name=value(q.get('name'),' ',30).trim();
-    if(active==='iqc4'){
-      s.mode=q.get('mode')==='dark'?'dark':'light';s.time=value(q.get('time')??q.get('waktu'),s.time,5);s.statusTime=value(q.get('statusTime')??q.get('status_time')??q.get('jam'),s.statusTime,5);
-      const reaction=q.get('reaction')??q.get('emoji')??q.get('reaksi');const aliases={heart:'❤️',like:'👍',haha:'😂',wow:'😮',sad:'😢',pray:'🙏','❤':'❤️','😭':'😢','😯':'😮'};s.reaction=aliases[reaction]||(['❤️','👍','😂','😮','😢','🙏','none'].includes(reaction)?reaction:s.reaction);
-      for(const k of ['star','menu','reactions'])s[k]=['0','false','no','off'].includes(q.get(k))?'0':'1';
-      s.battery=value(q.get('battery')??q.get('baterai'),s.battery,3);const n=(q.get('network')||s.network).toUpperCase().replace('WI-FI','WIFI');s.network=['4G','5G','LTE','3G','WIFI'].includes(n)?n:s.network;s.language=(q.get('lang')||q.get('language'))==='id'?'id':'en';s.format=q.get('html')==='1'?'html':'jpg';
+  function info(endpoint) {
+    try {
+      const url = new URL(endpoint, ORIGIN),
+        m = url.pathname.match(/^\/(?:api\/)?(?:iqc([2345])?|qc([45]))\/?$/);
+      if (!m || url.origin !== ORIGIN) return null;
+      const type =
+        (m[1] || m[2]) === "5"
+          ? "iqc5"
+          : (m[1] || m[2]) === "4"
+            ? "iqc4"
+            : m[1] === "3"
+              ? "iqc3"
+              : m[1] === "2" || url.searchParams.get("v2") === "1"
+                ? "iqc2"
+                : "iqc";
+      let route = url.pathname.replace(/\/$/, "");
+      if (type === "iqc2" && !m[1]) route += "?v2=1";
+      return { type, url, route };
+    } catch (e) {
+      return null;
     }
-    if(active==='iqc3'){
-      s.music=value(q.get('music')??q.get('judul')??q.get('title')??q.get('lagu'),s.music,100);
-      s.artist=value(q.get('artist')??q.get('artis'),s.artist,100);s.time=value(q.get('time'),s.time,10);
-      s.bg=(q.get('bg')||q.get('background'))==='solid'?'solid':'gradient';
-      s.color1=color(q.get('color1'),s.bg==='solid'?old.color1:s.color1);
-      s.color2=color(q.get('color2'),s.bg==='solid'?old.color2:s.color2);
-      s.color=color(q.get('color'),s.bg==='gradient'?old.color:s.color);
-      s.angle=q.has('angle')&&Number.isFinite(Number(q.get('angle')))?String(Math.max(0,Math.min(360,Number(q.get('angle'))))):s.angle;
-      s.format=q.get('html')==='1'?'html':'jpg';
-    }
-    if(active==='iqc5'){
-      s.name=value(q.get('name')??q.get('nama'),s.name,30);s.nameColor=color(q.get('nameColor')??q.get('warnaNama'),s.nameColor);s.profileColor=color(q.get('profileColor'),s.profileColor);
-      s.mode=q.get('mode')==='light'?'light':'dark';s.time=value(q.get('time')??q.get('waktu'),s.time,5);
-      const aliases={heart:'❤️',like:'👍',haha:'😂',wow:'😮',sad:'😢',pray:'🙏','❤':'❤️','0':'none'},r=q.get('reaction')??q.get('emoji')??q.get('reaksi');s.reaction=aliases[r]||(['❤️','👍','😂','😮','😢','🙏','none'].includes(r)?r:s.reaction);
-      for(const k of ['star','menu','reactions'])s[k]=q.has(k)?(['0','false','off','no'].includes(q.get(k))?'0':['1','true','on','yes'].includes(q.get(k))?'1':s[k]):s[k];
-      s.language=(q.get('lang')||q.get('language'))==='en'?'en':'id';s.format=q.get('html')==='1'?'html':['jpg','jpeg'].includes(q.get('format'))?'jpg':'png';
-      const profile=q.get('profile')??q.get('avatar')??q.get('pp');if(profile===null&&old.profileSource==='upload'){s.profileSource='upload';}else if(['none','0','off'].includes(profile)){s.profileSource='none';}else if(profile&&!['','default'].includes(profile)){s.profileSource='url';s.profileUrl=value(profile,'',2048);}
-    }
-    const known=new Set(active==='iqc5'?['pesan','message','text','name','nama','nameColor','warnaNama','profileColor','profile','avatar','pp','mode','time','waktu','reaction','emoji','reaksi','star','menu','reactions','lang','language','html','format']:active==='iqc4'?['pesan','message','text','mode','time','waktu','statusTime','status_time','jam','reaction','emoji','reaksi','star','menu','reactions','battery','baterai','network','lang','language','html']:active==='iqc3'?['lirik','lyrics','pesan','music','judul','title','lagu','artist','artis','time','bg','background','color1','color2','color','angle','html']:['pesan','mode','seed','name','v2']);
-    s.extra=[...q].filter(([key])=>!known.has(key));s.preset=old.preset||'custom';forms[active]=s;
-    paint();learning();
   }
-  function paint(){
-    if(!active)return;const model=models[active],s=forms[active];
-    $('pgIqcControls').querySelectorAll('input,textarea,select').forEach(e=>e.disabled=false);
-    $('pgIqcTitle').textContent=model.title;$('pgIqcOutput').textContent=model.output;
-    document.querySelectorAll('[data-iqc-type]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.iqcType===active)));
-    $('pgIqcNameWrap').hidden=!['iqc2','iqc5'].includes(active);$('pgIqcProfile').hidden=active!=='iqc5';$('pgIqcLegacy').hidden=['iqc3','iqc4','iqc5'].includes(active);$('pgIqcWa').hidden=!['iqc4','iqc5'].includes(active);$('pgIqcMusic').hidden=active!=='iqc3';$('pgIqcFormatting').hidden=active==='iqc3';
-    $('pgIqcTextLabel').textContent=active==='iqc3'?'Lirik / pesan':'Isi pesan';$('pgIqcTextParam').textContent=active==='iqc3'?'lirik':'pesan';$('pgIqcTextHelp').textContent=model.textHelp;
-    $('pgIqcSeedHelp').textContent=model.seedHelp||'';
-    $('pgIqcMode').options[0].textContent=active==='iqc'?'Default · terang':'Default · gelap';
-    const route=$('pgIqcRoute');route.replaceChildren();model.routes.forEach(v=>route.add(new Option(v,v)));
-    if(!model.routes.includes(s.route))route.add(new Option(s.route,s.route));route.value=s.route;
-    $('pgIqcRouteHelp').textContent=active==='iqc2'?'Alias /iqc?v2=1 dan /api/iqc?v2=1 juga menghasilkan WhatsApp. /iqc2 selalu versi 2.':'Rute /api/... adalah alias fungsi serverless; hasilnya sama.';
-    const preset=$('pgIqcPreset');preset.replaceChildren();preset.add(new Option('Isian khusus','custom'));model.presets.forEach(p=>preset.add(new Option(p.name,p.id)));
-    preset.value=s.preset;const p=model.presets.find(p=>p.id===s.preset);$('pgIqcPresetHint').textContent=p?p.help:'Ubah setiap parameter di bawah. URL dan contoh kode mengikuti isian.';
-    const ids={text:'Text',name:'Name',mode:'Mode',seed:'Seed',music:'Song',artist:'Artist',time:'Time',bg:'Bg',angle:'Angle',format:'Format',statusTime:'StatusTime',reaction:'Reaction',star:'Star',menu:'Menu',reactions:'Reactions',battery:'Battery',network:'Network',language:'Language'};
-    Object.entries(ids).forEach(([key,id])=>$('pgIqc'+id).value=s[key]);
-    $('pgIqcWaFormat').replaceChildren();(active==='iqc5'?[['png','PNG · lossless, default persis'],['jpg','JPG · gambar'],['html','HTML · template']]:[['jpg','JPG · gambar'],['html','HTML · template']]).forEach(([v,t])=>$('pgIqcWaFormat').add(new Option(t,v)));
-    for(const k of ['profileSource','profileUrl','nameColor','profileColor'])$('pgIqc'+k[0].toUpperCase()+k.slice(1)).value=s[k];
-    $('pgIqcStatusTime').closest('.iqc-columns').hidden=active==='iqc5';$('pgIqcBattery').closest('.iqc-columns').hidden=active==='iqc5';
-    if(active==='iqc5'){$('pgIqcWaTime').closest('.iqc-columns').hidden=false;$('pgIqcStatusTime').parentElement.hidden=true;}else $('pgIqcStatusTime').parentElement.hidden=false;
-    $('pgIqcLanguage').options[0].textContent=active==='iqc5'?'English':'English · sesuai foto';$('pgIqcLanguage').options[1].textContent=active==='iqc5'?'Indonesia · sesuai foto':'Bahasa Indonesia';
-    $('pgIqcWaOutputParam').textContent=active==='iqc5'?'format / html':'html';
-    $('pgIqcWaHelp').replaceChildren();$('pgIqcWaHelp').append(document.createTextNode(active==='iqc5'?'Jam HH.mm / HH:mm. Nama, profil dan menu mengikuti teks; PNG default identik foto. ':'Jam HH.mm / HH:mm. Default memakai foto asli; tanpa name atau seed. '));const editorLink=document.createElement('a');editorLink.href=active==='iqc5'?'/app5':'/app4';editorLink.textContent='Buka editor pratinjau langsung';$('pgIqcWaHelp').append(editorLink);
-    $('pgIqcStar').options[0].textContent=active==='iqc5'?'Aktif · Hapus Bintang':'Aktif · Unstar';$('pgIqcStar').options[1].textContent=active==='iqc5'?'Nonaktif · Beri Bintang':'Nonaktif · Star';
-    $('pgIqcWaMode').value=s.mode||'light';$('pgIqcWaTime').value=s.time;$('pgIqcWaFormat').value=s.format;
-    [['color1','Color1','Hex1'],['color2','Color2','Hex2'],['color','Color','HexSolid']].forEach(([key,picker,hex])=>{$('pgIqc'+picker).value=s[key];$('pgIqc'+hex).value=s[key];$('pgIqc'+hex).setCustomValidity('');});
+  function color(value, fallback) {
+    const v = String(value || "").replace(/^#/, "");
+    return /^[\da-f]{6}$/i.test(v) ? "#" + v.toLowerCase() : fallback;
+  }
+  function value(key, fallback, limit) {
+    return String(key ?? fallback).slice(0, limit || 1000);
+  }
+  function fromEndpoint(options = {}) {
+    const i = info($("pgEndpoint").value.trim());
+    $("pgIqcControls").hidden = !i;
+    $("pgIqcLearning").hidden = !i;
+    $("playground").toggleAttribute("data-iqc", !!i);
+    $("pgMethod").disabled = !!i;
+    $("pgIqcControls")
+      .querySelectorAll("input,textarea,select")
+      .forEach((e) => (e.disabled = !i));
+    if (!i) {
+      active = null;
+      clearTimeout(renderTimer);
+      pending = false;
+      busy = false;
+      $("pgIqcLiveStatus").textContent =
+        "Endpoint lain: gunakan Kirim untuk menjalankan request manual.";
+      return;
+    }
+    active = i.type;
+    $("pgMethod").value = "GET";
+    const s = defaults(active),
+      q = i.url.searchParams,
+      old = forms[active] || s;
+    s.route = i.route;
+    s.text = value(
+      active === "iqc3"
+        ? (q.get("lirik") ?? q.get("lyrics") ?? q.get("pesan"))
+        : (q.get("pesan") ??
+            (["iqc4", "iqc5"].includes(active)
+              ? (q.get("message") ?? q.get("text"))
+              : null)),
+      s.text,
+      1000,
+    );
+    s.mode = ["light", "dark"].includes((q.get("mode") || "").toLowerCase())
+      ? q.get("mode").toLowerCase()
+      : s.mode;
+    s.seed = /^\d+$/.test(q.get("seed") || "")
+      ? String(Number(q.get("seed")) >>> 0)
+      : "";
+    s.name = value(q.get("name"), s.name, 30).trim();
+    if (active === "iqc4") {
+      s.mode = q.get("mode") === "dark" ? "dark" : "light";
+      s.time = value(q.get("time") ?? q.get("waktu"), s.time, 5);
+      s.statusTime = value(
+        q.get("statusTime") ?? q.get("status_time") ?? q.get("jam"),
+        s.statusTime,
+        5,
+      );
+      const reaction = q.get("reaction") ?? q.get("emoji") ?? q.get("reaksi");
+      const aliases = {
+        heart: "❤️",
+        like: "👍",
+        haha: "😂",
+        wow: "😮",
+        sad: "😢",
+        pray: "🙏",
+        "❤": "❤️",
+        "😭": "😢",
+        "😯": "😮",
+      };
+      s.reaction =
+        aliases[reaction] ||
+        (["❤️", "👍", "😂", "😮", "😢", "🙏", "none"].includes(reaction)
+          ? reaction
+          : s.reaction);
+      for (const k of ["star", "menu", "reactions"])
+        s[k] = ["0", "false", "no", "off"].includes(q.get(k)) ? "0" : "1";
+      s.battery = value(q.get("battery") ?? q.get("baterai"), s.battery, 3);
+      const n = (q.get("network") || s.network)
+        .toUpperCase()
+        .replace("WI-FI", "WIFI");
+      s.network = ["4G", "5G", "LTE", "3G", "WIFI"].includes(n) ? n : s.network;
+      s.language = (q.get("lang") || q.get("language")) === "id" ? "id" : "en";
+      s.format = "jpg";
+    }
+    if (active === "iqc3") {
+      s.music = value(
+        q.get("music") ?? q.get("judul") ?? q.get("title") ?? q.get("lagu"),
+        s.music,
+        100,
+      );
+      s.artist = value(q.get("artist") ?? q.get("artis"), s.artist, 100);
+      s.time = value(q.get("time"), s.time, 10);
+      s.bg =
+        (q.get("bg") || q.get("background")) === "solid" ? "solid" : "gradient";
+      s.color1 = color(
+        q.get("color1"),
+        s.bg === "solid" ? old.color1 : s.color1,
+      );
+      s.color2 = color(
+        q.get("color2"),
+        s.bg === "solid" ? old.color2 : s.color2,
+      );
+      s.color = color(
+        q.get("color"),
+        s.bg === "gradient" ? old.color : s.color,
+      );
+      s.angle =
+        q.has("angle") && Number.isFinite(Number(q.get("angle")))
+          ? String(Math.max(0, Math.min(360, Number(q.get("angle")))))
+          : s.angle;
+      s.format = "jpg";
+    }
+    if (active === "iqc5") {
+      s.name = value(q.get("name") ?? q.get("nama"), s.name, 30);
+      s.nameColor = color(
+        q.get("nameColor") ?? q.get("warnaNama"),
+        s.nameColor,
+      );
+      s.profileColor = color(q.get("profileColor"), s.profileColor);
+      s.mode = q.get("mode") === "light" ? "light" : "dark";
+      s.time = value(q.get("time") ?? q.get("waktu"), s.time, 5);
+      const aliases = {
+          heart: "❤️",
+          like: "👍",
+          haha: "😂",
+          wow: "😮",
+          sad: "😢",
+          pray: "🙏",
+          "❤": "❤️",
+          0: "none",
+        },
+        r = q.get("reaction") ?? q.get("emoji") ?? q.get("reaksi");
+      s.reaction =
+        aliases[r] ||
+        (["❤️", "👍", "😂", "😮", "😢", "🙏", "none"].includes(r)
+          ? r
+          : s.reaction);
+      for (const k of ["star", "menu", "reactions"])
+        s[k] = q.has(k)
+          ? ["0", "false", "off", "no"].includes(q.get(k))
+            ? "0"
+            : ["1", "true", "on", "yes"].includes(q.get(k))
+              ? "1"
+              : s[k]
+          : s[k];
+      s.language = (q.get("lang") || q.get("language")) === "en" ? "en" : "id";
+      s.format = ["jpg", "jpeg"].includes(q.get("format")) ? "jpg" : "png";
+      const profile = q.get("profile") ?? q.get("avatar") ?? q.get("pp");
+      if (profile === null && old.profileSource === "upload") {
+        s.profileSource = "upload";
+      } else if (["none", "0", "off"].includes(profile)) {
+        s.profileSource = "none";
+      } else if (profile && !["", "default"].includes(profile)) {
+        s.profileSource = "url";
+        s.profileUrl = value(profile, "", 2048);
+      }
+    }
+    const known = new Set(
+      active === "iqc5"
+        ? [
+            "pesan",
+            "message",
+            "text",
+            "name",
+            "nama",
+            "nameColor",
+            "warnaNama",
+            "profileColor",
+            "profile",
+            "avatar",
+            "pp",
+            "mode",
+            "time",
+            "waktu",
+            "reaction",
+            "emoji",
+            "reaksi",
+            "star",
+            "menu",
+            "reactions",
+            "lang",
+            "language",
+            "html",
+            "format",
+          ]
+        : active === "iqc4"
+          ? [
+              "pesan",
+              "message",
+              "text",
+              "mode",
+              "time",
+              "waktu",
+              "statusTime",
+              "status_time",
+              "jam",
+              "reaction",
+              "emoji",
+              "reaksi",
+              "star",
+              "menu",
+              "reactions",
+              "battery",
+              "baterai",
+              "network",
+              "lang",
+              "language",
+              "html",
+            ]
+          : active === "iqc3"
+            ? [
+                "lirik",
+                "lyrics",
+                "pesan",
+                "music",
+                "judul",
+                "title",
+                "lagu",
+                "artist",
+                "artis",
+                "time",
+                "bg",
+                "background",
+                "color1",
+                "color2",
+                "color",
+                "angle",
+                "html",
+              ]
+            : ["pesan", "mode", "seed", "name", "v2"],
+    );
+    s.extra = [...q].filter(([key]) => !known.has(key));
+    s.preset = old.preset || "custom";
+    forms[active] = s;
+    paint();
+    $("pgEndpoint").value = endpoint(s);
+    learning();
+    if (!options.quiet) schedule();
+  }
+  function paint() {
+    if (!active) return;
+    const model = models[active],
+      s = forms[active];
+    $("pgIqcControls")
+      .querySelectorAll("input,textarea,select")
+      .forEach((e) => (e.disabled = false));
+    s.format = active === "iqc5" && s.format !== "jpg" ? "png" : "jpg";
+    $("pgIqcTitle").textContent = model.title;
+    $("pgIqcOutput").textContent = model.output;
+    document
+      .querySelectorAll("[data-iqc-type]")
+      .forEach((b) =>
+        b.setAttribute("aria-pressed", String(b.dataset.iqcType === active)),
+      );
+    $("pgIqcNameWrap").hidden = !["iqc2", "iqc5"].includes(active);
+    $("pgIqcProfile").hidden = active !== "iqc5";
+    $("pgIqcLegacy").hidden = ["iqc3", "iqc4", "iqc5"].includes(active);
+    $("pgIqcWa").hidden = !["iqc4", "iqc5"].includes(active);
+    $("pgIqcMusic").hidden = active !== "iqc3";
+    $("pgIqcFormatting").hidden = active === "iqc3";
+    $("pgIqcTextLabel").textContent =
+      active === "iqc3" ? "Lirik / pesan" : "Isi pesan";
+    $("pgIqcTextParam").textContent = active === "iqc3" ? "lirik" : "pesan";
+    $("pgIqcTextHelp").textContent = model.textHelp;
+    $("pgIqcSeedHelp").textContent = model.seedHelp || "";
+    $("pgIqcMode").options[0].textContent =
+      active === "iqc" ? "Default · terang" : "Default · gelap";
+    const route = $("pgIqcRoute");
+    route.replaceChildren();
+    model.routes.forEach((v) => route.add(new Option(v, v)));
+    if (!model.routes.includes(s.route))
+      route.add(new Option(s.route, s.route));
+    route.value = s.route;
+    $("pgIqcRouteHelp").textContent =
+      active === "iqc2"
+        ? "Alias /iqc?v2=1 dan /api/iqc?v2=1 juga menghasilkan WhatsApp. /iqc2 selalu versi 2."
+        : "Rute /api/... adalah alias fungsi serverless; hasilnya sama.";
+    const preset = $("pgIqcPreset");
+    preset.replaceChildren();
+    preset.add(new Option("Isian khusus", "custom"));
+    model.presets.forEach((p) => preset.add(new Option(p.name, p.id)));
+    preset.value = s.preset;
+    const p = model.presets.find((p) => p.id === s.preset);
+    $("pgIqcPresetHint").textContent = p
+      ? p.help
+      : "Ubah setiap parameter di bawah. URL dan contoh kode mengikuti isian.";
+    const ids = {
+      text: "Text",
+      name: "Name",
+      mode: "Mode",
+      seed: "Seed",
+      music: "Song",
+      artist: "Artist",
+      time: "Time",
+      bg: "Bg",
+      angle: "Angle",
+      format: "Format",
+      statusTime: "StatusTime",
+      reaction: "Reaction",
+      star: "Star",
+      menu: "Menu",
+      reactions: "Reactions",
+      battery: "Battery",
+      network: "Network",
+      language: "Language",
+    };
+    Object.entries(ids).forEach(
+      ([key, id]) => ($("pgIqc" + id).value = s[key]),
+    );
+    $("pgIqcWaFormat").replaceChildren();
+    (active === "iqc5"
+      ? [
+          ["png", "PNG · lossless, default persis"],
+          ["jpg", "JPG · gambar"],
+        ]
+      : [["jpg", "JPG · gambar"]]
+    ).forEach(([v, t]) => $("pgIqcWaFormat").add(new Option(t, v)));
+    for (const k of [
+      "profileSource",
+      "profileUrl",
+      "nameColor",
+      "profileColor",
+    ])
+      $("pgIqc" + k[0].toUpperCase() + k.slice(1)).value = s[k];
+    $("pgIqcStatusTime").closest(".iqc-columns").hidden = active === "iqc5";
+    $("pgIqcBattery").closest(".iqc-columns").hidden = active === "iqc5";
+    if (active === "iqc5") {
+      $("pgIqcWaTime").closest(".iqc-columns").hidden = false;
+      $("pgIqcStatusTime").parentElement.hidden = true;
+    } else $("pgIqcStatusTime").parentElement.hidden = false;
+    $("pgIqcLanguage").options[0].textContent =
+      active === "iqc5" ? "English" : "English · sesuai foto";
+    $("pgIqcLanguage").options[1].textContent =
+      active === "iqc5" ? "Indonesia · sesuai foto" : "Bahasa Indonesia";
+    $("pgIqcWaOutputParam").textContent = active === "iqc5" ? "format" : "JPG";
+    $("pgIqcWaHelp").replaceChildren();
+    $("pgIqcWaHelp").append(
+      document.createTextNode(
+        active === "iqc5"
+          ? "Jam HH.mm / HH:mm. Nama, profil dan menu mengikuti teks; PNG default identik foto. "
+          : "Jam HH.mm / HH:mm. Default memakai foto asli; tanpa name atau seed. ",
+      ),
+    );
+    const editorLink = document.createElement("a");
+    editorLink.href = active === "iqc5" ? "/app5" : "/app4";
+    editorLink.textContent = "Buka editor pratinjau langsung";
+    $("pgIqcWaHelp").append(editorLink);
+    $("pgIqcStar").options[0].textContent =
+      active === "iqc5" ? "Aktif · Hapus Bintang" : "Aktif · Unstar";
+    $("pgIqcStar").options[1].textContent =
+      active === "iqc5" ? "Nonaktif · Beri Bintang" : "Nonaktif · Star";
+    $("pgIqcWaMode").value = s.mode || "light";
+    $("pgIqcWaTime").value = s.time;
+    $("pgIqcWaFormat").value = s.format;
+    [
+      ["color1", "Color1", "Hex1"],
+      ["color2", "Color2", "Hex2"],
+      ["color", "Color", "HexSolid"],
+    ].forEach(([key, picker, hex]) => {
+      $("pgIqc" + picker).value = s[key];
+      $("pgIqc" + hex).value = s[key];
+      $("pgIqc" + hex).setCustomValidity("");
+    });
     visibility();
+    guide();
   }
-  function visibility(){
-    const three=active==='iqc3',solid=$('pgIqcBg').value==='solid';
-    $('pgIqcGradient').hidden=solid;$('pgIqcSolid').hidden=!solid;
-    $('pgIqcCount').textContent=$('pgIqcText').value.length+' / 1000';$('pgIqcAngleValue').textContent=$('pgIqcAngle').value+'°';
-    ['Hex1','Hex2','Color1','Color2','Angle'].forEach(id=>$('pgIqc'+id).disabled=!three||solid);
-    ['HexSolid','Color'].forEach(id=>$('pgIqc'+id).disabled=!three||!solid);
-    $('pgIqcSeed').disabled=three||['iqc4','iqc5'].includes(active);
-    $('pgIqcWa').querySelectorAll('input,select').forEach(e=>e.disabled=!['iqc4','iqc5'].includes(active));
-    if(active==='iqc5')['StatusTime','Battery','Network'].forEach(id=>$('pgIqc'+id).disabled=true);
-    const five=active==='iqc5',source=$('pgIqcProfileSource').value;$('pgIqcProfile').querySelectorAll('input,select').forEach(e=>e.disabled=!five);
-    $('pgIqcProfileUrlWrap').hidden=source!=='url';$('pgIqcProfileFileWrap').hidden=source!=='upload';$('pgIqcProfileUrl').disabled=!five||source!=='url';$('pgIqcProfileUrl').required=five&&source==='url';$('pgIqcProfileFile').disabled=!five||source!=='upload';
-    $('pgMethod').value=five&&source==='upload'?'POST':'GET';
-    if(five)$('pgHint').textContent=source==='upload'?'POST · upload multipart':'GET · parameter form';
+  function visibility() {
+    const three = active === "iqc3",
+      solid = $("pgIqcBg").value === "solid";
+    $("pgIqcGradient").hidden = solid;
+    $("pgIqcSolid").hidden = !solid;
+    $("pgIqcCount").textContent = $("pgIqcText").value.length + " / 1000";
+    $("pgIqcAngleValue").textContent = $("pgIqcAngle").value + "°";
+    ["Hex1", "Hex2", "Color1", "Color2", "Angle"].forEach(
+      (id) => ($("pgIqc" + id).disabled = !three || solid),
+    );
+    ["HexSolid", "Color"].forEach(
+      (id) => ($("pgIqc" + id).disabled = !three || !solid),
+    );
+    $("pgIqcSeed").disabled = three || ["iqc4", "iqc5"].includes(active);
+    $("pgIqcWa")
+      .querySelectorAll("input,select")
+      .forEach((e) => (e.disabled = !["iqc4", "iqc5"].includes(active)));
+    if (active === "iqc5")
+      ["StatusTime", "Battery", "Network"].forEach(
+        (id) => ($("pgIqc" + id).disabled = true),
+      );
+    const five = active === "iqc5",
+      source = $("pgIqcProfileSource").value;
+    $("pgIqcProfile")
+      .querySelectorAll("input,select")
+      .forEach((e) => (e.disabled = !five));
+    $("pgIqcProfileUrlWrap").hidden = source !== "url";
+    $("pgIqcProfileFileWrap").hidden = source !== "upload";
+    $("pgIqcProfileUrl").disabled = !five || source !== "url";
+    $("pgIqcProfileUrl").required = five && source === "url";
+    $("pgIqcProfileFile").disabled = !five || source !== "upload";
+    $("pgMethod").value = five && source === "upload" ? "POST" : "GET";
+    if (five)
+      $("pgHint").textContent =
+        source === "upload"
+          ? "POST · upload multipart"
+          : "GET · parameter form";
   }
-  function read(){
-    const s=forms[active];const ids={text:'Text',name:'Name',mode:'Mode',seed:'Seed',music:'Song',artist:'Artist',time:'Time',bg:'Bg',angle:'Angle',format:'Format',statusTime:'StatusTime',reaction:'Reaction',star:'Star',menu:'Menu',reactions:'Reactions',battery:'Battery',network:'Network',language:'Language',route:'Route'};
-    Object.entries(ids).forEach(([key,id])=>s[key]=$('pgIqc'+id).value);
-    if(['iqc4','iqc5'].includes(active)){s.mode=$('pgIqcWaMode').value;s.time=$('pgIqcWaTime').value;s.format=$('pgIqcWaFormat').value;}
-    if(active==='iqc5')for(const k of ['profileSource','profileUrl','nameColor','profileColor'])s[k]=$('pgIqc'+k[0].toUpperCase()+k.slice(1)).value;
-    s.color1=$('pgIqcColor1').value;s.color2=$('pgIqcColor2').value;s.color=$('pgIqcColor').value;return s;
-  }
-  function endpoint(s){
-    const url=new URL(s.route,ORIGIN),q=url.searchParams;
-    for(const [key,v] of s.extra||[])q.append(key,v);
-    const text=s.text.trim();if(text)q.set(active==='iqc3'?'lirik':'pesan',text);
-    if(active==='iqc5'){
-      if(s.name.trim())q.set('name',s.name.trim());q.set('nameColor',s.nameColor);q.set('profileColor',s.profileColor);if(s.profileSource==='url')q.set('profile',s.profileUrl.trim()||'default');else if(s.profileSource!=='upload')q.set('profile',s.profileSource==='none'?'none':'default');
-      q.set('mode',s.mode||'dark');q.set('reaction',s.reaction);q.set('time',s.time);q.set('star',s.star);q.set('menu',s.menu);q.set('reactions',s.reactions);q.set('lang',s.language);if(s.format==='html')q.set('html','1');else q.set('format',s.format==='jpg'?'jpg':'png');
-    }else if(active==='iqc4'){
-      q.set('mode',s.mode||'light');q.set('reaction',s.reaction);q.set('time',s.time);q.set('statusTime',s.statusTime);q.set('star',s.star);q.set('menu',s.menu);q.set('reactions',s.reactions);q.set('battery',s.battery);q.set('network',s.network);q.set('lang',s.language);if(s.format==='html')q.set('html','1');
-    }else if(active==='iqc3'){
-      if(s.music.trim())q.set('music',s.music.trim());if(s.artist.trim())q.set('artist',s.artist.trim());if(s.time.trim())q.set('time',s.time.trim());
-      q.set('bg',s.bg);
-      if(s.bg==='solid'){q.set('color',s.color);}else{q.set('color1',s.color1);q.set('color2',s.color2);q.set('angle',s.angle);}
-      if(s.format==='html')q.set('html','1');
-    }else{
-      if(s.mode)q.set('mode',s.mode);if(s.seed!=='')q.set('seed',s.seed);
-      if(active==='iqc2'&&s.name.trim())q.set('name',s.name.trim());
+  function read() {
+    const s = forms[active];
+    const ids = {
+      text: "Text",
+      name: "Name",
+      mode: "Mode",
+      seed: "Seed",
+      music: "Song",
+      artist: "Artist",
+      time: "Time",
+      bg: "Bg",
+      angle: "Angle",
+      format: "Format",
+      statusTime: "StatusTime",
+      reaction: "Reaction",
+      star: "Star",
+      menu: "Menu",
+      reactions: "Reactions",
+      battery: "Battery",
+      network: "Network",
+      language: "Language",
+      route: "Route",
+    };
+    Object.entries(ids).forEach(
+      ([key, id]) => (s[key] = $("pgIqc" + id).value),
+    );
+    if (["iqc4", "iqc5"].includes(active)) {
+      s.mode = $("pgIqcWaMode").value;
+      s.time = $("pgIqcWaTime").value;
+      s.format = $("pgIqcWaFormat").value;
     }
-    return url.pathname+(q.toString()?'?'+q.toString():'');
+    if (active === "iqc5")
+      for (const k of [
+        "profileSource",
+        "profileUrl",
+        "nameColor",
+        "profileColor",
+      ])
+        s[k] = $("pgIqc" + k[0].toUpperCase() + k.slice(1)).value;
+    s.color1 = $("pgIqcColor1").value;
+    s.color2 = $("pgIqcColor2").value;
+    s.color = $("pgIqcColor").value;
+    return s;
   }
-  function changed(event){
-    if(!active)return;
-    const target=event&&event.target;
-    if(target?.id==='pgIqcProfileFile'){profileFile=target.files[0]||null;const help=$('pgIqcProfileFileHelp');if(profileFile&&profileFile.size>2*1024*1024){profileFile=null;target.value='';help.textContent='Foto maksimum 2 MB. Pilih file lebih kecil.';}else help.textContent=profileFile?'Siap: '+profileFile.name+' · '+Math.round(profileFile.size/1024)+' KB. Dikirim hanya saat Kirim.':'Pilih foto maks. 2 MB / 4 MP.';}
-    const links=[['pgIqcColor1','pgIqcHex1'],['pgIqcColor2','pgIqcHex2'],['pgIqcColor','pgIqcHexSolid']];
-    for(const [picker,hex] of links){
-      if(target?.id===picker)$(hex).value=$(picker).value;
-      if(target?.id===hex){const v=color($(hex).value,null);$(hex).setCustomValidity(v?'':'Gunakan 6 digit hex, dengan atau tanpa #.');if(!v)return;$(picker).value=v;}
+  function endpoint(s, type = active) {
+    const url = new URL(s.route, ORIGIN),
+      q = url.searchParams;
+    for (const [key, v] of s.extra || []) q.append(key, v);
+    const text = s.text.trim();
+    if (text) q.set(type === "iqc3" ? "lirik" : "pesan", text);
+    if (type === "iqc5") {
+      if (s.name.trim()) q.set("name", s.name.trim());
+      q.set("nameColor", s.nameColor);
+      q.set("profileColor", s.profileColor);
+      if (s.profileSource === "url")
+        q.set("profile", s.profileUrl.trim() || "default");
+      else if (s.profileSource !== "upload")
+        q.set("profile", s.profileSource === "none" ? "none" : "default");
+      q.set("mode", s.mode || "dark");
+      q.set("reaction", s.reaction);
+      q.set("time", s.time);
+      q.set("star", s.star);
+      q.set("menu", s.menu);
+      q.set("reactions", s.reactions);
+      q.set("lang", s.language);
+      q.set("format", s.format === "jpg" ? "jpg" : "png");
+    } else if (type === "iqc4") {
+      q.set("mode", s.mode || "light");
+      q.set("reaction", s.reaction);
+      q.set("time", s.time);
+      q.set("statusTime", s.statusTime);
+      q.set("star", s.star);
+      q.set("menu", s.menu);
+      q.set("reactions", s.reactions);
+      q.set("battery", s.battery);
+      q.set("network", s.network);
+      q.set("lang", s.language);
+    } else if (type === "iqc3") {
+      if (s.music.trim()) q.set("music", s.music.trim());
+      if (s.artist.trim()) q.set("artist", s.artist.trim());
+      if (s.time.trim()) q.set("time", s.time.trim());
+      q.set("bg", s.bg);
+      if (s.bg === "solid") {
+        q.set("color", s.color);
+      } else {
+        q.set("color1", s.color1);
+        q.set("color2", s.color2);
+        q.set("angle", s.angle);
+      }
+    } else {
+      if (s.mode) q.set("mode", s.mode);
+      if (s.seed !== "") q.set("seed", s.seed);
+      if (type === "iqc2" && s.name.trim()) q.set("name", s.name.trim());
     }
-    read();forms[active].preset='custom';$('pgIqcPreset').value='custom';$('pgIqcPresetHint').textContent='Isian khusus. Pilih contoh lagi untuk membandingkan parameter.';
-    visibility();$('pgEndpoint').value=endpoint(forms[active]);learning();savePlayground();
-    $('pgIqcNote').textContent='Parameter berubah. Tekan Kirim untuk hasil baru; belum ada request otomatis.';
+    q.delete("html");
+    return url.pathname + (q.toString() ? "?" + q.toString() : "");
   }
-  function select(type){
-    if(!models[type])return;
-    if(active)read();active=type;forms[type] ||= defaults(type);
-    $('pgMethod').value='GET';$('pgBody').value='';$('pgIqcControls').hidden=false;$('pgIqcLearning').hidden=false;$('pgMethod').disabled=true;$('playground').setAttribute('data-iqc','');
-    paint();$('pgEndpoint').value=endpoint(forms[active]);$('pgBodyWrap').style.display='none';$('pgHint').textContent='GET · parameter form';learning();savePlayground();
-    $('pgIqcNote').textContent='Isi parameter, lalu tekan Kirim. Tidak ada auto-fetch.';
-  }
-  function preset(id){
-    if(!active||id==='custom')return;const p=models[active].presets.find(p=>p.id===id);if(!p)return;
-    forms[active]=Object.assign(defaults(active),p.value,{preset:id});paint();$('pgEndpoint').value=endpoint(forms[active]);learning();savePlayground();$('pgIqcNote').textContent=p.help;
-  }
-  function reset(){preset('default');showToast('Parameter '+models[active].title+' direset');}
-  function randomSeed(){if(!active||['iqc3','iqc4','iqc5'].includes(active))return;const a=new Uint32Array(1);if(globalThis.crypto?.getRandomValues)crypto.getRandomValues(a);else a[0]=Math.random()*4294967296;$('pgIqcSeed').value=String(a[0]);changed();}
-  function format(mark){
-    const e=$('pgIqcText'),start=e.selectionStart,end=e.selectionEnd,text=e.value.slice(start,end)||'teks';
-    e.setRangeText(mark+text+mark,start,end,'select');if(e.value.length>1000)e.value=e.value.slice(0,1000);e.focus();changed();
-  }
-  function filename(i){return i?i.type+(i.url.searchParams.get('html')==='1'&&['iqc3','iqc4','iqc5'].includes(i.type)?'.html':i.type==='iqc5'&&!['jpg','jpeg'].includes(i.url.searchParams.get('format'))?'.png':'.jpg'):'iqc.jpg';}
-  const shell=s=>"'"+String(s).replace(/'/g,"'\\''")+"'";
-  const php=s=>"'"+String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'")+"'";
-  function generated(language){
-    const i=info($('pgEndpoint').value.trim());if(!i)return '';
-    const url=i.url,entries=[...url.searchParams],baseUrl=url.origin+url.pathname,file=filename(i);
-    if(i.type==='iqc5'&&forms.iqc5?.profileSource==='upload'){
-      if(language==='curl')return '# POST multipart · satu foto profil\ncurl --fail --show-error '+shell(url.href)+' \\\n  -F '+shell('profile=@foto.png')+' \\\n  -o '+shell(file);
-      if(language==='javascript')return 'const form = new FormData();\nform.append("profile", document.querySelector("input[type=file]").files[0]);\n// Jangan set Content-Type sendiri: browser membuat boundary multipart.\nconst response = await fetch('+JSON.stringify(url.href)+', {method:"POST", body:form});\nif (!response.ok) throw new Error("HTTP " + response.status);\nconst blob = await response.blob();\nconst link = document.createElement("a");\nlink.href = URL.createObjectURL(blob);\nlink.download = '+JSON.stringify(file)+';\nlink.click();';
-      if(language==='python')return 'import requests\n\nwith open("foto.png", "rb") as image:\n    res = requests.post('+JSON.stringify(url.href)+', files={"profile": image}, timeout=70)\nres.raise_for_status()\nopen('+JSON.stringify(file)+', "wb").write(res.content)';
-      if(language==='php')return '<?php\n$curl = curl_init('+php(url.href)+');\ncurl_setopt_array($curl, [\n  CURLOPT_POST => true,\n  CURLOPT_POSTFIELDS => ["profile" => new CURLFile("foto.png")],\n  CURLOPT_RETURNTRANSFER => true,\n  CURLOPT_TIMEOUT => 70,\n]);\n$result = curl_exec($curl);\nif ($result === false || curl_getinfo($curl, CURLINFO_HTTP_CODE) !== 200) throw new Exception("Upload gagal");\nfile_put_contents('+php(file)+', $result);\ncurl_close($curl);';
-      return 'package main\n\nimport ("bytes"; "io"; "mime/multipart"; "net/http"; "os"; "time")\nfunc main() {\n  var body bytes.Buffer\n  writer := multipart.NewWriter(&body)\n  photo, err := os.Open("foto.png"); if err != nil { panic(err) }; defer photo.Close()\n  part, err := writer.CreateFormFile("profile", "foto.png"); if err != nil { panic(err) }\n  if _, err = io.Copy(part, photo); err != nil { panic(err) }\n  writer.Close()\n  req, err := http.NewRequest("POST", '+JSON.stringify(url.href)+', &body); if err != nil { panic(err) }\n  req.Header.Set("Content-Type", writer.FormDataContentType())\n  client := &http.Client{Timeout: 70 * time.Second}\n  res, err := client.Do(req); if err != nil { panic(err) }; defer res.Body.Close()\n  if res.StatusCode != 200 { panic(res.Status) }\n  output, err := os.Create('+JSON.stringify(file)+'); if err != nil { panic(err) }; defer output.Close()\n  if _, err := io.Copy(output, res.Body); err != nil { panic(err) }\n}';
+  function changed(event) {
+    if (!active) return;
+    const target = event && event.target;
+    if (target?.id === "pgIqcProfileFile") {
+      profileFile = target.files[0] || null;
+      const help = $("pgIqcProfileFileHelp");
+      if (profileFile && profileFile.size > 2 * 1024 * 1024) {
+        profileFile = null;
+        target.value = "";
+        help.textContent = "Foto maksimum 2 MB. Pilih file lebih kecil.";
+      } else
+        help.textContent = profileFile
+          ? "Siap: " +
+            profileFile.name +
+            " · " +
+            Math.round(profileFile.size / 1024) +
+            " KB. Dipakai untuk preview gambar / Kirim."
+          : "Pilih foto maks. 2 MB / 4 MP.";
     }
-    if(language==='curl')return '# Sukses: '+(file.endsWith('.html')?'template HTML':file.endsWith('.png')?'gambar PNG':'gambar JPG')+'\ncurl --fail --show-error --location '+shell(url.href)+' \\\n  -o '+shell(file);
-    if(language==='javascript'){
-      const params=entries.length===new Set(entries.map(v=>v[0])).size?Object.fromEntries(entries):entries;
-      return 'const params = '+JSON.stringify(params,null,2)+';\nconst url = new URL('+JSON.stringify(baseUrl)+');\nurl.search = new URLSearchParams(params).toString();\n\nconst response = await fetch(url);\nif (!response.ok) throw new Error("HTTP " + response.status);\nconst blob = await response.blob();\nconst fileURL = URL.createObjectURL(blob);\n// '+(file.endsWith('.html')?'Gunakan sebagai src iframe terisolasi.':'Gunakan sebagai src gambar atau tautan unduh.')+'\nconst link = document.createElement("a");\nlink.href = fileURL;\nlink.download = '+JSON.stringify(file)+';\nlink.click();\nsetTimeout(() => URL.revokeObjectURL(fileURL), 30000);';
+    const links = [
+      ["pgIqcColor1", "pgIqcHex1"],
+      ["pgIqcColor2", "pgIqcHex2"],
+      ["pgIqcColor", "pgIqcHexSolid"],
+    ];
+    for (const [picker, hex] of links) {
+      if (target?.id === picker) $(hex).value = $(picker).value;
+      if (target?.id === hex) {
+        const v = color($(hex).value, null);
+        $(hex).setCustomValidity(
+          v ? "" : "Gunakan 6 digit hex, dengan atau tanpa #.",
+        );
+        if (!v) return;
+        $(picker).value = v;
+      }
     }
-    if(language==='python')return 'import requests\n\nparams = '+JSON.stringify(Object.fromEntries(entries),null,2)+'\nres = requests.get('+JSON.stringify(baseUrl)+', params=params, timeout=70)\nres.raise_for_status()\nwith open('+JSON.stringify(file)+', "wb") as f:\n    f.write(res.content)';
-    if(language==='php')return '<?php\n$params = [\n'+entries.map(([k,v])=>'  '+php(k)+' => '+php(v)+',').join('\n')+'\n];\n$url = '+php(baseUrl)+' . "?" . http_build_query($params);\n$content = file_get_contents($url);\nif ($content === false) throw new Exception("Request gagal");\nfile_put_contents('+php(file)+', $content);';
-    return 'package main\n\nimport (\n  "io"\n  "net/http"\n  "net/url"\n  "os"\n  "time"\n)\n\nfunc main() {\n  q := url.Values{}\n'+entries.map(([k,v])=>'  q.Add('+JSON.stringify(k)+', '+JSON.stringify(v)+')').join('\n')+'\n  client := &http.Client{Timeout: 70 * time.Second}\n  res, err := client.Get('+JSON.stringify(baseUrl)+' + "?" + q.Encode())\n  if err != nil { panic(err) }\n  defer res.Body.Close()\n  if res.StatusCode != 200 { panic(res.Status) }\n  f, err := os.Create('+JSON.stringify(file)+')\n  if err != nil { panic(err) }\n  defer f.Close()\n  if _, err := io.Copy(f, res.Body); err != nil { panic(err) }\n}';
+    read();
+    forms[active].preset = "custom";
+    $("pgIqcPreset").value = "custom";
+    $("pgIqcPresetHint").textContent =
+      "Isian khusus. Pilih contoh lagi untuk membandingkan parameter.";
+    visibility();
+    $("pgEndpoint").value = endpoint(forms[active]);
+    learning();
+    guide();
+    savePlayground();
+    $("pgIqcNote").textContent =
+      "URL dan kode sudah mengikuti isian terbaru. Preview gambar diperbarui setelah jeda edit.";
+    schedule();
   }
-  function learning(){
-    const i=info($('pgEndpoint').value.trim());if(!i)return;
-    $('pgIqcUrl').value=i.url.href;
-    const entries=[...i.url.searchParams];$('pgIqcParamCount').textContent='('+entries.length+')';
-    const table=$('pgIqcQuery');table.replaceChildren();
-    if(!entries.length){const tr=document.createElement('tr'),td=document.createElement('td');td.colSpan=2;td.textContent='Tidak ada query — API memakai nilai default.';tr.append(td);table.append(tr);}
-    entries.forEach(([key,v])=>{const row=document.createElement('tr');[key,v].forEach(text=>{const td=document.createElement('td');td.textContent=text;row.append(td);});table.append(row);});
-    currentCode=generated(lang);$('pgIqcCode').innerHTML=highlight(currentCode,LANG_MAP[lang]);
-    document.querySelectorAll('[data-iqc-lang]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.iqcLang===lang)));
-    $('pgBtnText').textContent='Kirim';
+  function select(type) {
+    if (!models[type]) return;
+    if (active) read();
+    active = type;
+    forms[type] ||= defaults(type);
+    $("pgMethod").value = "GET";
+    $("pgBody").value = "";
+    $("pgIqcControls").hidden = false;
+    $("pgIqcLearning").hidden = false;
+    $("pgMethod").disabled = true;
+    $("playground").setAttribute("data-iqc", "");
+    paint();
+    $("pgEndpoint").value = endpoint(forms[active]);
+    $("pgBodyWrap").style.display = "none";
+    $("pgHint").textContent = "GET · parameter form";
+    learning();
+    savePlayground();
+    $("pgIqcNote").textContent =
+      "Isian default dapat dilihat, diedit, atau direset. Output Playground selalu berupa gambar.";
+    schedule(250);
   }
-  function language(v){if(!['curl','javascript','python','php','go'].includes(v))return;lang=v;learning();savePlayground();}
-  function init(){
-    $('pgIqcControls').addEventListener('input',e=>{if(e.target.id==='pgIqcPreset')return;changed(e);});
-    $('pgIqcProfileFile').addEventListener('change',changed);
-    $('pgEndpoint').addEventListener('input',()=>{clearTimeout(timer);timer=setTimeout(()=>{fromEndpoint();savePlayground();},350);});
-    $('pgEndpoint').addEventListener('change',()=>{clearTimeout(timer);fromEndpoint();savePlayground();});
+  function preset(id) {
+    if (!active || id === "custom") return;
+    const p = models[active].presets.find((p) => p.id === id);
+    if (!p) return;
+    forms[active] = Object.assign(defaults(active), p.value, { preset: id });
+    lastCompletedKey = "";
+    paint();
+    $("pgEndpoint").value = endpoint(forms[active]);
+    learning();
+    savePlayground();
+    $("pgIqcNote").textContent = p.help;
+    schedule(250);
   }
-  function restore(saved){
-    if(!saved||typeof saved!=='object')return;
-    if(['curl','javascript','python','php','go'].includes(saved.lang))lang=saved.lang;
-    for(const type of Object.keys(models))if(saved.forms?.[type]&&typeof saved.forms[type]==='object'){
-      const s=defaults(type),raw=saved.forms[type];for(const k of Object.keys(s))if(k!=='extra'&&typeof raw[k]==='string')s[k]=raw[k].slice(0,1000);
-      ['color1','color2','color'].forEach(k=>s[k]=color(s[k],defaults(type)[k]));if(!models[type].routes.includes(s.route))s.route=models[type].routes[0];forms[type]=s;
-    }
+  function reset() {
+    preset("default");
+    showToast("Parameter " + models[active].title + " direset");
   }
-  return {info,select,preset,reset,randomSeed,format,language,fromEndpoint,init,learning,filename,generated,restore,upload:()=>{const i=info($('pgEndpoint').value.trim());return i?.type==='iqc5'&&forms.iqc5?.profileSource==='upload'?{file:profileFile}:null;},snapshot:()=>({forms,lang}),copyUrl:()=>copyText($('pgIqcUrl').value,'URL lengkap disalin'),copyCode:()=>copyText(currentCode,'Contoh kode disalin')};
-})();
+  function randomSeed() {
+    if (!active || ["iqc3", "iqc4", "iqc5"].includes(active)) return;
+    const a = new Uint32Array(1);
+    if (globalThis.crypto?.getRandomValues) crypto.getRandomValues(a);
+    else a[0] = Math.random() * 4294967296;
+    $("pgIqcSeed").value = String(a[0]);
+    changed();
+  }
+  function format(mark) {
+    const e = $("pgIqcText"),
+      start = e.selectionStart,
+      end = e.selectionEnd,
+      text = e.value.slice(start, end) || "teks";
+    e.setRangeText(mark + text + mark, start, end, "select");
+    if (e.value.length > 1000) e.value = e.value.slice(0, 1000);
+    e.focus();
+    changed();
+  }
+  function filename(i) {
+    return i
+      ? i.type +
+          (i.type === "iqc5" &&
+          !["jpg", "jpeg"].includes(i.url.searchParams.get("format"))
+            ? ".png"
+            : ".jpg")
+      : "iqc.jpg";
+  }
+  const shell = (s) => "'" + String(s).replace(/'/g, "'\\''") + "'";
+  const php = (s) =>
+    "'" + String(s).replace(/\\/g, "\\\\").replace(/'/g, "\\'") + "'";
+  function generated(language) {
+    const i = info($("pgEndpoint").value.trim());
+    if (!i) return "";
+    const url = i.url,
+      entries = [...url.searchParams],
+      baseUrl = url.origin + url.pathname,
+      file = filename(i);
+    if (i.type === "iqc5" && forms.iqc5?.profileSource === "upload") {
+      const photo = profileFile?.name || "foto.png";
+      const info =
+        "# POST multipart · pilih foto; letakkan file di folder eksekusi";
+      if (language === "curl")
+        return (
+          info +
+          "\n" +
+          [
+            "curl --fail --show-error " + shell(url.href),
+            "  -F " + shell("profile=@" + photo),
+            "  -o " + shell(file),
+          ].join(String.fromCharCode(32, 92, 10))
+        );
+      if (language === "javascript")
+        return `// Foto yang dipilih: ${JSON.stringify(photo)}
+const form = new FormData();
+form.append("profile", document.querySelector("input[type=file]").files[0]);
+// Jangan set Content-Type sendiri: browser membuat boundary multipart.
+const response = await fetch(${JSON.stringify(url.href)}, {method:"POST", body:form});
+if (!response.ok) throw new Error("HTTP " + response.status);
+const blob = await response.blob();
+const fileURL = URL.createObjectURL(blob);
+const link = document.createElement("a");
+link.href = fileURL;
+link.download = ${JSON.stringify(file)};
+link.click();
+setTimeout(() => URL.revokeObjectURL(fileURL), 30000);`;
+      if (language === "python")
+        return `import requests
 
+with open(${JSON.stringify(photo)}, "rb") as image:
+    res = requests.post(${JSON.stringify(url.href)}, files={"profile": image}, timeout=70)
+res.raise_for_status()
+with open(${JSON.stringify(file)}, "wb") as output:
+    output.write(res.content)`;
+      if (language === "php")
+        return `<?php
+$curl = curl_init(${php(url.href)});
+curl_setopt_array($curl, [
+  CURLOPT_POST => true,
+  CURLOPT_POSTFIELDS => ["profile" => new CURLFile(${php(photo)})],
+  CURLOPT_RETURNTRANSFER => true,
+  CURLOPT_TIMEOUT => 70,
+]);
+$result = curl_exec($curl);
+if ($result === false || curl_getinfo($curl, CURLINFO_HTTP_CODE) !== 200) throw new Exception("Upload gagal");
+file_put_contents(${php(file)}, $result);
+curl_close($curl);`;
+      return `package main
+
+import ("bytes"; "io"; "mime/multipart"; "net/http"; "os"; "time")
+func main() {
+  var body bytes.Buffer
+  writer := multipart.NewWriter(&body)
+  photo, err := os.Open(${JSON.stringify(photo)}); if err != nil { panic(err) }; defer photo.Close()
+  part, err := writer.CreateFormFile("profile", ${JSON.stringify(photo)}); if err != nil { panic(err) }
+  if _, err = io.Copy(part, photo); err != nil { panic(err) }
+  writer.Close()
+  req, err := http.NewRequest("POST", ${JSON.stringify(url.href)}, &body); if err != nil { panic(err) }
+  req.Header.Set("Content-Type", writer.FormDataContentType())
+  client := &http.Client{Timeout: 70 * time.Second}
+  res, err := client.Do(req); if err != nil { panic(err) }; defer res.Body.Close()
+  if res.StatusCode != 200 { panic(res.Status) }
+  output, err := os.Create(${JSON.stringify(file)}); if err != nil { panic(err) }; defer output.Close()
+  if _, err := io.Copy(output, res.Body); err != nil { panic(err) }
+}`;
+    }
+    if (language === "curl")
+      return (
+        "# Sukses: " +
+        (file.endsWith(".html")
+          ? "template HTML"
+          : file.endsWith(".png")
+            ? "gambar PNG"
+            : "gambar JPG") +
+        "\ncurl --fail --show-error --location " +
+        shell(url.href) +
+        " \\\n  -o " +
+        shell(file)
+      );
+    if (language === "javascript") {
+      const params =
+        entries.length === new Set(entries.map((v) => v[0])).size
+          ? Object.fromEntries(entries)
+          : entries;
+      return (
+        "const params = " +
+        JSON.stringify(params, null, 2) +
+        ";\nconst url = new URL(" +
+        JSON.stringify(baseUrl) +
+        ');\nurl.search = new URLSearchParams(params).toString();\n\nconst response = await fetch(url);\nif (!response.ok) throw new Error("HTTP " + response.status);\nconst blob = await response.blob();\nconst fileURL = URL.createObjectURL(blob);\n// ' +
+        (file.endsWith(".html")
+          ? "Gunakan sebagai src iframe terisolasi."
+          : "Gunakan sebagai src gambar atau tautan unduh.") +
+        '\nconst link = document.createElement("a");\nlink.href = fileURL;\nlink.download = ' +
+        JSON.stringify(file) +
+        ";\nlink.click();\nsetTimeout(() => URL.revokeObjectURL(fileURL), 30000);"
+      );
+    }
+    if (language === "python")
+      return (
+        "import requests\n\nparams = " +
+        JSON.stringify(Object.fromEntries(entries), null, 2) +
+        "\nres = requests.get(" +
+        JSON.stringify(baseUrl) +
+        ", params=params, timeout=70)\nres.raise_for_status()\nwith open(" +
+        JSON.stringify(file) +
+        ', "wb") as f:\n    f.write(res.content)'
+      );
+    if (language === "php")
+      return (
+        "<?php\n$params = [\n" +
+        entries
+          .map(([k, v]) => "  " + php(k) + " => " + php(v) + ",")
+          .join("\n") +
+        "\n];\n$url = " +
+        php(baseUrl) +
+        ' . "?" . http_build_query($params);\n$content = file_get_contents($url);\nif ($content === false) throw new Exception("Request gagal");\nfile_put_contents(' +
+        php(file) +
+        ", $content);"
+      );
+    return (
+      'package main\n\nimport (\n  "io"\n  "net/http"\n  "net/url"\n  "os"\n  "time"\n)\n\nfunc main() {\n  q := url.Values{}\n' +
+      entries
+        .map(
+          ([k, v]) =>
+            "  q.Add(" + JSON.stringify(k) + ", " + JSON.stringify(v) + ")",
+        )
+        .join("\n") +
+      "\n  client := &http.Client{Timeout: 70 * time.Second}\n  res, err := client.Get(" +
+      JSON.stringify(baseUrl) +
+      ' + "?" + q.Encode())\n  if err != nil { panic(err) }\n  defer res.Body.Close()\n  if res.StatusCode != 200 { panic(res.Status) }\n  f, err := os.Create(' +
+      JSON.stringify(file) +
+      ")\n  if err != nil { panic(err) }\n  defer f.Close()\n  if _, err := io.Copy(f, res.Body); err != nil { panic(err) }\n}"
+    );
+  }
+  function learning() {
+    const i = info($("pgEndpoint").value.trim());
+    if (!i) return;
+    $("pgIqcUrl").value = i.url.href;
+    const entries = [...i.url.searchParams];
+    $("pgIqcParamCount").textContent = "(" + entries.length + ")";
+    const table = $("pgIqcQuery");
+    table.replaceChildren();
+    if (!entries.length) {
+      const tr = document.createElement("tr"),
+        td = document.createElement("td");
+      td.colSpan = 2;
+      td.textContent = "Tidak ada query — API memakai nilai default.";
+      tr.append(td);
+      table.append(tr);
+    }
+    entries.forEach(([key, v]) => {
+      const row = document.createElement("tr");
+      [key, v].forEach((text) => {
+        const td = document.createElement("td");
+        td.textContent = text;
+        row.append(td);
+      });
+      table.append(row);
+    });
+    currentCode = generated(lang);
+    $("pgIqcCode").innerHTML = highlight(currentCode, LANG_MAP[lang]);
+    document
+      .querySelectorAll("[data-iqc-lang]")
+      .forEach((b) =>
+        b.setAttribute("aria-pressed", String(b.dataset.iqcLang === lang)),
+      );
+    if (!$("pgSubmitBtn").disabled) $("pgBtnText").textContent = "Kirim";
+  }
+  function language(v) {
+    if (!["curl", "javascript", "python", "php", "go"].includes(v)) return;
+    lang = v;
+    learning();
+    savePlayground();
+  }
+  function init() {
+    $("pgIqcControls").addEventListener("input", (e) => {
+      if (["pgIqcPreset", "pgIqcAuto"].includes(e.target.id)) return;
+      changed(e);
+    });
+    $("pgIqcProfileFile").addEventListener("change", changed);
+    $("pgIqcAuto").checked = autoEnabled;
+    $("pgIqcAuto").addEventListener("change", () => {
+      autoEnabled = $("pgIqcAuto").checked;
+      clearTimeout(renderTimer);
+      pending = false;
+      savePlayground();
+      if (autoEnabled) schedule(0);
+      else
+        $("pgIqcLiveStatus").textContent =
+          "Pratinjau otomatis dijeda. URL/kode tetap diperbarui; tekan Kirim untuk gambar.";
+    });
+    $("pgEndpoint").addEventListener("input", () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        fromEndpoint();
+        savePlayground();
+      }, 350);
+    });
+    $("pgEndpoint").addEventListener("change", () => {
+      clearTimeout(timer);
+      fromEndpoint();
+      savePlayground();
+    });
+  }
+  function restore(saved) {
+    if (!saved || typeof saved !== "object") return;
+    if (typeof saved.auto === "boolean") {
+      autoEnabled = saved.auto;
+      $("pgIqcAuto").checked = autoEnabled;
+    }
+    if (["curl", "javascript", "python", "php", "go"].includes(saved.lang))
+      lang = saved.lang;
+    for (const type of Object.keys(models))
+      if (saved.forms?.[type] && typeof saved.forms[type] === "object") {
+        const s = defaults(type),
+          raw = saved.forms[type];
+        for (const k of Object.keys(s))
+          if (k !== "extra" && typeof raw[k] === "string")
+            s[k] = raw[k].slice(0, 1000);
+        ["color1", "color2", "color"].forEach(
+          (k) => (s[k] = color(s[k], defaults(type)[k])),
+        );
+        if (!models[type].routes.includes(s.route))
+          s.route = models[type].routes[0];
+        forms[type] = s;
+      }
+  }
+
+  function rows(id, entries) {
+    const table = $(id);
+    table.replaceChildren();
+    for (const cells of entries) {
+      const tr = document.createElement("tr");
+      for (const text of cells) {
+        const td = document.createElement("td");
+        td.textContent = text;
+        tr.append(td);
+      }
+      table.append(tr);
+    }
+  }
+  function headers(type = active) {
+    return [...headerReference.common, ...(headerReference.models[type] || [])];
+  }
+  function guide() {
+    if (!active) return;
+    const d = defaults(active),
+      url = new URL(endpoint(d, active), ORIGIN),
+      file = filename(info(url.href));
+    $("pgIqcDefaultTitle").textContent = "Default " + models[active].title;
+    $("pgIqcDefaultUrl").href = ORIGIN + models[active].routes[0];
+    $("pgIqcDefaultUrl").textContent = "Buka gambar default API ↗";
+    rows(
+      "pgIqcDefaultValues",
+      [...url.searchParams].concat(
+        ["iqc", "iqc2"].includes(active)
+          ? [["seed", "acak (opsional; kosong untuk acak)"]]
+          : [],
+      ),
+    );
+    $("pgIqcDefaultNote").textContent = ["iqc", "iqc2"].includes(active)
+      ? "Pesan/nama/tema default diisi nyata. Jam mengikuti WIB; seed kosong membuat wallpaper/baterai acak. Reset tidak menghapus contoh default."
+      : "Default memakai file foto referensi. Setelah diedit, gambar dirender ulang; tinggi mengikuti teks. Default PNG/JPG mengikuti model.";
+    $("pgIqcHowTo").textContent =
+      active === "iqc5" && forms[active]?.profileSource === "upload"
+        ? "POST multipart: pilih satu foto (maks. 2 MB / 4 MP). Seluruh isian masuk query, foto masuk field profile. Jangan set Content-Type sendiri di browser; FormData membuat boundary. Kode lima bahasa memakai isian dan nama file Anda. Letakkan foto di folder eksekusi saat menjalankan contoh CLI."
+        : "GET tanpa body JSON. Isi parameter, salin URL atau kode bahasa pilihan, lalu baca respons sebagai blob/binary dan simpan " +
+          file +
+          ". Accept: " +
+          (file.endsWith(".png") ? "image/png" : "image/jpeg") +
+          " opsional; Content-Type request tidak diperlukan.";
+    $("pgIqcHeadersTitle").textContent =
+      "Header tersedia · " + active.toUpperCase();
+    rows("pgIqcHeaderReference", headers());
+  }
+  function requestKey() {
+    const i = info($("pgEndpoint").value.trim());
+    if (!i) return "";
+    const upload = i.type === "iqc5" && forms.iqc5?.profileSource === "upload";
+    return JSON.stringify([
+      i.url.href,
+      upload ? "POST" : "GET",
+      upload && profileFile
+        ? [profileFile.name, profileFile.size, profileFile.lastModified]
+        : null,
+    ]);
+  }
+  function canRender() {
+    return (
+      active &&
+      $("playgroundForm").checkValidity() &&
+      !(
+        active === "iqc5" &&
+        forms.iqc5?.profileSource === "upload" &&
+        !profileFile
+      )
+    );
+  }
+  function schedule(delay = 850) {
+    clearTimeout(renderTimer);
+    if (!active) return;
+    const key = requestKey();
+
+    const image = $("pgResponseCode").querySelector("img");
+    if (image && image.dataset.requestKey !== key) {
+      const link = $("pgResponseCode").querySelector("a.res-download");
+      if (link) {
+        link.setAttribute("aria-disabled", "true");
+        link.style.pointerEvents = "none";
+      }
+    }
+    if (!autoEnabled) {
+      $("pgIqcLiveStatus").textContent =
+        "Otomatis dijeda. URL/kode mengikuti isian; gambar sebelumnya belum diperbarui. Tekan Kirim.";
+      return;
+    }
+    if (key === lastCompletedKey && !busy) return;
+    $("pgIqcLiveStatus").textContent = canRender()
+      ? "Isian berubah · menyiapkan gambar terbaru…"
+      : "Lengkapi isian yang valid / pilih foto untuk melihat gambar.";
+    renderTimer = setTimeout(() => {
+      if (!active || !autoEnabled || !canRender()) return;
+      if (busy) {
+        pending = true;
+        $("pgIqcLiveStatus").textContent =
+          "Render berjalan · perubahan terbaru menunggu giliran, tanpa request paralel.";
+        return;
+      }
+      if (requestKey() === lastCompletedKey) return;
+      executePlayground({ preventDefault() {} }, { automatic: true });
+    }, delay);
+  }
+  function beginRequest() {
+    clearTimeout(renderTimer);
+    busy = true;
+    pending = false;
+  }
+  function finishRequest(key) {
+    busy = false;
+    lastCompletedKey = key;
+    const changed = requestKey() !== key;
+    if (active && autoEnabled && (pending || changed)) {
+      pending = false;
+      schedule(0);
+    }
+  }
+  function pause() {
+    autoEnabled = false;
+    pending = false;
+    busy = false;
+    clearTimeout(renderTimer);
+    $("pgIqcAuto").checked = false;
+    savePlayground();
+  }
+
+  return {
+    headers,
+    guide,
+    requestKey,
+    canRender,
+    schedule,
+    beginRequest,
+    finishRequest,
+    pause,
+    busy: () => busy,
+    info,
+    select,
+    preset,
+    reset,
+    randomSeed,
+    format,
+    language,
+    fromEndpoint,
+    init,
+    learning,
+    filename,
+    generated,
+    restore,
+    upload: () => {
+      const i = info($("pgEndpoint").value.trim());
+      return i?.type === "iqc5" && forms.iqc5?.profileSource === "upload"
+        ? { file: profileFile }
+        : null;
+    },
+    snapshot: () => ({ forms, lang, auto: autoEnabled }),
+    copyUrl: () => copyText($("pgIqcUrl").value, "URL lengkap disalin"),
+    copyCode: () => copyText(currentCode, "Contoh kode disalin"),
+  };
+})();
+/* IQC_CONTROLLER_END */
 
 /* =========================================================
    7. Clipboard & toast

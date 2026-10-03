@@ -1,4 +1,5 @@
 // IQC4 — WhatsApp iOS reaction + context menu, based on the supplied photo.
+const exposedHeaders = require('../src/shared/iqc-header-reference.json').exposed.join(', ');
 const fs = require('node:fs');
 const path = require('node:path');
 const { imageSize } = require('image-size');
@@ -68,7 +69,7 @@ async function image(p) {
 module.exports=async(req,res)=>{
   res.setHeader('Access-Control-Allow-Origin','*');
   res.setHeader('Access-Control-Allow-Methods','GET, HEAD, OPTIONS');
-  res.setHeader('Access-Control-Expose-Headers','X-IQC-Renderer, X-IQC-Variant, X-IQC-Source, X-IQC-Width, X-IQC-Height, X-IQC-Error-Code');
+  res.setHeader('Access-Control-Expose-Headers', exposedHeaders);
   res.setHeader('X-IQC-Variant','4');res.setHeader('X-IQC-Renderer','chromium-153-node24');
   res.setHeader('Cache-Control','no-store');res.setHeader('X-Content-Type-Options','nosniff');
   if(req.method==='OPTIONS'){res.statusCode=204;res.end();return;}

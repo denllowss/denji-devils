@@ -1,0 +1,26 @@
+{
+  "exposed": ["Content-Type", "Content-Length", "Content-Disposition", "Cache-Control", "X-Content-Type-Options", "X-IQC-Variant", "X-IQC-Renderer", "X-IQC-Cache", "X-IQC-Source", "X-IQC-Width", "X-IQC-Height", "X-IQC-Error-Code", "Allow", "Access-Control-Allow-Origin", "Access-Control-Allow-Methods", "Access-Control-Allow-Headers", "Access-Control-Expose-Headers"],
+  "common": [
+    ["Content-Type", "image/jpeg; khusus IQC5 default image/png. Error IQC3–5 memakai application/json. IQC1/2 dapat mengirim JPEG fallback dengan HTTP error."],
+    ["Content-Length", "Jumlah byte respons gambar, bukan jumlah karakter pesan. Header transport dapat berbeda pada respons error/HTML."],
+    ["Content-Disposition", "inline; filename=... untuk gambar. Playground memilih nama unduhan sesuai model dan format."],
+    ["Cache-Control", "no-store: respons tidak disimpan browser/CDN. Cache renderer IQC1/2 terpisah dari cache HTTP."],
+    ["X-Content-Type-Options", "nosniff; browser tidak menebak tipe file."],
+    ["X-IQC-Variant", "Nomor model 1–5; tersedia pada request model yang valid."],
+    ["X-IQC-Renderer", "chromium-153-node24; runtime renderer project."],
+    ["X-IQC-Width", "Lebar gambar yang benar-benar dikirim, dalam px."],
+    ["X-IQC-Height", "Tinggi gambar yang benar-benar dikirim. IQC3–5 bertambah untuk teks panjang."],
+    ["X-IQC-Error-Code", "Hanya jika ada error. Periksa bersama HTTP status; gambar fallback tidak berarti sukses."],
+    ["Access-Control-Allow-Origin", "*; API dapat dipanggil dari origin lain."],
+    ["Access-Control-Allow-Methods", "IQC1–4: GET, HEAD, OPTIONS. IQC5 juga POST untuk profil upload."],
+    ["Access-Control-Expose-Headers", "Daftar header yang boleh dibaca JavaScript melalui CORS; mencakup metadata gambar di atas."],
+    ["Allow", "Hanya pada HTTP 405, menunjukkan metode yang didukung."]
+  ],
+  "models": {
+    "iqc": [["X-IQC-Cache", "HIT / MISS. Seed eksplisit memakai cache per menit WIB; tanpa seed hasil acak. Jam tetap mengikuti WIB."]],
+    "iqc2": [["X-IQC-Cache", "HIT / MISS. Seed eksplisit memakai cache per menit WIB; tanpa seed baterai acak. Jam tetap mengikuti WIB."]],
+    "iqc3": [["X-IQC-Source", "reference-photo untuk default, dynamic-render setelah isian berubah."]],
+    "iqc4": [["X-IQC-Source", "reference-photo untuk default, dynamic-render setelah isian berubah."]],
+    "iqc5": [["X-IQC-Source", "reference-photo (PNG asli), reference-converted (default JPG), atau dynamic-render."], ["Access-Control-Allow-Headers", "Content-Type; untuk POST JSON/raster dan preflight upload profil."]]
+  }
+}

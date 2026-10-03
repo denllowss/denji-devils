@@ -1,4 +1,6 @@
 // IQC3 — iMessage / Apple Music lyrics card, berdasarkan foto pengguna.
+const exposedHeaders = require('../src/shared/iqc-header-reference.json').exposed.join(', ');
+const { imageSize } = require('image-size');
 const fs = require('node:fs');
 const path = require('node:path');
 const { errorCode } = require('../src/services/iqc-runtime');
@@ -78,7 +80,7 @@ async function image(p) {
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, HEAD, OPTIONS');
-  res.setHeader('Access-Control-Expose-Headers', 'X-IQC-Renderer, X-IQC-Variant, X-IQC-Source, X-IQC-Error-Code');
+  res.setHeader('Access-Control-Expose-Headers', exposedHeaders);
   res.setHeader('X-IQC-Variant', '3');
   res.setHeader('X-IQC-Renderer', 'chromium-153-node24');
   res.setHeader('Cache-Control', 'no-store');
@@ -98,6 +100,10 @@ module.exports = async (req, res) => {
     let result;
     try { result = await image(p); }
     catch (_) { result = await image(p); }
+    const size = imageSize(result);
+    res.setHeader('X-IQC-Width', String(size.width));
+    res.setHeader('X-IQC-Height', String(size.height));
+    res.setHeader('Content-Disposition', 'inline; filename="iqc3.jpg"');
     res.setHeader('X-IQC-Source', p.reference ? 'reference-photo' : 'dynamic-render');
     res.setHeader('Content-Type', 'image/jpeg');
     res.setHeader('Content-Length', String(result.length));

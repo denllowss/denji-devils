@@ -160,7 +160,7 @@ Buka `/docs#playground`, kemudian pilih IQC1, IQC2, IQC3, atau IQC4. Tiap versi 
 - IQC2: semua field IQC1 + nama, alias `/iqc2`, `/api/iqc2`, `/iqc?v2=1`, `/api/iqc?v2=1`.
 - IQC3: lirik, musik, artis, gradient/solid, warna hex, sudut, label waktu, JPG/HTML, dan alias API.
 - IQC4: pesan, tema, reaksi, dua jam, bintang/menu/bar reaksi, baterai, jaringan, bahasa menu dan JPG/HTML.
-- Klik **Kirim** untuk render. Tidak ada auto-fetch saat mengedit; pratinjau dan unduhan menggunakan satu respons yang sama. HTML IQC3/IQC4 dipratinjau dalam iframe terisolasi.
+- Edit otomatis memperbarui gambar setelah jeda 850 ms, dengan satu render aktif. Otomatis dapat dijeda; **Kirim** tetap tersedia. Preview dan unduh menggunakan satu respons yang sama. HTML hanya tersedia melalui API lanjutan, bukan output Playground.
 - Status HTTP, ukuran, dimensi, renderer, cache/source dan kode error tersedia di detail respons. Gambar fallback IQC1/IQC2 tidak dianggap sebagai HTTP sukses.
 - Isian disimpan per versi di browser; bisa kembali ke contoh default lewat Reset. URL manual dapat mengisi form kembali.
 
@@ -300,4 +300,25 @@ npm run test:iqc5:ui
 # Template dan editor offline dapat dibangun ulang tanpa network
 python3 scripts/build-iqc5-template.py
 python3 scripts/build-iqc5-editor.py
+```
+
+
+## Playground gambar langsung — seluruh IQC1–IQC5
+
+`/docs#playground` dan deep link `/docs?playground=iqc5#playground` sekarang memakai **output gambar**, bukan template HTML. Nilai default pesan/nama/tema/warna/jam sesuai API sudah terisi. Edit form → URL, tabel parameter, cara pakai dan kode cURL/JavaScript/Python/PHP/Go langsung mengikuti input; setelah jeda **850 ms**, preview gambar diperbarui otomatis. Hanya satu render aktif; perubahan saat render diproses setelahnya, dan respons lama tidak menimpa isian terbaru.
+
+- **Pratinjau gambar otomatis** bisa dijeda; `Kirim` tetap tersedia. `Bersihkan` menghapus hasil dan menjeda otomatis.
+- **Lihat / pakai default** mengisi ulang semua field relevan. Tautan **Buka gambar default API** tetap tersedia. Seed IQC1/2 opsional; kosong = acak, jam tetap WIB.
+- IQC1–4: JPG; IQC5: PNG default atau JPG. Opsi HTML di Playground dihapus, tetapi `html=1` pada API IQC3–5 tetap berfungsi untuk pengguna lanjutan.
+- Foto upload IQC5 menggunakan POST multipart. Semua parameter teks berada pada URL/kode; foto ada di field `profile`. Browser tidak perlu menetapkan Content-Type/boundary sendiri.
+- Preview, metadata dan unduhan menggunakan **satu respons yang sama**, bukan fetch gambar kedua. Hasil lama ditandai selama render baru; error tidak dilabeli sebagai sukses.
+- Header yang tersedia per model dijelaskan di `/docs#iqc-headers-reference` dan di form. Panel hasil menampilkan **semua header aktual yang terbaca oleh fetch**, HTTP, metode, ukuran dan URL request.
+- Semua API IQC sekarang memberikan `X-IQC-Width`, `X-IQC-Height` dan `Content-Disposition` untuk gambar. `X-IQC-Cache` hanya IQC1/2; `X-IQC-Source` IQC3–5; `X-IQC-Error-Code` kondisional. Metadata ini diekspos melalui CORS; bytes default foto tetap sama.
+
+Sumber UI yang mudah dirawat: `src/ui/iqc-playground.js`, `src/ui/playground-response.js`; kontrak header bersama: `src/shared/iqc-header-reference.json`. Build embedding offline/idempotent:
+
+```bash
+python3 scripts/build-docs-playground.py
+npm run test:iqc:playground
+npm run test:iqc:headers
 ```
