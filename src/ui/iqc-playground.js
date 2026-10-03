@@ -1,9 +1,21 @@
 const pgIqc = (function () {
   const $ = (id) => document.getElementById(id);
   const headerReference = __IQC_HEADER_REFERENCE__;
+  const ssgcHeaders = __SSGC_HEADER_REFERENCE__;
   const originalMessage = "see u, hopefully we will meet in the next life.";
   const originalLyrics = "I don't regret, just pretend shit never happened";
   const models = {
+    ssgc: {
+      title:'SSGC · Info Grup WhatsApp', output:'739 px · JPG/PNG · tinggi otomatis',routes:['/ssgc','/api/ssgc'],textHelp:'Deskripsi maks. 2000 karakter/grapheme. limit/batas menentukan kapan muncul Baca selengkapnya. full=1 atau limit=0 menampilkan semua teks. Default hanya berisi teks yang terlihat pada foto.',presets:[
+        {id:'default',name:'Foto asli · JPG persis',help:'Nama, profil dan deskripsi bawaan foto. JPG default byte-identik. Bagian deskripsi yang tersembunyi tidak tersedia dari screenshot.',value:{}},
+        {id:'name',name:'Nama & deskripsi sendiri',help:'Ganti name dan description; limit=45 menampilkan Baca selengkapnya jika teks melebihi batas.',value:{name:'Komunitas Denji',text:'Selamat datang di grup kami. ❤\nTempat berbagi cerita dan belajar bersama.',limit:'45'}},
+        {id:'limit',name:'Batas 80 karakter',help:'Batas berdasarkan grapheme, sehingga emoji tidak terpotong. Link hanya muncul jika memang ada teks yang dipotong.',value:{name:'Grup Kita',text:'Halo semuanya. ❤\n'+('Tempat berbagi cerita, belajar dan saling mendukung. '.repeat(6)),limit:'80'}},
+        {id:'full',name:'Deskripsi penuh · autoheight',help:'full=1 menghilangkan pemotongan; footer/menu bergeser mengikuti panjang deskripsi.',value:{name:'Grup Kita',text:'Selamat datang! ❤\n'+('Tempat berbagi cerita, belajar dan saling mendukung. '.repeat(12)),full:'1'}},
+        {id:'profile',name:'Profil URL publik',help:'profile adalah URL gambar publik; downloader server menolak localhost/private dan SVG.',value:{name:'Grup Kita',text:'Profil grup dari URL publik.',profileSource:'url',profileUrl:'https://jpeg.wavebeem.com/icon.jpg'}},
+        {id:'upload',name:'Upload foto profil · POST',help:'Pilih satu file. POST multipart dengan field profile; URL/kode mencerminkan input dan nama file yang dipilih.',value:{name:'Grup Kita',text:'Profil grup dari foto sendiri. ❤',profileSource:'upload'}},
+        {id:'png',name:'PNG · nama sans',help:'format=png dan titleFont=sans. JPG adalah default asli; PNG adalah render/konversi lossless.',value:{format:'png',titleFont:'sans',name:'Grup Kita',text:'Gambar SSGC dalam format PNG.'}}
+      ]
+    },
     iqc: {
       title: "IQC1 · Instagram DM",
       output: "1350 × 2400 JPG",
@@ -433,6 +445,7 @@ const pgIqc = (function () {
             mode: "light",
           }
         : {}),
+      limit:"44", full:"0", members:"126", titleFont:"serif",
       profileSource: "default",
       profileUrl: "",
       nameColor: "#b83e91",
@@ -449,15 +462,16 @@ const pgIqc = (function () {
             format: "png",
           }
         : {}),
+      ...(type==='ssgc'?{name:'VOXEN FIGHTER',text:'WELCOME TO—VOXEN FIGHTER\n#VOXEN ANTI-DIMMING...',format:'jpg'}:{}),
     };
   }
   function info(endpoint) {
     try {
       const url = new URL(endpoint, ORIGIN),
-        m = url.pathname.match(/^\/(?:api\/)?(?:iqc([2345])?|qc([45]))\/?$/);
+        m = url.pathname.match(/^\/(?:api\/)?(?:iqc([2345])?|qc([45])|(ssgc))\/?$/);
       if (!m || url.origin !== ORIGIN) return null;
       const type =
-        (m[1] || m[2]) === "5"
+        m[3] === "ssgc" ? "ssgc" : (m[1] || m[2]) === "5"
           ? "iqc5"
           : (m[1] || m[2]) === "4"
             ? "iqc4"
@@ -629,8 +643,16 @@ const pgIqc = (function () {
         s.profileUrl = value(profile, "", 2048);
       }
     }
+    if(active==='ssgc') {
+      s.name=value(q.get('name')??q.get('nama')??q.get('groupName')??q.get('group'),s.name,64);
+      s.text=value(q.get('description')??q.get('deskripsi')??q.get('desc'),s.text,4000);
+      s.limit=value(q.get('limit')??q.get('batas')??q.get('descriptionLimit'),s.limit,5);
+      s.full=['1','true','on','yes'].includes(q.get('full')??q.get('fullDescription'))||s.limit==='0'?'1':'0';
+      s.members=value(q.get('members')??q.get('anggota'),s.members,6);s.titleFont=(q.get('titleFont')??q.get('font'))==='sans'?'sans':'serif';s.format=q.get('format')==='png'?'png':'jpg';
+      const profile=q.get('profile')??q.get('avatar')??q.get('pp');if(profile===null&&old.profileSource==='upload')s.profileSource='upload';else if(['none','0','off'].includes(profile))s.profileSource='none';else if(profile&&!['','default'].includes(profile)){s.profileSource='url';s.profileUrl=value(profile,'',2048);}
+    }
     const known = new Set(
-      active === "iqc5"
+      active === "ssgc" ? ["name","nama","groupName","group","description","deskripsi","desc","limit","batas","descriptionLimit","full","fullDescription","members","anggota","titleFont","font","profile","avatar","pp","format","html"] : active === "iqc5"
         ? [
             "pesan",
             "message",
@@ -709,6 +731,7 @@ const pgIqc = (function () {
     paint();
     $("pgEndpoint").value = endpoint(s);
     learning();
+    guide();
     if (!options.quiet) schedule();
   }
   function paint() {
@@ -718,7 +741,7 @@ const pgIqc = (function () {
     $("pgIqcControls")
       .querySelectorAll("input,textarea,select")
       .forEach((e) => (e.disabled = false));
-    s.format = active === "iqc5" && s.format !== "jpg" ? "png" : "jpg";
+    s.format = active === "ssgc" ? (s.format === "png" ? "png" : "jpg") : active === "iqc5" && s.format !== "jpg" ? "png" : "jpg";
     $("pgIqcTitle").textContent = model.title;
     $("pgIqcOutput").textContent = model.output;
     document
@@ -726,15 +749,21 @@ const pgIqc = (function () {
       .forEach((b) =>
         b.setAttribute("aria-pressed", String(b.dataset.iqcType === active)),
       );
-    $("pgIqcNameWrap").hidden = !["iqc2", "iqc5"].includes(active);
-    $("pgIqcProfile").hidden = active !== "iqc5";
-    $("pgIqcLegacy").hidden = ["iqc3", "iqc4", "iqc5"].includes(active);
+    $("pgIqcNameWrap").hidden = !["iqc2", "iqc5", "ssgc"].includes(active);
+    $("pgIqcProfile").hidden = !["iqc5","ssgc"].includes(active);
+    $("pgIqcSsgc").hidden=active!=="ssgc";
+    $("pgIqcProfileNote").hidden=active==="ssgc";
+    $("pgIqcNameColor").closest(".iqc-columns").hidden=active==="ssgc";
+    $("pgIqcLegacy").hidden = ["iqc3", "iqc4", "iqc5", "ssgc"].includes(active);
     $("pgIqcWa").hidden = !["iqc4", "iqc5"].includes(active);
     $("pgIqcMusic").hidden = active !== "iqc3";
-    $("pgIqcFormatting").hidden = active === "iqc3";
+    $("pgIqcFormatting").hidden = ["iqc3","ssgc"].includes(active);
+    $("pgIqcText").maxLength=active==="ssgc"?2000:1000;
+    $("pgIqcName").maxLength=active==="ssgc"?64:30;
     $("pgIqcTextLabel").textContent =
-      active === "iqc3" ? "Lirik / pesan" : "Isi pesan";
-    $("pgIqcTextParam").textContent = active === "iqc3" ? "lirik" : "pesan";
+      active === "ssgc" ? "Deskripsi grup" : active === "iqc3" ? "Lirik / pesan" : "Isi pesan";
+    $("pgIqcTextParam").textContent = active === "ssgc" ? "description" : active === "iqc3" ? "lirik" : "pesan";
+    $("pgIqcNameHelp").textContent=active==="ssgc"?"Nama grup maks. 64 karakter. Default VOXEN FIGHTER; nama panjang menggeser deskripsi dan menu otomatis.":"Maks. 30 karakter. IQC2 default Jidar; IQC5 default ★. Warna nama/profil hanya berlaku untuk IQC5.";
     $("pgIqcTextHelp").textContent = model.textHelp;
     $("pgIqcSeedHelp").textContent = model.seedHelp || "";
     $("pgIqcMode").options[0].textContent =
@@ -835,15 +864,15 @@ const pgIqc = (function () {
       $("pgIqc" + hex).value = s[key];
       $("pgIqc" + hex).setCustomValidity("");
     });
+    for(const k of ["limit","full","members","titleFont","format"])$("pgIqcSsgc"+k[0].toUpperCase()+k.slice(1)).value=s[k];
     visibility();
-    guide();
   }
   function visibility() {
     const three = active === "iqc3",
       solid = $("pgIqcBg").value === "solid";
     $("pgIqcGradient").hidden = solid;
     $("pgIqcSolid").hidden = !solid;
-    $("pgIqcCount").textContent = $("pgIqcText").value.length + " / 1000";
+    $("pgIqcCount").textContent = (active==="ssgc"?[...new Intl.Segmenter("id",{granularity:"grapheme"}).segment($("pgIqcText").value)].length:$("pgIqcText").value.length) + (active==="ssgc"?" / 2000":" / 1000");
     $("pgIqcAngleValue").textContent = $("pgIqcAngle").value + "°";
     ["Hex1", "Hex2", "Color1", "Color2", "Angle"].forEach(
       (id) => ($("pgIqc" + id).disabled = !three || solid),
@@ -851,7 +880,7 @@ const pgIqc = (function () {
     ["HexSolid", "Color"].forEach(
       (id) => ($("pgIqc" + id).disabled = !three || !solid),
     );
-    $("pgIqcSeed").disabled = three || ["iqc4", "iqc5"].includes(active);
+    $("pgIqcSeed").disabled = three || ["iqc4", "iqc5", "ssgc"].includes(active);
     $("pgIqcWa")
       .querySelectorAll("input,select")
       .forEach((e) => (e.disabled = !["iqc4", "iqc5"].includes(active)));
@@ -859,7 +888,7 @@ const pgIqc = (function () {
       ["StatusTime", "Battery", "Network"].forEach(
         (id) => ($("pgIqc" + id).disabled = true),
       );
-    const five = active === "iqc5",
+    const five = ["iqc5","ssgc"].includes(active),
       source = $("pgIqcProfileSource").value;
     $("pgIqcProfile")
       .querySelectorAll("input,select")
@@ -869,12 +898,15 @@ const pgIqc = (function () {
     $("pgIqcProfileUrl").disabled = !five || source !== "url";
     $("pgIqcProfileUrl").required = five && source === "url";
     $("pgIqcProfileFile").disabled = !five || source !== "upload";
-    $("pgMethod").value = five && source === "upload" ? "POST" : "GET";
+    $("pgIqcSsgc").querySelectorAll('input,select').forEach(e=>e.disabled=active!=='ssgc');
+    if(active==='ssgc'){$('pgIqcNameColor').disabled=true;$('pgIqcProfileColor').disabled=true;$('pgIqcSsgcLimit').disabled=$('pgIqcSsgcFull').value==='1';}
+    const large=active==="ssgc"&&new URL(endpoint(forms[active]),ORIGIN).href.length>6000;
+    $("pgMethod").value = (five && source === "upload") || large ? "POST" : "GET";
     if (five)
       $("pgHint").textContent =
         source === "upload"
           ? "POST · upload multipart"
-          : "GET · parameter form";
+          : large ? "POST · JSON otomatis (URL panjang)" : "GET · parameter form";
   }
   function read() {
     const s = forms[active];
@@ -907,7 +939,7 @@ const pgIqc = (function () {
       s.time = $("pgIqcWaTime").value;
       s.format = $("pgIqcWaFormat").value;
     }
-    if (active === "iqc5")
+    if (["iqc5","ssgc"].includes(active))
       for (const k of [
         "profileSource",
         "profileUrl",
@@ -915,6 +947,7 @@ const pgIqc = (function () {
         "profileColor",
       ])
         s[k] = $("pgIqc" + k[0].toUpperCase() + k.slice(1)).value;
+    if(active==="ssgc")for(const k of ["limit","full","members","titleFont","format"])s[k]=$("pgIqcSsgc"+k[0].toUpperCase()+k.slice(1)).value;
     s.color1 = $("pgIqcColor1").value;
     s.color2 = $("pgIqcColor2").value;
     s.color = $("pgIqcColor").value;
@@ -925,8 +958,11 @@ const pgIqc = (function () {
       q = url.searchParams;
     for (const [key, v] of s.extra || []) q.append(key, v);
     const text = s.text.trim();
-    if (text) q.set(type === "iqc3" ? "lirik" : "pesan", text);
-    if (type === "iqc5") {
+    if (text || type==="ssgc") q.set(type==="ssgc"?"description":type === "iqc3" ? "lirik" : "pesan", text);
+    if(type==='ssgc'){
+      q.set('name',s.name.trim());q.set('limit',s.limit);q.set('full',s.full);q.set('members',s.members);q.set('titleFont',s.titleFont);q.set('format',s.format==='png'?'png':'jpg');
+      if(s.profileSource==='url')q.set('profile',s.profileUrl.trim()||'default');else if(s.profileSource!=='upload')q.set('profile',s.profileSource==='none'?'none':'default');
+    }else if (type === "iqc5") {
       if (s.name.trim()) q.set("name", s.name.trim());
       q.set("nameColor", s.nameColor);
       q.set("profileColor", s.profileColor);
@@ -1036,8 +1072,9 @@ const pgIqc = (function () {
     paint();
     $("pgEndpoint").value = endpoint(forms[active]);
     $("pgBodyWrap").style.display = "none";
-    $("pgHint").textContent = "GET · parameter form";
+    visibility();
     learning();
+    guide();
     savePlayground();
     $("pgIqcNote").textContent =
       "Isian default dapat dilihat, diedit, atau direset. Output Playground selalu berupa gambar.";
@@ -1052,6 +1089,7 @@ const pgIqc = (function () {
     paint();
     $("pgEndpoint").value = endpoint(forms[active]);
     learning();
+    guide();
     savePlayground();
     $("pgIqcNote").textContent = p.help;
     schedule(250);
@@ -1061,7 +1099,7 @@ const pgIqc = (function () {
     showToast("Parameter " + models[active].title + " direset");
   }
   function randomSeed() {
-    if (!active || ["iqc3", "iqc4", "iqc5"].includes(active)) return;
+    if (!active || ["iqc3", "iqc4", "iqc5", "ssgc"].includes(active)) return;
     const a = new Uint32Array(1);
     if (globalThis.crypto?.getRandomValues) crypto.getRandomValues(a);
     else a[0] = Math.random() * 4294967296;
@@ -1081,8 +1119,7 @@ const pgIqc = (function () {
   function filename(i) {
     return i
       ? i.type +
-          (i.type === "iqc5" &&
-          !["jpg", "jpeg"].includes(i.url.searchParams.get("format"))
+          ((i.type === "ssgc" ? i.url.searchParams.get("format")==="png" : i.type === "iqc5" && !["jpg", "jpeg"].includes(i.url.searchParams.get("format")))
             ? ".png"
             : ".jpg")
       : "iqc.jpg";
@@ -1090,15 +1127,59 @@ const pgIqc = (function () {
   const shell = (s) => "'" + String(s).replace(/'/g, "'\\''") + "'";
   const php = (s) =>
     "'" + String(s).replace(/\\/g, "\\\\").replace(/'/g, "\\'") + "'";
+  // Long group descriptions must not exceed provider/browser URL limits.
+  function bodyRequest(i = info($("pgEndpoint").value.trim())) {
+    if(i?.type!=="ssgc" || i.url.href.length<=6000)return null;
+    return {url:i.url.pathname,params:Object.fromEntries(i.url.searchParams),kind:forms.ssgc?.profileSource==="upload"?"multipart":"json"};
+  }
+  function jsonCode(language,baseUrl,params,file){
+    const serialized=JSON.stringify(params),pretty=JSON.stringify(params,null,2),note='POST JSON otomatis: payload panjang dikirim di body, bukan URL.';
+    if(language==='curl')return '# '+note+'\n'+['curl --fail --show-error '+shell(baseUrl),'  -H '+shell('Content-Type: application/json'),'  --data-raw '+shell(serialized),'  -o '+shell(file)].join(String.fromCharCode(32,92,10));
+    if(language==='javascript')return `// ${note}
+const params = ${pretty};
+const response = await fetch(${JSON.stringify(baseUrl)}, {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(params)});
+if (!response.ok) throw new Error("HTTP " + response.status);
+const blob = await response.blob();
+const fileURL = URL.createObjectURL(blob);
+const link = document.createElement("a"); link.href = fileURL; link.download = ${JSON.stringify(file)}; link.click();
+setTimeout(() => URL.revokeObjectURL(fileURL), 30000);`;
+    if(language==='python')return `import requests
+# ${note}
+params = ${pretty}
+res = requests.post(${JSON.stringify(baseUrl)}, json=params, timeout=70)
+res.raise_for_status()
+with open(${JSON.stringify(file)}, "wb") as output:
+    output.write(res.content)`;
+    if(language==='php')return `<?php
+// ${note}
+$curl = curl_init(${php(baseUrl)});
+curl_setopt_array($curl, [CURLOPT_POST => true, CURLOPT_POSTFIELDS => ${php(serialized)}, CURLOPT_HTTPHEADER => ["Content-Type: application/json"], CURLOPT_RETURNTRANSFER => true, CURLOPT_TIMEOUT => 70]);
+$result = curl_exec($curl);
+if ($result === false || curl_getinfo($curl, CURLINFO_HTTP_CODE) !== 200) throw new Exception("Request gagal");
+file_put_contents(${php(file)}, $result); curl_close($curl);`;
+    return `package main
+import ("io"; "net/http"; "os"; "strings"; "time")
+func main() {
+  // ${note}
+  req, err := http.NewRequest("POST", ${JSON.stringify(baseUrl)}, strings.NewReader(${JSON.stringify(serialized)})); if err != nil { panic(err) }
+  req.Header.Set("Content-Type", "application/json")
+  client := &http.Client{Timeout:70*time.Second}
+  res, err := client.Do(req); if err != nil { panic(err) }; defer res.Body.Close()
+  if res.StatusCode != 200 { panic(res.Status) }
+  output, err := os.Create(${JSON.stringify(file)}); if err != nil { panic(err) }; defer output.Close()
+  if _, err := io.Copy(output,res.Body); err != nil { panic(err) }
+}`;
+  }
   function generated(language) {
     const i = info($("pgEndpoint").value.trim());
     if (!i) return "";
     const url = i.url,
       entries = [...url.searchParams],
       baseUrl = url.origin + url.pathname,
-      file = filename(i);
-    if (i.type === "iqc5" && forms.iqc5?.profileSource === "upload") {
-      const photo = profileFile?.name || "foto.png";
+      file = filename(i),payload=bodyRequest(i);
+    if(payload?.kind==="json")return jsonCode(language,baseUrl,payload.params,file);
+    if (["iqc5","ssgc"].includes(i.type) && forms[i.type]?.profileSource === "upload") {
+      const photo = profileFile?.name || "foto.png",requestUrl=payload?baseUrl:url.href,fields=payload?entries:[];
       const info =
         "# POST multipart · pilih foto; letakkan file di folder eksekusi";
       if (language === "curl")
@@ -1106,7 +1187,8 @@ const pgIqc = (function () {
           info +
           "\n" +
           [
-            "curl --fail --show-error " + shell(url.href),
+            "curl --fail --show-error " + shell(requestUrl),
+            ...fields.map(([k,v])=>"  --form-string "+shell(k+"="+v)),
             "  -F " + shell("profile=@" + photo),
             "  -o " + shell(file),
           ].join(String.fromCharCode(32, 92, 10))
@@ -1114,9 +1196,10 @@ const pgIqc = (function () {
       if (language === "javascript")
         return `// Foto yang dipilih: ${JSON.stringify(photo)}
 const form = new FormData();
+${fields.map(([k,v])=>"form.append("+JSON.stringify(k)+", "+JSON.stringify(v)+");").join("\n")}
 form.append("profile", document.querySelector("input[type=file]").files[0]);
 // Jangan set Content-Type sendiri: browser membuat boundary multipart.
-const response = await fetch(${JSON.stringify(url.href)}, {method:"POST", body:form});
+const response = await fetch(${JSON.stringify(requestUrl)}, {method:"POST", body:form});
 if (!response.ok) throw new Error("HTTP " + response.status);
 const blob = await response.blob();
 const fileURL = URL.createObjectURL(blob);
@@ -1129,16 +1212,16 @@ setTimeout(() => URL.revokeObjectURL(fileURL), 30000);`;
         return `import requests
 
 with open(${JSON.stringify(photo)}, "rb") as image:
-    res = requests.post(${JSON.stringify(url.href)}, files={"profile": image}, timeout=70)
+    res = requests.post(${JSON.stringify(requestUrl)}, ${fields.length?"data="+JSON.stringify(Object.fromEntries(fields))+", ":""}files={"profile": image}, timeout=70)
 res.raise_for_status()
 with open(${JSON.stringify(file)}, "wb") as output:
     output.write(res.content)`;
       if (language === "php")
         return `<?php
-$curl = curl_init(${php(url.href)});
+$curl = curl_init(${php(requestUrl)});
 curl_setopt_array($curl, [
   CURLOPT_POST => true,
-  CURLOPT_POSTFIELDS => ["profile" => new CURLFile(${php(photo)})],
+  CURLOPT_POSTFIELDS => [${fields.map(([k,v])=>php(k)+" => "+php(v)+", ").join("")} "profile" => new CURLFile(${php(photo)})],
   CURLOPT_RETURNTRANSFER => true,
   CURLOPT_TIMEOUT => 70,
 ]);
@@ -1152,11 +1235,12 @@ import ("bytes"; "io"; "mime/multipart"; "net/http"; "os"; "time")
 func main() {
   var body bytes.Buffer
   writer := multipart.NewWriter(&body)
+  ${fields.map(([k,v])=>"if err := writer.WriteField("+JSON.stringify(k)+", "+JSON.stringify(v)+"); err != nil { panic(err) }").join("\n  ")}
   photo, err := os.Open(${JSON.stringify(photo)}); if err != nil { panic(err) }; defer photo.Close()
   part, err := writer.CreateFormFile("profile", ${JSON.stringify(photo)}); if err != nil { panic(err) }
   if _, err = io.Copy(part, photo); err != nil { panic(err) }
   writer.Close()
-  req, err := http.NewRequest("POST", ${JSON.stringify(url.href)}, &body); if err != nil { panic(err) }
+  req, err := http.NewRequest("POST", ${JSON.stringify(requestUrl)}, &body); if err != nil { panic(err) }
   req.Header.Set("Content-Type", writer.FormDataContentType())
   client := &http.Client{Timeout: 70 * time.Second}
   res, err := client.Do(req); if err != nil { panic(err) }; defer res.Body.Close()
@@ -1237,7 +1321,9 @@ func main() {
   function learning() {
     const i = info($("pgEndpoint").value.trim());
     if (!i) return;
-    $("pgIqcUrl").value = i.url.href;
+    const payload=bodyRequest(i);
+    $("pgIqcUrl").value = payload?i.url.origin+payload.url:i.url.href;
+    $("pgIqcUrlLabel").textContent=payload?"Endpoint POST · parameter ada di body":"URL request lengkap";
     const entries = [...i.url.searchParams];
     $("pgIqcParamCount").textContent = "(" + entries.length + ")";
     const table = $("pgIqcQuery");
@@ -1272,6 +1358,7 @@ func main() {
     if (!["curl", "javascript", "python", "php", "go"].includes(v)) return;
     lang = v;
     learning();
+    guide();
     savePlayground();
   }
   function init() {
@@ -1318,7 +1405,7 @@ func main() {
           raw = saved.forms[type];
         for (const k of Object.keys(s))
           if (k !== "extra" && typeof raw[k] === "string")
-            s[k] = raw[k].slice(0, 1000);
+            s[k] = raw[k].slice(0, k === "profileUrl" ? 2048 : type === "ssgc" && k === "text" ? 4000 : 1000);
         ["color1", "color2", "color"].forEach(
           (k) => (s[k] = color(s[k], defaults(type)[k])),
         );
@@ -1342,7 +1429,7 @@ func main() {
     }
   }
   function headers(type = active) {
-    return [...headerReference.common, ...(headerReference.models[type] || [])];
+    return type==="ssgc" ? ssgcHeaders : [...headerReference.common, ...(headerReference.models[type] || [])];
   }
   function guide() {
     if (!active) return;
@@ -1363,9 +1450,9 @@ func main() {
     $("pgIqcDefaultNote").textContent = ["iqc", "iqc2"].includes(active)
       ? "Pesan/nama/tema default diisi nyata. Jam mengikuti WIB; seed kosong membuat wallpaper/baterai acak. Reset tidak menghapus contoh default."
       : "Default memakai file foto referensi. Setelah diedit, gambar dirender ulang; tinggi mengikuti teks. Default PNG/JPG mengikuti model.";
-    $("pgIqcHowTo").textContent =
-      active === "iqc5" && forms[active]?.profileSource === "upload"
-        ? "POST multipart: pilih satu foto (maks. 2 MB / 4 MP). Seluruh isian masuk query, foto masuk field profile. Jangan set Content-Type sendiri di browser; FormData membuat boundary. Kode lima bahasa memakai isian dan nama file Anda. Letakkan foto di folder eksekusi saat menjalankan contoh CLI."
+    $("pgIqcHowTo").textContent = bodyRequest()?.kind==="json"?"POST JSON otomatis untuk payload panjang. Semua parameter di tabel masuk body agar tidak terkena batas URL. Kode lima bahasa mengikuti isian; baca respons sebagai blob/binary. Salin URL menyalin contoh POST saat mode ini aktif.":
+      ["iqc5","ssgc"].includes(active) && forms[active]?.profileSource === "upload"
+        ? "POST multipart: pilih satu foto (maks. 2 MB / 4 MP). Seluruh isian masuk query (atau field multipart bila URL panjang), foto masuk field profile. Jangan set Content-Type sendiri di browser; FormData membuat boundary. Kode lima bahasa memakai isian dan nama file Anda. Letakkan foto di folder eksekusi saat menjalankan contoh CLI."
         : "GET tanpa body JSON. Isi parameter, salin URL atau kode bahasa pilihan, lalu baca respons sebagai blob/binary dan simpan " +
           file +
           ". Accept: " +
@@ -1378,10 +1465,10 @@ func main() {
   function requestKey() {
     const i = info($("pgEndpoint").value.trim());
     if (!i) return "";
-    const upload = i.type === "iqc5" && forms.iqc5?.profileSource === "upload";
+    const upload = ["iqc5","ssgc"].includes(i.type) && forms[i.type]?.profileSource === "upload";
     return JSON.stringify([
       i.url.href,
-      upload ? "POST" : "GET",
+      upload || bodyRequest(i) ? "POST" : "GET",
       upload && profileFile
         ? [profileFile.name, profileFile.size, profileFile.lastModified]
         : null,
@@ -1392,8 +1479,8 @@ func main() {
       active &&
       $("playgroundForm").checkValidity() &&
       !(
-        active === "iqc5" &&
-        forms.iqc5?.profileSource === "upload" &&
+        ["iqc5","ssgc"].includes(active) &&
+        forms[active]?.profileSource === "upload" &&
         !profileFile
       )
     );
@@ -1457,6 +1544,7 @@ func main() {
 
   return {
     headers,
+    bodyRequest,
     guide,
     requestKey,
     canRender,
@@ -1480,12 +1568,12 @@ func main() {
     restore,
     upload: () => {
       const i = info($("pgEndpoint").value.trim());
-      return i?.type === "iqc5" && forms.iqc5?.profileSource === "upload"
+      return ["iqc5","ssgc"].includes(i?.type) && forms[i.type]?.profileSource === "upload"
         ? { file: profileFile }
         : null;
     },
     snapshot: () => ({ forms, lang, auto: autoEnabled }),
-    copyUrl: () => copyText($("pgIqcUrl").value, "URL lengkap disalin"),
+    copyUrl: () => copyText(bodyRequest()?currentCode:$("pgIqcUrl").value, bodyRequest()?"Payload panjang: contoh POST disalin":"URL lengkap disalin"),
     copyCode: () => copyText(currentCode, "Contoh kode disalin"),
   };
 })();

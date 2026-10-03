@@ -87,11 +87,15 @@ async function executePlayground(e, settings = {}) {
   savePlayground();
   const t0 = performance.now();
   try {
+    const payload=pgIqc.bodyRequest(),requestEndpoint=payload?.url||endpoint;
     const options = { method, headers: {}, signal: controller.signal };
     if (upload) {
       options.method = "POST";
       options.body = new FormData();
       options.body.append("profile", upload.file);
+      if(payload)for(const[k,v]of Object.entries(payload.params))options.body.append(k,v);
+    } else if(payload){
+      options.method="POST";options.headers["Content-Type"]="application/json";options.body=JSON.stringify(payload.params);
     } else if (method === "POST") {
       try {
         JSON.parse(bodyText);
@@ -103,7 +107,7 @@ async function executePlayground(e, settings = {}) {
       options.headers["Content-Type"] = "application/json";
       options.body = bodyText;
     }
-    const res = await fetch(endpoint, options);
+    const res = await fetch(requestEndpoint, options);
     if (id !== pgRequestId) return;
     const ctype = res.headers.get("content-type") || "";
     const blob = await res.blob();
@@ -121,7 +125,7 @@ async function executePlayground(e, settings = {}) {
       "res-status-badge " + (res.ok ? "status-200" : "status-400");
     const detail = responseDetails(
       res,
-      endpoint,
+      requestEndpoint,
       blob.size,
       elapsed,
       options.method,

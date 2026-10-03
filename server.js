@@ -18,6 +18,7 @@ const IQC_PATH = path.join(__dirname, 'api', 'iqc.js');
 const IQC3_PATH = path.join(__dirname, 'api', 'iqc3.js');
 const IQC4_PATH = path.join(__dirname, 'api', 'iqc4.js');
 const IQC5_PATH = path.join(__dirname, 'api', 'iqc5.js');
+const SSGC_PATH = path.join(__dirname, 'api', 'ssgc.js');
 let iqcHandler = null;
 
 function loadIqc() {
@@ -61,6 +62,13 @@ app.all(['/iqc5', '/api/iqc5', '/qc5', '/api/qc5'], async (req, res) => {
   catch (error) { console.error('[iqc5]', error.message); if (!res.headersSent) res.status(500).json({status:'error',message:'IQC5 tidak tersedia'}); }
 });
 app.get('/app5', (req, res) => res.sendFile(path.join(__dirname, 'public', 'app5.html')));
+
+// SSGC profile uploads reach the shared safe parser before general JSON limits.
+app.all(['/ssgc', '/api/ssgc'], async (req,res) => {
+  try { await require(SSGC_PATH)(req,res); }
+  catch(error) { console.error('[ssgc]',error.message); if(!res.headersSent)res.status(500).json({status:'error',message:'SSGC tidak tersedia'}); }
+});
+app.get(['/ssgc-app','/app-ssgc'], (req,res) => res.sendFile(path.join(__dirname,'public','ssgc-app.html')));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

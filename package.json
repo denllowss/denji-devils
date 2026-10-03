@@ -15,7 +15,10 @@
     "test:iqc5:ui": "node scripts/run-node.js scripts/verify-iqc5-ui.js",
     "test:iqc:playground": "node scripts/run-node.js scripts/verify-iqc-playground.js",
     "test:iqc:headers": "node scripts/run-node.js scripts/verify-iqc-headers.js",
-    "test:vercel": "node scripts/run-node.js scripts/verify-vercel-config.js"
+    "test:vercel": "node scripts/run-node.js scripts/verify-vercel-config.js",
+    "test:ssgc": "node scripts/run-node.js scripts/verify-ssgc.js",
+    "test:ssgc:ui": "node scripts/run-node.js scripts/verify-ssgc-ui.js",
+    "build:ssgc": "python3 scripts/build-ssgc-template.py && python3 scripts/build-ssgc-editor.py && python3 scripts/build-docs-playground.py"
   },
   "dependencies": {
     "@raihan07/vidly": "^13.0.2",

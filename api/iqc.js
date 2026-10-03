@@ -261,17 +261,18 @@ async function renderJpg(html, options = {}) {
       deviceScaleFactor: options.scale || SCALE
     });
 
-    if (options.variant === 5) {
+    if (options.variant === 5 || options.variant === "ssgc") {
       await page.setRequestInterception(true);
       page.on('request', r => /^(data:|about:|blob:)/.test(r.url()) ? r.continue() : r.abort());
     }
 
     // muat dokumen; emoji CDN ditunggu lewat waitForFunction di bawah
     await page.setContent(html, { waitUntil: 'domcontentloaded', timeout: 10000 });
-    if (options.variant === 5) {
-      await page.waitForFunction(() => window.__iqc5Ready === true || window.__iqc5Error, { timeout: 8000 });
-      const code = await page.evaluate(() => window.__iqc5Error);
-      if (code) { const e = new Error('Foto profil tidak dapat didekode.'); e.code = code; e.status = 415; throw e; }
+    if (options.variant === 5 || options.variant === "ssgc") {
+      const group = options.variant === "ssgc";
+      await page.waitForFunction(g => g ? (window.__ssgcReady === true || window.__ssgcError) : (window.__iqc5Ready === true || window.__iqc5Error), { timeout: 8000 }, group);
+      const code = await page.evaluate(g => g ? window.__ssgcError : window.__iqc5Error, group);
+      if (code) { const e = new Error(code === 'OUTPUT_TOO_TALL' ? 'Deskripsi terlalu tinggi; kurangi teks atau gunakan limit.' : 'Foto profil tidak dapat didekode.'); e.code = code; e.status = code === 'OUTPUT_TOO_TALL' ? 413 : 415; throw e; }
     } else if (options.variant === 4) {
       await page.waitForFunction(() => window.__iqc4Ready === true, { timeout: 7000 });
     } else if (options.variant === 3) {
@@ -301,7 +302,7 @@ async function renderJpg(html, options = {}) {
     ]).catch(() => {});
     await new Promise((r) => setTimeout(r, 120)); // buffer singkat paint akhir
 
-    if (options.variant === 3 || options.variant === 5) await page.evaluate(() => window.dispatchEvent(new Event('resize')));
+    if (options.variant === 3 || options.variant === 5 || options.variant === "ssgc") await page.evaluate(() => window.dispatchEvent(new Event('resize')));
     return await page.screenshot({ type: options.format === 'png' ? 'png' : 'jpeg',
       ...(options.format === 'png' ? {} : { quality: options.quality || 90 }), fullPage: !!options.fullPage });
   } catch (e) {

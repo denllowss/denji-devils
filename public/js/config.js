@@ -39,6 +39,7 @@ const LINK = [
   { judul: "IQC3 — iMessage Music & Lirik", url: "/app3", gambar: "" },
   { judul: "IQC4 — WhatsApp Reaksi & Menu", url: "/app4", gambar: "" },
   { judul: "IQC5 — WhatsApp Profil & Nama", url: "/app5", gambar: "" },
+  { judul: "SSGC — Info Grup WhatsApp", url: "/ssgc-app", gambar: "" },
   { judul: "Lowquality — JPEG Deep Fry", url: "/lowquality-app", gambar: "" },
   { judul: "Channel Wa (koleksi sticker)", url: "https://whatsapp.com/channel/0029VbBDyGpEFeXu4KTwvo08", gambar: "" },
   { judul: "Nomor wa", url: "https://wa.me/18674678687", gambar: "" },

@@ -86,8 +86,8 @@ async function image(p, type, pesan) {
       ),
     );
     ok(
-      "Lima model pilihan",
-      await p.$$eval("[data-iqc-type]", (a) => a.length === 5),
+      "Enam model pilihan (IQC1–5 + SSGC)",
+      await p.$$eval("[data-iqc-type]", (a) => a.length === 6),
     );
     ok("Auto default aktif", await p.$eval("#pgIqcAuto", (e) => e.checked));
     const types = ["iqc", "iqc2", "iqc3", "iqc4", "iqc5"];

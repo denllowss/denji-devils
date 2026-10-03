@@ -2,6 +2,26 @@
   "version": 2,
   "rewrites": [
     {
+      "source": "/ssgc",
+      "destination": "/api/ssgc"
+    },
+    {
+      "source": "/ssgc/",
+      "destination": "/api/ssgc"
+    },
+    {
+      "source": "/api/ssgc/",
+      "destination": "/api/ssgc"
+    },
+    {
+      "source": "/ssgc-app",
+      "destination": "/ssgc-app.html"
+    },
+    {
+      "source": "/app-ssgc",
+      "destination": "/ssgc-app.html"
+    },
+    {
       "source": "/iqc5",
       "destination": "/api/iqc5"
     },
@@ -176,7 +196,7 @@
   ],
   "functions": {
     "api/index.js": {
-      "excludeFiles": "{api/iqc*.js,api/lowquality.js,src/services/lowquality.js,api/_template*.html,api/iqc*-assets/**,src/services/iqc-runtime.js,node_modules/@sparticuz/chromium/**,node_modules/puppeteer-core/**,node_modules/@puppeteer/browsers/**}"
+      "excludeFiles": "{api/iqc*.js,api/ssgc.js,api/lowquality.js,src/services/lowquality.js,api/_template*.html,api/*-assets/**,src/services/iqc-runtime.js,node_modules/@sparticuz/chromium/**,node_modules/puppeteer-core/**,node_modules/@puppeteer/browsers/**}"
     },
     "api/iqc.js": {
       "includeFiles": "{api/_template*.html,node_modules/@sparticuz/chromium/bin/*.br}",
@@ -205,6 +225,11 @@
     },
     "api/iqc5.js": {
       "includeFiles": "{api/_template5.html,api/iqc5-assets/**,node_modules/@sparticuz/chromium/bin/*.br}",
+      "memory": 2048,
+      "maxDuration": 60
+    },
+    "api/ssgc.js": {
+      "includeFiles": "{api/_template-ssgc.html,api/ssgc-assets/**,node_modules/@sparticuz/chromium/bin/*.br}",
       "memory": 2048,
       "maxDuration": 60
     }

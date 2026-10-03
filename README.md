@@ -1,6 +1,6 @@
 # Denji API
 
-Linktree, media downloader, dokumentasi API, dan generator IQC dalam satu project Express + HTML statis. Runtime deployment: Node.js 24.x. Gunakan Node 24 juga untuk instalasi/pengujian lokal.
+Linktree, media downloader, dokumentasi API, dan generator IQC / SSGC dalam satu project Express + HTML statis. Runtime deployment: Node.js 24.x. Gunakan Node 24 juga untuk instalasi/pengujian lokal.
 
 ## Jalankan lokal
 
@@ -34,9 +34,10 @@ Buka `http://localhost:3000`. Port dapat diatur dengan variabel lingkungan `PORT
 | GET | `/iqc3`, `/api/iqc3` | JPG iMessage / Apple Music, lirik dan warna dinamis |
 | GET | `/iqc4`, `/api/iqc4`, `/qc4`, `/api/qc4` | WhatsApp iOS reaksi + pesan + menu dari foto |
 | GET / POST | `/iqc5`, `/api/iqc5`, `/qc5`, `/api/qc5` | WhatsApp profil/nama, PNG default identik foto, JPG opsional |
+| GET / POST | `/ssgc`, `/api/ssgc` | Info grup WhatsApp, JPG default identik foto; nama/deskripsi/profil/batas/full dapat diubah |
 | GET / POST | `/lowquality`, `/api/lowquality` | Kompresi JPEG berulang dari URL/upload |
 
-Halaman: `/` (linktree), `/dl` (downloader), `/docs` (dokumentasi + playground), `/app` (editor quote Instagram), `/app3` (editor musik/lirik IQC3), `/app4` (editor reaksi IQC4), `/app5` (editor profil/nama IQC5).
+Halaman: `/` (linktree), `/dl` (downloader), `/docs` (dokumentasi + playground), `/app` (editor quote Instagram), `/app3` (editor musik/lirik IQC3), `/app4` (editor reaksi IQC4), `/app5` (editor profil/nama IQC5), `/ssgc-app` (editor info grup; alias `/app-ssgc`).
 
 ## IQC
 
@@ -333,3 +334,55 @@ npm run test:vercel
 ```
 
 Tes ini memeriksa batas panjang semua pola serta kecocokan file yang harus dikecualikan/dipertahankan. Jalankan dengan Node.js 24 sesuai runtime project.
+
+
+## SSGC — Info Grup WhatsApp
+
+Model tersendiri (bukan IQC6), dari JPEG pengguna 739 × 1600. API `/ssgc` / `/api/ssgc`, editor `/ssgc-app` / `/app-ssgc`, Playground `/docs?playground=ssgc#playground`.
+
+- **Default JPG byte-identik** dengan foto asli yang disimpan di `api/ssgc-assets/reference.jpg`. `format=png` adalah konversi lossless dari gambar JPEG, bukan file asli.
+- **Edit nama / deskripsi / profil:** nama maks. 64 grapheme, deskripsi maks. 2000. Nama/deskripsi panjang menggeser menu ke bawah dan memperbesar tinggi output. Font `serif` default; `titleFont=sans` memakai Roboto.
+- **Baca selengkapnya:** `limit` (alias `batas`) 0–2000, default 44. Link hijau hanya muncul jika teks benar-benar terpotong. Emoji ZWJ/flag/combining mark dihitung sebagai satu grapheme, tidak dipotong di tengah. `full=1` atau `limit=0` menampilkan semua teks tanpa link.
+- **Tidak mengarang bagian tersembunyi:** deskripsi default hanya teks yang terlihat pada screenshot (`WELCOME TO—VOXEN FIGHTER\n#VOXEN ANTI-DIMMING...`). Bagian setelah link tidak diketahui; masukkan sendiri teks lengkap untuk mode full.
+- **Profil:** `profile=default` / `none` / URL gambar HTTP(S) publik; upload lewat POST multipart field `profile` (alias file `avatar` / `image`), POST JSON `profileData` base64/data URI, atau body `image/*` mentah. Maks. 2 MB / 4 MP. Query mengoverride body, termasuk alias.
+- **Input aman:** DNS downloader di-pin ke IP publik; tiap redirect diperiksa. URL private/localhost/metadata, kredensial, port khusus, SVG dan raster rusak ditolak. Template memakai font/emoji RGBA transparan offline; renderer tidak mengakses jaringan. Body maks. 3 MB, field multipart maks. 8192 byte, gambar hasil maks. 4 MB / tinggi 20000 px.
+- **Editor dan Playground:** default tersedia/resettable, preview gambar otomatis 850 ms, satu request aktif, hasil lama tidak menimpa isian baru, opsi pause/manual. Unduh memakai blob respons yang sama. URL/kode lima bahasa mengikuti semua input dan nama file pilihan. Payload SSGC dengan URL di atas 6000 karakter otomatis memakai POST JSON, atau metadata field multipart jika upload.
+- **Metadata:** `X-SSGC-Variant: group-info`, `-Source`, `-Renderer`, `-Width`, `-Height`, `-Description-Length`, `-Description-Shown`, `-Description-Limit`, `-Truncated`; `-Error-Code` pada kegagalan. Semua metadata gambar/pemotongan diekspos melalui CORS. `Cache-Control: no-store`; cache render terbatas di memori.
+
+```bash
+# Default foto asli
+curl --fail 'http://localhost:3000/ssgc' -o ssgc.jpg
+
+# Nama / deskripsi / batas sebelum Baca selengkapnya
+curl --get --fail 'http://localhost:3000/ssgc' \
+  --data-urlencode 'name=Grup Kita' \
+  --data-urlencode 'description=Selamat datang di grup kita. ❤ Tempat berbagi cerita dan belajar bersama.' \
+  --data 'limit=45' -o ssgc.jpg
+
+# Upload profil, seluruh deskripsi ditampilkan
+curl --fail 'http://localhost:3000/ssgc' \
+  --form-string 'name=Komunitas Denji' \
+  --form-string 'description=Deskripsi lengkap Anda. ❤' \
+  -F 'full=1' -F 'profile=@foto.png' -o ssgc.jpg
+
+# JSON untuk deskripsi panjang (profil URL opsional)
+curl --fail 'http://localhost:3000/api/ssgc' \
+  -H 'Content-Type: application/json' \
+  --data-raw '{"name":"Grup Kita","description":"Teks lengkap Anda","full":1,"format":"png"}' \
+  -o ssgc.png
+```
+
+Parameter tambahan `members` / `anggota` 0–999999 (default 126); nama alias `nama` / `groupName` / `group`; deskripsi alias `deskripsi` / `desc`; profil alias `avatar` / `pp`; batas alias `descriptionLimit`; mode penuh alias `fullDescription`; font alias `font`. `html=1` menyediakan template offline API lanjutan; editor/Playground selalu mengirim gambar.
+
+### Build & verifikasi SSGC
+
+```bash
+# Python 3 + Pillow diperlukan hanya saat membangun ulang template.
+npm run build:ssgc
+# Server harus berjalan. BASE_URL dapat diubah ke deployment produksi.
+npm run test:ssgc
+npm run test:ssgc:ui
+npm run test:vercel
+```
+
+Source template `src/ui/ssgc-template.html`, controller editor `src/ui/ssgc-editor.js`, controller Playground `src/ui/iqc-playground.js`, dan referensi header `src/shared/ssgc-header-reference.json`. Builder menjaga JPEG asli tanpa recompression serta root/public HTML mirrors identik. Noto Serif berlisensi OFL di `licenses/NotoSerif-OFL.txt`; Roboto/emoji memakai aset transparan yang sama dengan IQC5.
