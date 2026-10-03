@@ -322,3 +322,14 @@ python3 scripts/build-docs-playground.py
 npm run test:iqc:playground
 npm run test:iqc:headers
 ```
+
+
+### Validasi konfigurasi Vercel
+
+Vercel membatasi setiap string `functions.*.includeFiles` / `excludeFiles` hingga **256 karakter**. Fungsi utama memakai satu wildcard `api/iqc*-assets/**` untuk aset IQC3–5, bukan mengulang setiap versi; total pola 228 karakter. Chromium, Puppeteer, template dan handler IQC tetap dikecualikan dari `api/index.js`, sedangkan dependency downloader utama tetap disertakan.
+
+```bash
+npm run test:vercel
+```
+
+Tes ini memeriksa batas panjang semua pola serta kecocokan file yang harus dikecualikan/dipertahankan. Jalankan dengan Node.js 24 sesuai runtime project.

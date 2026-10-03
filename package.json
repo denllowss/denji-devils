@@ -14,7 +14,8 @@
     "test:iqc5": "node scripts/run-node.js scripts/verify-iqc5.js",
     "test:iqc5:ui": "node scripts/run-node.js scripts/verify-iqc5-ui.js",
     "test:iqc:playground": "node scripts/run-node.js scripts/verify-iqc-playground.js",
-    "test:iqc:headers": "node scripts/run-node.js scripts/verify-iqc-headers.js"
+    "test:iqc:headers": "node scripts/run-node.js scripts/verify-iqc-headers.js",
+    "test:vercel": "node scripts/run-node.js scripts/verify-vercel-config.js"
   },
   "dependencies": {
     "@raihan07/vidly": "^13.0.2",
