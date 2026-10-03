@@ -211,12 +211,12 @@ async function input(req) {
     if (type.startsWith("multipart/form-data"))
       ({ fields, upload } = await multipart(req));
     else if (type.startsWith("application/json")) {
-      if (
-        req.body &&
-        typeof req.body === "object" &&
-        !Buffer.isBuffer(req.body)
-      )
-        fields = req.body;
+      // Vercel parses JSON lazily: reading req.body can itself throw.
+      let body;
+      try { body = req.body; }
+      catch (_) { throw imageInput.fail("INVALID_BODY", "JSON tidak valid."); }
+      if (body && typeof body === "object" && !Buffer.isBuffer(body))
+        fields = body;
       else {
         try {
           fields = JSON.parse((await raw(req)).toString());

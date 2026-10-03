@@ -44,6 +44,13 @@ async function error(route, status, label, options) {
   ok(label + " → JSON " + status);
 }
 (async () => {
+  const lazyRequest = {method:"POST",url:"/iqc5",headers:{"content-type":"application/json"}};
+  Object.defineProperty(lazyRequest,"body",{get(){throw new SyntaxError("Malformed JSON");}});
+  const lazyHeaders={};let lazyBody;
+  const lazyResponse={statusCode:200,setHeader(name,value){lazyHeaders[name]=value;},end(value){lazyBody=JSON.parse(value);}};
+  await require('../api/iqc5')(lazyRequest,lazyResponse);
+  assert.equal(lazyResponse.statusCode,400);assert.equal(lazyBody.error,"INVALID_BODY");
+  ok("Vercel lazy JSON parser returns safe 400");
   const original = await image("/iqc5", "Default");
   assert(
     original.b.equals(
