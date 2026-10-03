@@ -19,7 +19,9 @@
     "test:ssgc": "node scripts/run-node.js scripts/verify-ssgc.js",
     "test:ssgc:ui": "node scripts/run-node.js scripts/verify-ssgc-ui.js",
     "build:ssgc": "python3 scripts/build-ssgc-template.py && python3 scripts/build-ssgc-editor.py && python3 scripts/build-docs-playground.py",
-    "test:ssgc:full": "node scripts/run-node.js scripts/verify-ssgc-full-layout.js"
+    "test:ssgc:full": "node scripts/run-node.js scripts/verify-ssgc-full-layout.js",
+    "test:docs:desktop": "node scripts/run-node.js scripts/verify-docs-desktop.js",
+    "build:docs": "python3 scripts/build-docs-playground.py"
   },
   "dependencies": {
     "@raihan07/vidly": "^13.0.2",

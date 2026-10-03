@@ -17,6 +17,17 @@ if '/* IQC_CONTROLLER_END */' not in html:
     html=html[:a]+'/* IQC_CONTROLLER_START */\n'+source.rstrip()+'\n/* IQC_CONTROLLER_END */'+html[b:]
 else:inject('', '', source, '/* IQC_CONTROLLER_START */', '/* IQC_CONTROLLER_END */')
 inject('function responseDetails(', 'function copyAsCurl(', (ROOT/'src/ui/playground-response.js').read_text(), '/* IQC_RESPONSE_START */', '/* IQC_RESPONSE_END */')
+# Desktop controls/style stay tracked and inline (no CDN or second JS request).
+def embed_before(source,begin,end,target):
+    global html
+    if begin in html:
+        a=html.index(begin);b=html.index(end,a)+len(end)
+        html=html[:a]+begin+'\n'+source.rstrip()+'\n'+end+html[b:]
+    else:
+        a=html.rindex(target)
+        html=html[:a]+begin+'\n'+source.rstrip()+'\n'+end+'\n'+html[a:]
+embed_before((ROOT/'src/ui/docs-desktop.css').read_text(),'/* DOCS_DESKTOP_STYLE_START */','/* DOCS_DESKTOP_STYLE_END */','</style>')
+embed_before((ROOT/'src/ui/docs-desktop.js').read_text(),'/* DOCS_DESKTOP_UI_START */','/* DOCS_DESKTOP_UI_END */','</script>')
 # Static, shareable reference for every IQC model (also readable without JavaScript).
 import json
 from html import escape

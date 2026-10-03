@@ -389,3 +389,25 @@ npm run test:vercel
 ```
 
 Source template `src/ui/ssgc-template.html`, controller editor `src/ui/ssgc-editor.js`, controller Playground `src/ui/iqc-playground.js`, dan referensi header `src/shared/ssgc-header-reference.json`. Builder menjaga JPEG asli tanpa recompression serta root/public HTML mirrors identik. Noto Serif berlisensi OFL di `licenses/NotoSerif-OFL.txt`; Roboto/emoji memakai aset transparan yang sama dengan IQC5.
+
+
+## Docs desktop / PC
+
+`/docs` menggunakan workspace dua panel pada viewport mulai 1024 px. Identitas warna hijau tetap dipakai, tetapi latar/border desktop lebih ringan dan ruang konten mengikuti lebar layar hingga 1920 px.
+
+- Navigasi endpoint sticky dan pencarian `Ctrl/Cmd+K` tetap tersedia.
+- Picker endpoint/model memudahkan perpindahan IQC1–5, SSGC, Lowquality, downloader dan utilitas. Preset cepat/petunjuk dapat dibuka tanpa memenuhi form utama.
+- Form memiliki scroll sendiri serta tombol Kirim yang sticky; `Ctrl/Cmd+Enter` mengirim request saat fokus berada dalam Playground.
+- Panel kanan memiliki tab **Hasil & gambar** dan **Kode & parameter**. Semua contoh lima bahasa, input aktual, default/reset, cara pakai, dan referensi header tetap tersedia. Endpoint generik mendapat cURL yang mengikuti endpoint/body form.
+- Preview **Lebar / Fit layar / 100%** mengubah ukuran tampilan saja, bukan merender ulang. Unduh tetap memakai blob respons asli. Gambar dapat digulir dan difokuskan memakai keyboard.
+- Di bawah 1024 px, layout kembali ke flow mobile semula: learning dan kontrol request dikembalikan ke posisi asal. Tidak ada duplikasi form atau perubahan API, default screenshot, algoritma debounce/serialisasi, atau upload profil.
+
+Style/controller desktop tersimpan di `src/ui/docs-desktop.css` dan `src/ui/docs-desktop.js`; builder meng-embed keduanya ke root/public `docs.html` agar tak perlu request file CSS/JS baru.
+
+```bash
+npm run build:docs
+# Server harus berjalan; BASE_URL dapat diubah ke deployment produksi.
+npm run test:docs:desktop
+npm run test:iqc:playground
+npm run test:ssgc:ui
+```
