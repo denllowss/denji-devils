@@ -59,16 +59,16 @@ body::after{
   z-index:9998;
   pointer-events:none;
   background:
-    repeating-linear-gradient(0deg, rgba(0,0,0,0) 0 2px, rgba(0,0,0,0.045) 2px 3px),
-    repeating-linear-gradient(90deg, rgba(255,0,0,0.015) 0 1px, rgba(0,255,0,0.008) 1px 2px, rgba(0,0,255,0.015) 2px 3px);
-  opacity:0.55;
+    repeating-linear-gradient(0deg, rgba(0,0,0,0) 0 2px, rgba(0,0,0,0.03) 2px 3px);
+  opacity:0.18;
   mix-blend-mode:multiply;
-  animation: scanFlicker 0.18s steps(2) infinite;
+  animation: none;
+  transform: none;
 }
 
 @keyframes scanFlicker{
-  0%{opacity:0.48; transform:translateY(0)}
-  100%{opacity:0.55; transform:translateY(0.6px)}
+  0%{opacity:0.18}
+  100%{opacity:0.22}
 }
 
 /* vignette + light leak */
@@ -360,8 +360,8 @@ body::after{
 }
 
 @keyframes floatSticker{
-  0%{ transform: rotate(var(--rot)) translateY(0) }
-  100%{ transform: rotate(calc(var(--rot) + 0.9deg)) translateY(-7px) }
+  0%{ transform: rotate(var(--rot)) translateY(0) translateZ(0) }
+  100%{ transform: rotate(var(--rot)) translateY(-6px) translateZ(0) }
 }
 
 .link-hit{
@@ -515,74 +515,79 @@ body::after{
   display:grid;
   place-items:center;
   filter: drop-shadow(2px 3px 0 rgba(0,0,0,0.25));
-  animation: decoFloat 3.8s ease-in-out infinite alternate;
+  animation: decoFloat 6s ease-in-out infinite alternate;
   will-change:transform;
   user-select:none;
+  backface-visibility:hidden;
+  transform: translateZ(0);
 }
-
-.deco-icon svg{
+.deco-icon img{
   width:100%; height:100%;
   display:block;
+  object-fit:contain;
+  pointer-events:none;
+  image-rendering: -webkit-optimize-contrast;
 }
 
 .deco-icon.pin{
-  width:42px; height:42px;
+  width:48px; height:48px;
   top: 22%; left: 6%;
+  --r:-18deg;
   transform: rotate(-18deg);
-  animation: pinWobble 2.2s ease-in-out infinite alternate;
+  animation: decoFloat 5.5s ease-in-out infinite alternate;
 }
 .deco-icon.info{
-  width:38px; height:38px;
+  width:44px; height:44px;
   top: 16%; left: 22%;
+  --r:-4deg;
   animation-delay:0.3s;
 }
 .deco-icon.cursor{
-  width:46px; height:46px;
+  width:52px; height:52px;
   top: 14%; right: 12%;
+  --r:-8deg;
   transform: rotate(-8deg);
-  animation: cursorTwitch 1.8s ease-in-out infinite;
+  animation: decoFloat 6.5s ease-in-out infinite alternate;
 }
 .deco-icon.x{
-  width:32px; height:32px;
+  width:40px; height:40px;
   top: 44%; left: 4%;
+  --r:8deg;
   transform: rotate(8deg);
 }
 .deco-icon.bulb{
-  width:40px; height:40px;
+  width:48px; height:48px;
   top: 52%; left: 18%;
-  animation: bulbFlicker 2.5s ease-in-out infinite;
+  --r:2deg;
+  animation: decoFloat 5s ease-in-out infinite alternate;
 }
 .deco-icon.warn{
-  width:44px; height:44px;
+  width:50px; height:50px;
   top: 48%; right: 6%;
-  transform: rotate(12deg);
-  animation: warnShake 3s ease-in-out infinite;
+  --r:10deg;
+  transform: rotate(10deg);
+  animation: decoFloat 6s ease-in-out infinite alternate;
 }
 
 @keyframes decoFloat{
-  0%{ transform: translateY(0) rotate(var(--r,0deg)) }
-  100%{ transform: translateY(-10px) rotate(calc(var(--r,0deg) + 3deg)) }
+  0%{ transform: translateY(0) rotate(var(--r,0deg)) translateZ(0) }
+  100%{ transform: translateY(-8px) rotate(var(--r,0deg)) translateZ(0) }
 }
 @keyframes pinWobble{
-  0%{ transform: rotate(-20deg) translateY(0) }
-  100%{ transform: rotate(-14deg) translateY(-6px) }
+  0%{ transform: rotate(-18deg) translateY(0) translateZ(0) }
+  100%{ transform: rotate(-18deg) translateY(-5px) translateZ(0) }
 }
 @keyframes cursorTwitch{
-  0%, 85%, 100%{ transform: translate(0,0) rotate(-8deg) }
-  90%{ transform: translate(4px,3px) rotate(-8deg) scale(0.95) }
-  92%{ transform: translate(0,0) rotate(-8deg) }
+  0%, 100%{ transform: translateY(0) rotate(-8deg) translateZ(0) }
+  50%{ transform: translateY(-4px) rotate(-8deg) translateZ(0) }
 }
 @keyframes bulbFlicker{
   0%, 100%{ filter: drop-shadow(2px 3px 0 rgba(0,0,0,0.25)) brightness(1) }
-  50%{ filter: drop-shadow(0 0 8px #ffeb3b) brightness(1.15) drop-shadow(2px 3px 0 rgba(0,0,0,0.25)) }
-  52%{ filter: brightness(0.9) }
-  54%{ filter: brightness(1.2) }
+  50%{ filter: drop-shadow(0 0 6px rgba(255,235,59,0.6)) brightness(1.05) drop-shadow(2px 3px 0 rgba(0,0,0,0.25)) }
 }
 @keyframes warnShake{
-  0%, 90%, 100%{ transform: rotate(12deg) }
-  92%{ transform: rotate(14deg) translateX(2px) }
-  94%{ transform: rotate(10deg) translateX(-2px) }
-  96%{ transform: rotate(13deg) }
+  0%, 100%{ transform: rotate(10deg) translateZ(0) }
+  50%{ transform: rotate(10deg) translateY(-4px) translateZ(0) }
 }
 
 /* custom trailing cursor */

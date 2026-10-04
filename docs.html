@@ -1529,10 +1529,11 @@ svg{ display: block; flex-shrink: 0; }
     z-index:9998;
     pointer-events:none;
     background:
-      repeating-linear-gradient(0deg, rgba(0,0,0,0) 0 2px, rgba(0,0,0,0.045) 2px 3px),
-      repeating-linear-gradient(90deg, rgba(255,0,0,0.015) 0 1px, rgba(0,255,0,0.008) 1px 2px, rgba(0,0,255,0.015) 2px 3px);
-    opacity:0.45;
+      repeating-linear-gradient(0deg, rgba(0,0,0,0) 0 2px, rgba(0,0,0,0.03) 2px 3px);
+    opacity:0.22;
     mix-blend-mode:multiply;
+    animation: none !important;
+    transform: none !important;
   }
   .aero-vignette-docs{
     position:fixed;
@@ -1545,12 +1546,14 @@ svg{ display: block; flex-shrink: 0; }
   }
 }
 
-/* top navbar as sticker */
+/* top navbar as sticker - stabil no getar */
 .top-navbar{
   background: rgba(255,255,255,0.92) !important;
   border-bottom: 3px solid var(--syn-ink, #111) !important;
   box-shadow: 0 4px 0 var(--syn-ink, #111);
   backdrop-filter: blur(12px) saturate(140%);
+  transform: none !important;
+  animation: none !important;
 }
 .top-navbar .brand-logo-link{
   background: white;
@@ -1558,19 +1561,19 @@ svg{ display: block; flex-shrink: 0; }
   padding: 6px 12px;
   border-radius: 8px;
   box-shadow: 3px 3px 0 #111;
-  transform: rotate(-1.5deg);
+  transform: none !important;
 }
 .top-navbar .brand-badge{
   background: #00a651 !important;
   color: white !important;
   border: 2px solid #111 !important;
-  transform: rotate(2deg);
+  transform: none !important;
 }
 .top-navbar .status-pill{
   background: #ffde59 !important;
   border: 2px solid #111 !important;
   box-shadow: 2px 2px 0 #111;
-  transform: rotate(1deg);
+  transform: none !important;
 }
 .top-navbar .btn-nav{
   background: white !important;
@@ -1579,21 +1582,22 @@ svg{ display: block; flex-shrink: 0; }
   border-radius: 10px !important;
   font-weight: 800 !important;
   text-transform: uppercase;
-  transform: rotate(-1deg);
+  transform: none !important;
 }
 .top-navbar .btn-nav:hover{
-  transform: rotate(0deg) translateY(-2px) !important;
+  transform: translateY(-1px) !important;
   box-shadow: 4px 5px 0 #111 !important;
 }
 
-/* hero banner */
+/* hero banner - stabil */
 .hero-banner{
   background: white !important;
   border: 3px solid #111 !important;
   box-shadow: 6px 8px 0 #111 !important;
   border-radius: 12px !important;
-  transform: rotate(-0.6deg);
+  transform: none !important;
   position:relative;
+  animation: none !important;
 }
 .hero-banner::before{
   content:"";
@@ -1617,25 +1621,32 @@ svg{ display: block; flex-shrink: 0; }
   font-weight: 600 !important;
 }
 
-/* section cards as stickers */
+/* section cards as stickers - FIX GETARAN: no float animation di desktop, stabil */
 .section-card{
   background: white !important;
   border: 3px solid #111 !important;
   box-shadow: 6px 8px 0 #111 !important;
   border-radius: 10px !important;
-  transform: rotate(var(--syn-rot, -0.4deg));
+  transform: none !important;
   position:relative;
   overflow:visible !important;
-  animation: docsFloat 5s ease-in-out infinite alternate;
+  animation: none !important;
+  will-change: auto !important;
+  backface-visibility: hidden;
 }
-.section-card:nth-child(2){ --syn-rot: 0.6deg; animation-delay: .2s; }
-.section-card:nth-child(3){ --syn-rot: -0.8deg; animation-delay: .4s; }
-.section-card:nth-child(4){ --syn-rot: 0.3deg; animation-delay: .1s; }
-.section-card:nth-child(5){ --syn-rot: -0.5deg; animation-delay: .5s; }
+.section-card:nth-child(2),
+.section-card:nth-child(3),
+.section-card:nth-child(4),
+.section-card:nth-child(5){
+  --syn-rot: 0deg;
+  animation: none !important;
+  transform: none !important;
+}
 
+/* hapus keyframes getaran */
 @keyframes docsFloat{
-  0%{ transform: rotate(var(--syn-rot, -0.4deg)) translateY(0) }
-  100%{ transform: rotate(calc(var(--syn-rot, -0.4deg) + 0.5deg)) translateY(-4px) }
+  0%{ transform: none; }
+  100%{ transform: none; }
 }
 
 /* handles for docs cards */
@@ -1652,7 +1663,7 @@ svg{ display: block; flex-shrink: 0; }
 .section-card::before{ top:-5px; left:-5px; }
 .section-card::after{ top:-5px; right:-5px; }
 
-/* method tags */
+/* method tags - stabil */
 .method-tag{
   background: #111 !important;
   color: white !important;
@@ -1660,7 +1671,7 @@ svg{ display: block; flex-shrink: 0; }
   box-shadow: 2px 2px 0 #111 !important;
   font-weight: 900 !important;
   text-transform: uppercase;
-  transform: rotate(-2deg);
+  transform: none !important;
 }
 .method-tag.method-get{ background: #00a651 !important; }
 .method-tag.method-post{ background: #ff8a00 !important; }
@@ -1681,20 +1692,21 @@ svg{ display: block; flex-shrink: 0; }
   border: 2px solid #111 !important;
   border-radius: 8px !important;
   font-weight: 800 !important;
-  transform: rotate(-1deg);
+  transform: none !important;
   box-shadow: 2px 2px 0 #111 !important;
 }
 .code-tab-btn[aria-selected="true"]{
   background: #ffde59 !important;
 }
 
-/* playground workspace */
+/* playground workspace - stabil no getar */
 #playground{
   background: rgba(255,255,255,0.92) !important;
   border: 3px solid #111 !important;
   box-shadow: 8px 10px 0 #111 !important;
   border-radius: 14px !important;
-  transform: rotate(0.3deg);
+  transform: none !important;
+  animation: none !important;
 }
 #playground .pg-panel{
   border: 2.5px solid #111 !important;
@@ -1717,10 +1729,10 @@ svg{ display: block; flex-shrink: 0; }
   padding: 6px 10px !important;
   border: 2px solid #111 !important;
   box-shadow: 2px 2px 0 #111;
-  transform: rotate(-1deg);
+  transform: none !important;
 }
 
-/* buttons */
+/* buttons - stabil */
 .btn-send-req{
   background: #00a651 !important;
   color: white !important;
@@ -1728,11 +1740,11 @@ svg{ display: block; flex-shrink: 0; }
   box-shadow: 3px 4px 0 #111 !important;
   font-weight: 900 !important;
   text-transform: uppercase;
-  transform: rotate(-1deg);
+  transform: none !important;
   border-radius: 10px !important;
 }
 .btn-send-req:hover{
-  transform: rotate(0deg) scale(1.03) !important;
+  transform: translateY(-1px) scale(1.02) !important;
   box-shadow: 5px 6px 0 #111 !important;
 }
 
@@ -1749,29 +1761,31 @@ svg{ display: block; flex-shrink: 0; }
   transform: translateY(-1px);
 }
 
-/* toc */
+/* toc - stabil */
 .toc-card{
   background: white !important;
   border: 3px solid #111 !important;
   box-shadow: 5px 6px 0 #111 !important;
   border-radius: 12px !important;
-  transform: rotate(-0.8deg);
+  transform: none !important;
+  animation: none !important;
 }
 .toc-link.active{
   background: #00a651 !important;
   color: white !important;
   border: 2px solid #111 !important;
   box-shadow: 2px 2px 0 #111 !important;
-  transform: rotate(0.5deg);
+  transform: none !important;
 }
 
-/* footer */
+/* footer - stabil */
 .site-footer{
   background: white !important;
   border: 3px solid #111 !important;
   box-shadow: 6px 8px 0 #111 !important;
   border-radius: 12px !important;
-  transform: rotate(-0.3deg);
+  transform: none !important;
+  animation: none !important;
 }
 
 /* scrollbars */
@@ -1780,9 +1794,16 @@ svg{ display: block; flex-shrink: 0; }
   border-radius: 4px !important;
 }
 
-/* deco for docs - only desktop */
+/* deco for docs - hide di desktop biar tidak getar, hanya di mobile subtle */
+.aero-deco-layer,
+.aero-clouds,
+.aero-vignette,
+.aero-cursor{
+  display:none !important;
+}
 @media (min-width: 1024px){
   body::before{ filter: saturate(1.1) brightness(1.02); }
+  .aero-deco-layer{ display:none !important; }
 }
 /* DOCS_DESKTOP_STYLE_END */
 </style>
