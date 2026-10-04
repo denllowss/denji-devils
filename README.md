@@ -411,3 +411,64 @@ npm run test:docs:desktop
 npm run test:iqc:playground
 npm run test:ssgc:ui
 ```
+
+## Vercel Web Analytics + Flags - Integrasi Keseluruhan
+
+Integrasi mengikuti docs resmi Vercel:
+- https://vercel.com/docs/analytics/quickstart
+- https://vercel.com/docs/analytics/custom-events
+- https://vercel.com/docs/analytics/package
+- https://vercel.com/docs/flags/observability/web-analytics
+- https://vercel.com/docs/flags/flags-explorer/reference
+
+### Apa yang terintegrasi
+
+**Web Analytics (page views & custom events):**
+- `public/js/analytics-init.js` - init queues `window.va` & `window.si` synchronous di `<head>` semua halaman (9 halaman: `/`, `/docs`, `/dl`, `/app`, `/app3`, `/app4`, `/app5`, `/ssgc-app`, `/lowquality-app`)
+- Fallback script tags `defer src="/_vercel/insights/script.js"` dan `/_vercel/speed-insights/script.js` di semua HTML - Vercel serve ini saat analytics enabled di dashboard
+- `public/js/config.js` - inject via `@vercel/analytics@2.0.1` & `@vercel/speed-insights@2.0.0` dari CDN jsDelivr dengan `beforeSend` redaction dan `track()` flags-aware
+- `src/ui/analytics.js` - embedded inline di `docs.html` untuk no-extra-request tracking
+- Server lokal membalas stub JS kosong untuk `/_vercel/insights/script.js` & `/_vercel/speed-insights/script.js` agar tidak 404
+
+**Feature Flags observability:**
+- `src/flags/definitions.json` - 7 flags: `docs_desktop_workspace`, `docs_engage_layer`, `home_grouping`, `playground_auto_preview`, `ssgc_full_layout`, `iqc_emoji_transparent`, `analytics_custom_events` dengan description, origin, options true/false
+- Emisi DOM `data-flag-definitions` & `data-flag-values` di `config.js` via `denjiEmitFlags()` - Web Analytics otomatis lookup dan annotate page views & custom events
+- Global helpers: `DENJI_FLAGS`, `DENJI_GET_FLAG(key)`, `DENJI_GET_FLAGS()`, `DENJI_SET_FLAG(key, bool)`, `DENJI_TRACK(name, data, {flags})`, `DENJI_LIST_FLAGS()`
+- Override: `?flag_<key>=0/1` URL, `localStorage denji_flag_<key>`, cookie `vercel-flag-overrides`
+- Discovery endpoint `/.well-known/vercel/flags` -> `/api/flags` (vercel.json rewrite) mengembalikan `{definitions, hints, overrideEncryptionMode}` dengan `safeJsonStringify` anti-XSS. Jika `FLAGS_SECRET` env var diset, verifikasi Authorization header dan return 401 jika gagal
+- Server middleware di `server.js` report semua flags tiap request via `X-Denji-Flags` header & `reportValue` untuk Runtime Logs
+- Server endpoint `POST /api/analytics/track` untuk server-side tracking via `@vercel/analytics/server` track() dengan flags - fallback log jika VERCEL_URL tidak ada (lokal)
+- Semua API image (`api/iqc.js`, `api/iqc3.js`, `api/iqc4.js`, `api/iqc5.js`, `api/ssgc.js`, `api/lowquality.js`) report flags di awal handler
+
+**Custom events dengan flags:**
+```js
+// Sesuai docs flags observability
+track('My Event', {}, { flags: ['summer-sale'] });
+
+// Di Denji - flags-aware
+DENJI_TRACK('home_link_click', { href: '/docs', cat: 'tools' }, { flags: ['home_grouping','analytics_custom_events'] });
+// atau
+track('docs_view', { path: location.pathname }); // auto-include semua flags & enrich data flag_<key>=1/0
+```
+
+Events yang sudah ada: `home_view`, `home_link_click`, `home_share`, `docs_view`, `docs_click`, `docs_related_click`, `docs_quick_click`, `docs_scroll` (25/50/75/90), `docs_time`, `playground_next_click`, `playground_preset_chip`, `footer_explore`, `denji_page_view` (auto dengan flags_enabled count). Semua otomatis ter-annotate flags di Web Analytics dashboard karena `data-flag-values` ada di DOM.
+
+**Redaksi sensitif:**
+`beforeSend` di config.js ignore `/private`, `/admin`, `token`, `email=`, `password=`, `secret=` dan redact query params `token`, `password`, `secret`, `email`, `phone`, `wa`, `nomor` -> `[redacted]` sesuai https://vercel.com/docs/analytics/redacting-sensitive-data
+
+**Aktifkan di Vercel Dashboard:**
+1. Deploy -> Vercel Dashboard -> Analytics -> Enable Web Analytics
+2. Speed Insights -> Enable
+3. (Opsional) Set `FLAGS_SECRET`: `node -e "console.log(require('crypto').randomBytes(32).toString('base64url'))"` sebagai env var Production & Preview Sensitive
+
+Cek Network tab: request ke `/<unique-path>/view` dan `/<unique-path>/event`.
+
+**Verifikasi:**
+```bash
+npm run test:analytics
+npm run test:vercel
+```
+
+`verify-analytics.js` cek 25 poin: analytics-init, config.js flags, definitions.json 7 flags, discovery endpoint, vercel.json rewrites, HTML integration 9 halaman, server middleware, track flags-aware, dependencies `@vercel/analytics`, `@vercel/speed-insights`, `flags`.
+
+Lihat `src/flags/README.md` untuk detail lengkap.

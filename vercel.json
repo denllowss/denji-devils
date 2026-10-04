@@ -186,6 +186,14 @@
       "destination": "/api/index.js"
     },
     {
+      "source": "/.well-known/vercel/flags",
+      "destination": "/api/flags"
+    },
+    {
+      "source": "/api/flags",
+      "destination": "/api/flags"
+    },
+    {
       "source": "/docs",
       "destination": "/docs.html"
     },
@@ -199,39 +207,44 @@
       "excludeFiles": "{api/iqc*.js,api/ssgc.js,api/lowquality.js,src/services/lowquality.js,api/_template*.html,api/*-assets/**,src/services/iqc-runtime.js,node_modules/@sparticuz/chromium/**,node_modules/puppeteer-core/**,node_modules/@puppeteer/browsers/**}"
     },
     "api/iqc.js": {
-      "includeFiles": "{api/_template*.html,node_modules/@sparticuz/chromium/bin/*.br}",
+      "includeFiles": "{api/_template*.html,src/flags/**,node_modules/@sparticuz/chromium/bin/*.br}",
       "memory": 2048,
       "maxDuration": 60
     },
     "api/iqc2.js": {
-      "includeFiles": "{api/_template*.html,node_modules/@sparticuz/chromium/bin/*.br}",
+      "includeFiles": "{api/_template*.html,src/flags/**,node_modules/@sparticuz/chromium/bin/*.br}",
       "memory": 2048,
       "maxDuration": 60
     },
     "api/iqc3.js": {
-      "includeFiles": "{api/_template*.html,api/iqc3-assets/**,node_modules/@sparticuz/chromium/bin/*.br}",
+      "includeFiles": "{api/_template*.html,api/iqc3-assets/**,src/flags/**,node_modules/@sparticuz/chromium/bin/*.br}",
       "memory": 2048,
       "maxDuration": 60
     },
     "api/lowquality.js": {
-      "includeFiles": "node_modules/@sparticuz/chromium/bin/*.br",
+      "includeFiles": "{src/flags/**,node_modules/@sparticuz/chromium/bin/*.br}",
       "memory": 2048,
       "maxDuration": 60
     },
     "api/iqc4.js": {
-      "includeFiles": "{api/_template4.html,api/iqc4-assets/**,node_modules/@sparticuz/chromium/bin/*.br}",
+      "includeFiles": "{api/_template4.html,api/iqc4-assets/**,src/flags/**,node_modules/@sparticuz/chromium/bin/*.br}",
       "memory": 2048,
       "maxDuration": 60
     },
     "api/iqc5.js": {
-      "includeFiles": "{api/_template5.html,api/iqc5-assets/**,node_modules/@sparticuz/chromium/bin/*.br}",
+      "includeFiles": "{api/_template5.html,api/iqc5-assets/**,src/flags/**,node_modules/@sparticuz/chromium/bin/*.br}",
       "memory": 2048,
       "maxDuration": 60
     },
     "api/ssgc.js": {
-      "includeFiles": "{api/_template-ssgc.html,api/ssgc-assets/**,node_modules/@sparticuz/chromium/bin/*.br}",
+      "includeFiles": "{api/_template-ssgc.html,api/ssgc-assets/**,src/flags/**,node_modules/@sparticuz/chromium/bin/*.br}",
       "memory": 2048,
       "maxDuration": 60
+    },
+    "api/flags.js": {
+      "includeFiles": "src/flags/**",
+      "memory": 512,
+      "maxDuration": 10
     }
   }
 }

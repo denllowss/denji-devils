@@ -67,6 +67,7 @@ async function image(p) {
   inflight.set(key,pending);return pending;
 }
 module.exports=async(req,res)=>{
+  try { require('../src/flags/server-helpers').reportFlags(req); } catch {}
   res.setHeader('Access-Control-Allow-Origin','*');
   res.setHeader('Access-Control-Allow-Methods','GET, HEAD, OPTIONS');
   res.setHeader('Access-Control-Expose-Headers', exposedHeaders);

@@ -22,7 +22,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<!-- Vercel Web Analytics + Speed Insights + Flags observability - keseluruhan -->
+<script src="/js/analytics-init.js"></script>
 <script src="/js/config.js"></script>
+<script defer src="/_vercel/insights/script.js"></script>
+<script defer src="/_vercel/speed-insights/script.js"></script>
 <style>
 :root{
   --page-bg: #c8d97c;
@@ -1488,6 +1492,297 @@ svg{ display: block; flex-shrink: 0; }
 @media(min-width:1024px){
   .docs-next-step{margin-top:-2px}
   .docs-next-actions a,.docs-next-actions button{font-size:11.5px;padding:7px 11px}
+}
+
+/* DOCS — THE SYNTHESIS Frutiger Aero override
+   Embedded via build-docs-playground.py after desktop+engage
+   Keeps workspace functional but skins it as sticker collage
+*/
+@media (min-width: 0px){
+  :root{
+    --page-bg: transparent !important;
+    --syn-green: #00a651;
+    --syn-ink: #111;
+  }
+  html{
+    background: #1e8cff;
+  }
+  body{
+    background: transparent !important;
+    position:relative;
+    isolation:isolate;
+  }
+  body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    z-index:-3;
+    background:
+      radial-gradient(120% 70% at 50% 0%, rgba(255,255,255,0.18) 0%, transparent 60%),
+      url('/images/synthesis-bg.jpg') center / cover no-repeat fixed;
+    filter: saturate(1.15) contrast(1.05) brightness(1.02);
+  }
+  body::after{
+    content:"";
+    position:fixed;
+    inset:0;
+    z-index:9998;
+    pointer-events:none;
+    background:
+      repeating-linear-gradient(0deg, rgba(0,0,0,0) 0 2px, rgba(0,0,0,0.045) 2px 3px),
+      repeating-linear-gradient(90deg, rgba(255,0,0,0.015) 0 1px, rgba(0,255,0,0.008) 1px 2px, rgba(0,0,255,0.015) 2px 3px);
+    opacity:0.45;
+    mix-blend-mode:multiply;
+  }
+  .aero-vignette-docs{
+    position:fixed;
+    inset:0;
+    z-index:-2;
+    pointer-events:none;
+    background:
+      radial-gradient(120% 90% at 50% 10%, transparent 40%, rgba(0,0,0,0.18) 100%),
+      radial-gradient(60% 40% at 90% 10%, rgba(255,255,255,0.32) 0%, transparent 60%);
+  }
+}
+
+/* top navbar as sticker */
+.top-navbar{
+  background: rgba(255,255,255,0.92) !important;
+  border-bottom: 3px solid var(--syn-ink, #111) !important;
+  box-shadow: 0 4px 0 var(--syn-ink, #111);
+  backdrop-filter: blur(12px) saturate(140%);
+}
+.top-navbar .brand-logo-link{
+  background: white;
+  border: 2.5px solid #111;
+  padding: 6px 12px;
+  border-radius: 8px;
+  box-shadow: 3px 3px 0 #111;
+  transform: rotate(-1.5deg);
+}
+.top-navbar .brand-badge{
+  background: #00a651 !important;
+  color: white !important;
+  border: 2px solid #111 !important;
+  transform: rotate(2deg);
+}
+.top-navbar .status-pill{
+  background: #ffde59 !important;
+  border: 2px solid #111 !important;
+  box-shadow: 2px 2px 0 #111;
+  transform: rotate(1deg);
+}
+.top-navbar .btn-nav{
+  background: white !important;
+  border: 2.5px solid #111 !important;
+  box-shadow: 3px 3px 0 #111 !important;
+  border-radius: 10px !important;
+  font-weight: 800 !important;
+  text-transform: uppercase;
+  transform: rotate(-1deg);
+}
+.top-navbar .btn-nav:hover{
+  transform: rotate(0deg) translateY(-2px) !important;
+  box-shadow: 4px 5px 0 #111 !important;
+}
+
+/* hero banner */
+.hero-banner{
+  background: white !important;
+  border: 3px solid #111 !important;
+  box-shadow: 6px 8px 0 #111 !important;
+  border-radius: 12px !important;
+  transform: rotate(-0.6deg);
+  position:relative;
+}
+.hero-banner::before{
+  content:"";
+  position:absolute;
+  top:-14px; left:-10px;
+  width:28px; height:28px;
+  background: radial-gradient(circle at 30% 30%, #eee 0 18%, #aaa 19% 32%, #444 33% 100%);
+  border-radius:50%;
+  border:1.5px solid #222;
+  box-shadow: 1px 2px 0 rgba(0,0,0,0.3);
+  transform: rotate(-18deg);
+}
+.hero-title{
+  font-family: 'Syne', 'Inter', sans-serif !important;
+  font-weight: 800 !important;
+  text-transform: uppercase;
+  letter-spacing: -0.04em !important;
+  color: #00a651 !important;
+}
+.hero-desc{
+  font-weight: 600 !important;
+}
+
+/* section cards as stickers */
+.section-card{
+  background: white !important;
+  border: 3px solid #111 !important;
+  box-shadow: 6px 8px 0 #111 !important;
+  border-radius: 10px !important;
+  transform: rotate(var(--syn-rot, -0.4deg));
+  position:relative;
+  overflow:visible !important;
+  animation: docsFloat 5s ease-in-out infinite alternate;
+}
+.section-card:nth-child(2){ --syn-rot: 0.6deg; animation-delay: .2s; }
+.section-card:nth-child(3){ --syn-rot: -0.8deg; animation-delay: .4s; }
+.section-card:nth-child(4){ --syn-rot: 0.3deg; animation-delay: .1s; }
+.section-card:nth-child(5){ --syn-rot: -0.5deg; animation-delay: .5s; }
+
+@keyframes docsFloat{
+  0%{ transform: rotate(var(--syn-rot, -0.4deg)) translateY(0) }
+  100%{ transform: rotate(calc(var(--syn-rot, -0.4deg) + 0.5deg)) translateY(-4px) }
+}
+
+/* handles for docs cards */
+.section-card::before,
+.section-card::after{
+  content:"";
+  position:absolute;
+  width:9px; height:9px;
+  background:white;
+  border:1.5px solid #111;
+  z-index:2;
+  box-shadow:0 0 0 1px white;
+}
+.section-card::before{ top:-5px; left:-5px; }
+.section-card::after{ top:-5px; right:-5px; }
+
+/* method tags */
+.method-tag{
+  background: #111 !important;
+  color: white !important;
+  border: 2px solid #111 !important;
+  box-shadow: 2px 2px 0 #111 !important;
+  font-weight: 900 !important;
+  text-transform: uppercase;
+  transform: rotate(-2deg);
+}
+.method-tag.method-get{ background: #00a651 !important; }
+.method-tag.method-post{ background: #ff8a00 !important; }
+.method-tag.method-ref{ background: #2fa8ff !important; }
+
+/* code cards */
+.code-card{
+  border: 3px solid #111 !important;
+  box-shadow: 5px 6px 0 #111 !important;
+  border-radius: 10px !important;
+  overflow:hidden;
+}
+.code-tabs-head{
+  background: #111 !important;
+}
+.code-tab-btn{
+  background: white !important;
+  border: 2px solid #111 !important;
+  border-radius: 8px !important;
+  font-weight: 800 !important;
+  transform: rotate(-1deg);
+  box-shadow: 2px 2px 0 #111 !important;
+}
+.code-tab-btn[aria-selected="true"]{
+  background: #ffde59 !important;
+}
+
+/* playground workspace */
+#playground{
+  background: rgba(255,255,255,0.92) !important;
+  border: 3px solid #111 !important;
+  box-shadow: 8px 10px 0 #111 !important;
+  border-radius: 14px !important;
+  transform: rotate(0.3deg);
+}
+#playground .pg-panel{
+  border: 2.5px solid #111 !important;
+  box-shadow: 4px 5px 0 #111 !important;
+  border-radius: 10px !important;
+  background: white !important;
+}
+#playground .panel-head{
+  background: #f8fff0 !important;
+  border-bottom: 2.5px solid #111 !important;
+}
+.docs-result-tabs{
+  background: white !important;
+  border-bottom: 2.5px solid #111 !important;
+}
+.docs-result-tabs button[aria-selected="true"]{
+  background: #00a651;
+  color: white;
+  border-radius: 6px;
+  padding: 6px 10px !important;
+  border: 2px solid #111 !important;
+  box-shadow: 2px 2px 0 #111;
+  transform: rotate(-1deg);
+}
+
+/* buttons */
+.btn-send-req{
+  background: #00a651 !important;
+  color: white !important;
+  border: 2.5px solid #111 !important;
+  box-shadow: 3px 4px 0 #111 !important;
+  font-weight: 900 !important;
+  text-transform: uppercase;
+  transform: rotate(-1deg);
+  border-radius: 10px !important;
+}
+.btn-send-req:hover{
+  transform: rotate(0deg) scale(1.03) !important;
+  box-shadow: 5px 6px 0 #111 !important;
+}
+
+/* inputs */
+.search-input, .endpoint-input, .method-select, .iqc-field input, .iqc-field select, .iqc-field textarea, .docs-endpoint-picker select{
+  border: 2.5px solid #111 !important;
+  box-shadow: 3px 3px 0 #111 !important;
+  border-radius: 10px !important;
+  font-weight: 600 !important;
+  background: white !important;
+}
+.search-input:focus, .endpoint-input:focus{
+  box-shadow: 4px 5px 0 #111, 0 0 0 3px #a8e05f !important;
+  transform: translateY(-1px);
+}
+
+/* toc */
+.toc-card{
+  background: white !important;
+  border: 3px solid #111 !important;
+  box-shadow: 5px 6px 0 #111 !important;
+  border-radius: 12px !important;
+  transform: rotate(-0.8deg);
+}
+.toc-link.active{
+  background: #00a651 !important;
+  color: white !important;
+  border: 2px solid #111 !important;
+  box-shadow: 2px 2px 0 #111 !important;
+  transform: rotate(0.5deg);
+}
+
+/* footer */
+.site-footer{
+  background: white !important;
+  border: 3px solid #111 !important;
+  box-shadow: 6px 8px 0 #111 !important;
+  border-radius: 12px !important;
+  transform: rotate(-0.3deg);
+}
+
+/* scrollbars */
+.scroller::-webkit-scrollbar-thumb{
+  background: #111 !important;
+  border-radius: 4px !important;
+}
+
+/* deco for docs - only desktop */
+@media (min-width: 1024px){
+  body::before{ filter: saturate(1.1) brightness(1.02); }
 }
 /* DOCS_DESKTOP_STYLE_END */
 </style>
@@ -6182,12 +6477,20 @@ const docsEngage = (() => {
     ssgc: '/ssgc-app',
     lowquality: '/lowquality-app',
   };
-  function track(name, data = {}) {
+  function track(name, data = {}, opts) {
     try {
-      // Vercel Analytics static inject exposes window.va as function and .track
-      if (typeof window.va === 'function') window.va('event', { name, data });
-      window.va?.track?.(name, data);
-      // Speed Insights also uses va, but safe to ignore
+      // Flags observability - https://vercel.com/docs/flags/observability/web-analytics
+      const allFlags = (typeof window.DENJI_GET_FLAGS === 'function') ? window.DENJI_GET_FLAGS() : {};
+      const flagKeys = (opts && opts.flags) ? opts.flags : Object.keys(allFlags);
+      const enriched = Object.assign({}, data || {});
+      try { for (const [k,v] of Object.entries(allFlags)) enriched['flag_'+k] = v ? 1 : 0; } catch {}
+      if (typeof window.DENJI_TRACK === 'function') {
+        window.DENJI_TRACK(name, enriched, { flags: flagKeys });
+        return;
+      }
+      if (typeof window.va === 'function') window.va('event', { name, data: enriched, flags: flagKeys });
+      if (window.va && typeof window.va.track === 'function') window.va.track(name, enriched, { flags: flagKeys });
+      if (window.__denji_analytics_track) window.__denji_analytics_track(name, enriched, { flags: flagKeys });
     } catch (_) {}
   }
   function create(tag, cls, html) {
@@ -6409,6 +6712,140 @@ const docsEngage = (() => {
   }
   document.addEventListener('DOMContentLoaded', init);
   return { track, renderNextStep };
+})();
+
+/**
+ * Denji Analytics - Full integration for docs & all pages
+ * https://vercel.com/docs/analytics/quickstart
+ * https://vercel.com/docs/analytics/custom-events
+ * https://vercel.com/docs/flags/observability/web-analytics
+ * 
+ * Fitur:
+ * - Page view tracking otomatis via /_vercel/insights/script.js
+ * - Speed Insights via /_vercel/speed-insights/script.js
+ * - Custom events dengan flags support: track(event, data, {flags: [...]})
+ * - Flags definitions & values emission via data-flag-definitions / data-flag-values
+ * - beforeSend redaction untuk data sensitif
+ * - Server-side tracking via /api/analytics/track dan reportValue
+ */
+(function() {
+  'use strict';
+  if (typeof window === 'undefined') return;
+
+  // Pastikan queues ada (fallback jika analytics-init.js belum load)
+  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+  window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };
+  window.vaq = window.vaq || [];
+  window.siq = window.siq || [];
+
+  // Flags sudah di-emit oleh config.js, tapi pastikan ada untuk halaman yang tidak load config.js
+  if (!window.DENJI_FLAGS) {
+    try {
+      const defs = {
+        "docs_desktop_workspace": { "description": "Desktop workspace", "options": [{ "value": true, "label": "On" }, { "value": false, "label": "Off" }] },
+        "docs_engage_layer": { "description": "Engagement layer", "options": [{ "value": true, "label": "On" }, { "value": false, "label": "Off" }] },
+        "home_grouping": { "description": "Homepage grouping", "options": [{ "value": true, "label": "On" }, { "value": false, "label": "Off" }] },
+        "playground_auto_preview": { "description": "Auto preview", "options": [{ "value": true, "label": "On" }, { "value": false, "label": "Off" }] },
+        "ssgc_full_layout": { "description": "SSGC full layout", "options": [{ "value": true, "label": "On" }, { "value": false, "label": "Off" }] },
+        "iqc_emoji_transparent": { "description": "Transparent emoji", "options": [{ "value": true, "label": "On" }, { "value": false, "label": "Off" }] },
+        "analytics_custom_events": { "description": "Custom events", "options": [{ "value": true, "label": "On" }, { "value": false, "label": "Off" }] }
+      };
+      const defaults = { docs_desktop_workspace: true, docs_engage_layer: true, home_grouping: true, playground_auto_preview: true, ssgc_full_layout: true, iqc_emoji_transparent: true, analytics_custom_events: true };
+      function safeJson(o){ return JSON.stringify(o).replace(/</g,'\\u003c').replace(/>/g,'\\u003e').replace(/&/g,'\\u0026'); }
+      function getFlag(k){
+        try {
+          const url = new URL(location.href);
+          if (url.searchParams.has('flag_'+k)) {
+            const v = url.searchParams.get('flag_'+k).toLowerCase();
+            if (['1','true','on','yes'].includes(v)) return true;
+            if (['0','false','off','no'].includes(v)) return false;
+          }
+          const ls = localStorage.getItem('denji_flag_'+k);
+          if (ls !== null) {
+            if (['1','true','on','yes'].includes(ls.toLowerCase())) return true;
+            if (['0','false','off','no'].includes(ls.toLowerCase())) return false;
+          }
+        } catch {}
+        return defaults[k] !== undefined ? defaults[k] : false;
+      }
+      function getAll(){ const out={}; for(const k of Object.keys(defs)) out[k]=getFlag(k); return out; }
+      const all = getAll();
+      if (!document.querySelector('script[data-flag-definitions]')) {
+        const s = document.createElement('script'); s.type='application/json'; s.setAttribute('data-flag-definitions',''); s.setAttribute('data-denji','1'); s.textContent=safeJson(defs); document.head.appendChild(s);
+      }
+      if (!document.querySelector('script[data-flag-values]')) {
+        const s = document.createElement('script'); s.type='application/json'; s.setAttribute('data-flag-values',''); s.setAttribute('data-denji','1'); s.textContent=safeJson(all); document.head.appendChild(s);
+      }
+      window.DENJI_FLAGS = all;
+      window.DENJI_FLAG_DEFINITIONS = defs;
+      window.DENJI_GET_FLAG = getFlag;
+      window.DENJI_GET_FLAGS = getAll;
+    } catch {}
+  }
+
+  // Enhanced track dengan flags support - sesuai docs flags observability
+  const originalTrack = window.DENJI_TRACK;
+  window.DENJI_TRACK = function(name, data, opts) {
+    try {
+      const allFlags = (typeof window.DENJI_GET_FLAGS === 'function') ? window.DENJI_GET_FLAGS() : window.DENJI_FLAGS || {};
+      const flagKeys = (opts && opts.flags) ? opts.flags : Object.keys(allFlags);
+      const enriched = Object.assign({}, data || {});
+      try { for (const [k,v] of Object.entries(allFlags)) enriched['flag_'+k] = v ? 1 : 0; } catch {}
+      // Kirim ke Vercel Analytics
+      if (typeof window.va === 'function') {
+        window.va('event', { name: name, data: enriched, flags: flagKeys });
+        if (window.va.track) window.va.track(name, enriched, { flags: flagKeys });
+      }
+      if (window.__denji_analytics_track) {
+        window.__denji_analytics_track(name, enriched, { flags: flagKeys });
+      }
+      // Juga coba kirim ke server untuk server-side tracking jika di Vercel
+      try {
+        if (navigator.sendBeacon && location.hostname !== 'localhost') {
+          const payload = JSON.stringify({ name, data: enriched, flags: flagKeys });
+          // sendBeacon tidak menunggu response, bagus untuk analytics
+          // Tapi endpoint kita POST /api/analytics/track
+          // Kita pakai fetch dengan keepalive sebagai alternatif
+          fetch('/api/analytics/track', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: payload,
+            keepalive: true
+          }).catch(()=>{});
+        }
+      } catch {}
+      // Panggil original jika ada
+      if (originalTrack && originalTrack !== window.DENJI_TRACK) {
+        try { originalTrack(name, data, opts); } catch {}
+      }
+    } catch {
+      try { if (window.va) window.va('event', { name: name, data: data }); } catch {}
+    }
+  };
+
+  // Auto track page view dengan flags (sudah di-handle di config.js juga, tapi ini fallback)
+  // Hindari double track dengan cek apakah sudah pernah track denji_page_view
+  if (!window.__denji_page_view_tracked) {
+    window.__denji_page_view_tracked = true;
+    setTimeout(function() {
+      try {
+        const allFlags = (typeof window.DENJI_GET_FLAGS === 'function') ? window.DENJI_GET_FLAGS() : {};
+        const data = { path: location.pathname, referrer: document.referrer || '' };
+        for (const [k,v] of Object.entries(allFlags)) data['flag_'+k] = v ? 1 : 0;
+        data.flags_enabled = Object.values(allFlags).filter(Boolean).length;
+        window.DENJI_TRACK('denji_page_view', data, { flags: Object.keys(allFlags) });
+      } catch {}
+    }, 1500);
+  }
+
+  // Expose helper untuk docs: list flags
+  window.DENJI_LIST_FLAGS = function() {
+    try {
+      console.table(window.DENJI_FLAGS);
+      return window.DENJI_FLAGS;
+    } catch { return {}; }
+  };
+
 })();
 /* DOCS_DESKTOP_UI_END */
 </script>

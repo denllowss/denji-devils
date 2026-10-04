@@ -251,6 +251,7 @@ async function render(p, format) {
   return task;
 }
 module.exports = async (req, res) => {
+  try { require('../src/flags/server-helpers').reportFlags(req); } catch {}
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, HEAD, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");

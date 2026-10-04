@@ -1,0 +1,161 @@
+/* Editor — THE SYNTHESIS frutiger aero override for IQC/SSGC/Lowquality editors */
+:root{
+  --syn-green:#00a651;
+  --syn-ink:#111;
+  --syn-yellow:#ffde59;
+}
+html{background:#1e8cff}
+body{
+  background: transparent !important;
+  position:relative;
+}
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:-3;
+  background:
+    radial-gradient(120% 70% at 50% 0%, rgba(255,255,255,0.18) 0%, transparent 60%),
+    url('/images/synthesis-bg.jpg') center / cover no-repeat fixed;
+  filter: saturate(1.12) brightness(1.02);
+}
+body::after{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:9998;
+  pointer-events:none;
+  background:
+    repeating-linear-gradient(0deg, rgba(0,0,0,0) 0 2px, rgba(0,0,0,0.04) 2px 3px);
+  opacity:0.35;
+  mix-blend-mode:multiply;
+}
+header{
+  background: rgba(255,255,255,0.92) !important;
+  border-bottom: 3px solid #111 !important;
+  box-shadow: 0 4px 0 #111 !important;
+  backdrop-filter: blur(10px);
+}
+header .brand{
+  background: white;
+  border: 2.5px solid #111;
+  padding: 6px 12px;
+  border-radius: 8px;
+  box-shadow: 3px 3px 0 #111;
+  transform: rotate(-1deg);
+  font-weight: 900 !important;
+  text-transform: uppercase;
+}
+header .badge{
+  background: #00a651 !important;
+  color: white !important;
+  border: 2px solid #111 !important;
+  box-shadow: 2px 2px 0 #111;
+}
+.nav a{
+  background: white !important;
+  border: 2.5px solid #111 !important;
+  box-shadow: 3px 3px 0 #111 !important;
+  border-radius: 10px !important;
+  font-weight: 800 !important;
+  text-transform: uppercase;
+  font-size: 11px !important;
+  padding: 7px 10px !important;
+  transform: rotate(-0.8deg);
+}
+.nav a:hover{
+  transform: rotate(0deg) translateY(-2px) !important;
+  box-shadow: 4px 5px 0 #111 !important;
+}
+
+.layout{
+  gap: 20px !important;
+}
+.tools, .preview-head, .api-panel, .preview-shell{
+  background: white !important;
+  border: 3px solid #111 !important;
+  box-shadow: 6px 8px 0 #111 !important;
+  border-radius: 12px !important;
+  transform: rotate(var(--rot, -0.3deg));
+}
+.tools{ --rot:-0.5deg; }
+.preview-head{ --rot:0.4deg; padding: 12px 16px !important; }
+.api-panel{ --rot:0.2deg; }
+
+.tools h1{
+  font-family: 'Syne', Inter, sans-serif !important;
+  font-weight: 800 !important;
+  text-transform: uppercase;
+  letter-spacing: -0.04em !important;
+  color: #00a651 !important;
+  line-height: 0.95 !important;
+}
+.intro{
+  font-weight: 600 !important;
+}
+
+.field label{
+  font-weight: 800 !important;
+  text-transform: uppercase;
+  font-size: 11px !important;
+  letter-spacing: 0.5px;
+}
+.field input, .field select, .field textarea{
+  border: 2.5px solid #111 !important;
+  box-shadow: 3px 3px 0 #111 !important;
+  border-radius: 10px !important;
+  font-weight: 600 !important;
+}
+.field input:focus, .field select:focus, .field textarea:focus{
+  box-shadow: 4px 5px 0 #111, 0 0 0 3px #a8e05f !important;
+  transform: translateY(-1px);
+}
+
+.button{
+  background: #00a651 !important;
+  color: white !important;
+  border: 2.5px solid #111 !important;
+  box-shadow: 3px 4px 0 #111 !important;
+  font-weight: 900 !important;
+  text-transform: uppercase;
+  border-radius: 10px !important;
+  transform: rotate(-0.8deg);
+}
+.button:hover{
+  transform: rotate(0deg) scale(1.02) !important;
+  box-shadow: 5px 6px 0 #111 !important;
+}
+.button.secondary{
+  background: white !important;
+  color: #111 !important;
+}
+
+.preset-list button, .profile-modes button, .iqc-variants button{
+  background: white !important;
+  border: 2.5px solid #111 !important;
+  box-shadow: 2px 3px 0 #111 !important;
+  border-radius: 8px !important;
+  font-weight: 800 !important;
+  text-transform: uppercase;
+  font-size: 11px !important;
+  transform: rotate(var(--r, -0.5deg));
+}
+.preset-list button:nth-child(2){ --r:0.8deg }
+.preset-list button:nth-child(3){ --r:-1deg }
+.preset-list button[aria-pressed="true"], .profile-modes button[aria-pressed="true"]{
+  background: #00a651 !important;
+  color: white !important;
+  transform: rotate(0deg) scale(1.05);
+}
+
+.preview-tag{
+  background: #ffde59 !important;
+  border: 2px solid #111 !important;
+  box-shadow: 2px 2px 0 #111 !important;
+  font-weight: 900 !important;
+  transform: rotate(1deg);
+}
+
+@media (max-width: 740px){
+  .tools, .preview-head, .api-panel{ transform: rotate(0deg) !important; }
+}

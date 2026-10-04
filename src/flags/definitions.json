@@ -1,0 +1,58 @@
+{
+  "docs_desktop_workspace": {
+    "description": "Aktifkan layout workspace desktop dua panel di /docs (sticky sidebar, request/response split)",
+    "origin": "https://denji-devils.vercel.app/docs#playground",
+    "options": [
+      { "value": true, "label": "On - Desktop workspace aktif" },
+      { "value": false, "label": "Off - Layout mobile default" }
+    ]
+  },
+  "docs_engage_layer": {
+    "description": "Aktifkan engagement layer: related links, next-step panel setelah hasil, quick bar, footer explore, dan scroll-depth tracking",
+    "origin": "https://denji-devils.vercel.app/docs",
+    "options": [
+      { "value": true, "label": "On - Engagement aktif" },
+      { "value": false, "label": "Off" }
+    ]
+  },
+  "home_grouping": {
+    "description": "Homepage grouping: Alat & API, Generator Gambar, Tautan Lain dengan badge Populer/Baru/Update dan CTA ke Playground",
+    "origin": "https://denji-devils.vercel.app/",
+    "options": [
+      { "value": true, "label": "On" },
+      { "value": false, "label": "Off" }
+    ]
+  },
+  "playground_auto_preview": {
+    "description": "Playground auto preview 850ms debounce, satu render aktif, stale-response protection",
+    "origin": "https://denji-devils.vercel.app/docs#playground",
+    "options": [
+      { "value": true, "label": "On - Auto preview" },
+      { "value": false, "label": "Off - Manual Kirim saja" }
+    ]
+  },
+  "ssgc_full_layout": {
+    "description": "SSGC full description tatanan inline rata tengah, balanced inset 46px, line-height 36px, WA formatting *bold* _italic_ ~strike~ `code` dan URL hijau",
+    "origin": "https://denji-devils.vercel.app/ssgc-app",
+    "options": [
+      { "value": true, "label": "On - Full layout aktif" },
+      { "value": false, "label": "Off - Compact only" }
+    ]
+  },
+  "iqc_emoji_transparent": {
+    "description": "Fix emoji tepi putih: gunakan genuine transparent RGBA PNG dari emoji-data Apple, bukan thresholded JPEG",
+    "origin": "https://denji-devils.vercel.app/app5",
+    "options": [
+      { "value": true, "label": "On - Transparent PNG" },
+      { "value": false, "label": "Off" }
+    ]
+  },
+  "analytics_custom_events": {
+    "description": "Aktifkan tracking custom events (home_link_click, docs_view, playground_next_click, dll) untuk bounce-rate reduction",
+    "origin": "https://vercel.com/docs/analytics/custom-events",
+    "options": [
+      { "value": true, "label": "On" },
+      { "value": false, "label": "Off" }
+    ]
+  }
+}

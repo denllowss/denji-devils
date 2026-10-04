@@ -373,6 +373,13 @@ async function renderSelaluFoto(req, res, params) {
 }
 
 module.exports = async (req, res) => {
+  // Flags observability - server-side tracking https://vercel.com/docs/flags/observability/web-analytics#server-side-tracking
+  try { require('../src/flags/server-helpers').reportFlags(req); } catch {}
+  try {
+    const { trackServerEvent } = require('../src/flags/server-helpers');
+    // Track page view dengan flags untuk IQC
+    if (req.method === 'GET') trackServerEvent('iqc_request', { variant: 'iqc', path: req.url }, ['iqc_emoji_transparent','playground_auto_preview','analytics_custom_events'], req).catch(()=>{});
+  } catch {}
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, HEAD, OPTIONS');
   res.setHeader('Access-Control-Expose-Headers', exposedHeaders);

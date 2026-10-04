@@ -68,12 +68,20 @@ const docsEngage = (() => {
     ssgc: '/ssgc-app',
     lowquality: '/lowquality-app',
   };
-  function track(name, data = {}) {
+  function track(name, data = {}, opts) {
     try {
-      // Vercel Analytics static inject exposes window.va as function and .track
-      if (typeof window.va === 'function') window.va('event', { name, data });
-      window.va?.track?.(name, data);
-      // Speed Insights also uses va, but safe to ignore
+      // Flags observability - https://vercel.com/docs/flags/observability/web-analytics
+      const allFlags = (typeof window.DENJI_GET_FLAGS === 'function') ? window.DENJI_GET_FLAGS() : {};
+      const flagKeys = (opts && opts.flags) ? opts.flags : Object.keys(allFlags);
+      const enriched = Object.assign({}, data || {});
+      try { for (const [k,v] of Object.entries(allFlags)) enriched['flag_'+k] = v ? 1 : 0; } catch {}
+      if (typeof window.DENJI_TRACK === 'function') {
+        window.DENJI_TRACK(name, enriched, { flags: flagKeys });
+        return;
+      }
+      if (typeof window.va === 'function') window.va('event', { name, data: enriched, flags: flagKeys });
+      if (window.va && typeof window.va.track === 'function') window.va.track(name, enriched, { flags: flagKeys });
+      if (window.__denji_analytics_track) window.__denji_analytics_track(name, enriched, { flags: flagKeys });
     } catch (_) {}
   }
   function create(tag, cls, html) {

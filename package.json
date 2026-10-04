@@ -21,6 +21,7 @@
     "build:ssgc": "python3 scripts/build-ssgc-template.py && python3 scripts/build-ssgc-editor.py && python3 scripts/build-docs-playground.py",
     "test:ssgc:full": "node scripts/run-node.js scripts/verify-ssgc-full-layout.js",
     "test:docs:desktop": "node scripts/run-node.js scripts/verify-docs-desktop.js",
+    "test:analytics": "node scripts/run-node.js scripts/verify-analytics.js",
     "build:docs": "python3 scripts/build-docs-playground.py"
   },
   "dependencies": {
@@ -29,6 +30,7 @@
     "@sparticuz/chromium": "153.0.0",
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",
+    "flags": "^4.0.0",
     "ab-downloader": "^2.0.0",
     "axios": "^1.20.0",
     "btch-downloader": "^6.4.0",

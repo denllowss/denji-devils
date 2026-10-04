@@ -63,6 +63,7 @@ async function input(req) {
   return {image,options,source:values.url?'url':'upload'};
 }
 module.exports=async(req,res)=>{
+  try { require('../src/flags/server-helpers').reportFlags(req); } catch {}
   res.setHeader('Access-Control-Allow-Origin','*');
   res.setHeader('Access-Control-Allow-Methods','GET, POST, HEAD, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers','Content-Type');

@@ -47,6 +47,78 @@ async function handleIqc(req, res) {
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Flags & Web Analytics observability - server side
+// https://vercel.com/docs/flags/observability/web-analytics#server-side-tracking
+let flagsServer = null;
+try { flagsServer = require('./src/flags'); } catch {}
+// Middleware: report flags untuk setiap request (untuk Runtime Logs & Web Analytics)
+app.use((req, res, next) => {
+  if (flagsServer) {
+    try {
+      const all = flagsServer.getAllFlags(req);
+      // Simpan di req untuk dipakai di handler lain
+      req.denjiFlags = all;
+      // Report untuk observability
+      for (const [k, v] of Object.entries(all)) {
+        try { flagsServer.reportValue(k, v); } catch {}
+      }
+      // Expose flag values via header untuk debugging (optional)
+      res.setHeader('X-Denji-Flags', Object.entries(all).filter(([,v])=>v).map(([k])=>k).join(','));
+    } catch {}
+  }
+  next();
+});
+
+// Flags discovery endpoint - untuk Vercel Toolbar & Web Analytics
+app.get('/.well-known/vercel/flags', async (req, res) => {
+  try {
+    const handler = require('./api/flags');
+    return await handler(req, res);
+  } catch (e) {
+    console.error('[flags] discovery error', e.message);
+    return res.status(500).json({ error: 'flags endpoint error' });
+  }
+});
+app.get('/api/flags', async (req, res) => {
+  try {
+    const handler = require('./api/flags');
+    return await handler(req, res);
+  } catch (e) {
+    return res.status(500).json({ error: 'flags endpoint error' });
+  }
+});
+
+// Server-side analytics tracking endpoint (optional, untuk custom events dari server)
+// Mengikuti docs: import { track } from '@vercel/analytics/server'
+app.post('/api/analytics/track', express.json(), async (req, res) => {
+  const { name, data, flags } = req.body || {};
+  if (!name) return res.status(400).json({ error: 'name required' });
+  try {
+    // Coba pakai @vercel/analytics/server jika tersedia
+    let tracked = false;
+    try {
+      const { track } = require('@vercel/analytics/server');
+      if (typeof track === 'function') {
+        // Report flag values dulu
+        if (flagsServer && flags) {
+          for (const k of flags) {
+            const v = flagsServer.getFlag(k, req);
+            flagsServer.reportValue(k, v);
+          }
+        }
+        await track(name, data || {}, { flags: flags || [] });
+        tracked = true;
+      }
+    } catch {}
+    if (!tracked) {
+      console.log(`[Analytics Track] ${name}`, JSON.stringify(data || {}), `flags=${(flags||[]).join(',')}`);
+    }
+    return res.json({ ok: true, tracked });
+  } catch (e) {
+    return res.status(500).json({ error: e.message });
+  }
+});
+
 // Lewatkan raw stream supaya multipart/base64 tidak terkena limit JSON umum.
 const LOWQUALITY_PATH = path.join(__dirname, 'api', 'lowquality.js');
 app.all(['/lowquality', '/api/lowquality'], async (req, res) => {
