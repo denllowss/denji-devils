@@ -1,5 +1,6 @@
 /* THE SYNTHESIS — Frutiger Aero interactions
-   - inject bg layers, deco icons, handles, draggable stickers, trailing cursor, parallax
+   - inject bg layers, deco icons (direct from poster 100% similar), handles, draggable stickers, trailing cursor, parallax
+   - Icons diambil langsung dari poster asli, dibersihkan background, bukan SVG bikinan
 */
 (function(){
   'use strict';
@@ -19,6 +20,28 @@
       <div class="aero-cloud c4"></div>
     `;
     document.body.prepend(cloudsWrap);
+
+    // Entrance overlay
+    if(!document.querySelector('.entrance-overlay')){
+      const overlay = document.createElement('div');
+      overlay.className = 'entrance-overlay';
+      overlay.innerHTML = `
+        <div class="entrance-logo">
+          <div class="entrance-sticker">THE SYNTHESIS</div>
+          <div class="entrance-sticker green">IS LOOKING</div>
+          <div class="entrance-bar"></div>
+        </div>
+      `;
+      document.body.appendChild(overlay);
+      document.body.classList.add('is-entering');
+      // hide after 1.4s
+      setTimeout(()=>{
+        overlay.classList.add('hide');
+        document.body.classList.remove('is-entering');
+        document.body.classList.add('is-entered');
+        setTimeout(()=>{ overlay.remove(); }, 900);
+      }, 1300);
+    }
   }
 
   function injectDeco(){
@@ -26,44 +49,26 @@
     const layer = document.createElement('div');
     layer.className = 'aero-deco-layer';
     layer.setAttribute('aria-hidden','true');
+    // Icons 100% mirip poster - crop langsung dari Recruitment Pubmat.jpg, background removal rapi, upscale 512px, transparent 100%
+    // pin_clean, info_clean, cursor_clean, x_clean, bulb_clean, warn_clean - direct + clean
     layer.innerHTML = `
       <div class="deco-icon pin" style="--r:-18deg" title="pin">
-        <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M16 2C16 2 10 2 10 7C10 11 13 13 13 13L11 28L16 24L21 28L19 13C19 13 22 11 22 7C22 2 16 2 16 2Z" fill="#E8E8E8" stroke="#111" stroke-width="1.8" stroke-linejoin="round"/>
-          <circle cx="16" cy="7" r="4" fill="#FF5A5A" stroke="#111" stroke-width="1.5"/>
-          <circle cx="16" cy="7" r="1.8" fill="white"/>
-        </svg>
+        <img src="/images/icons/pin_clean.png" alt="" width="48" height="48" loading="eager" decoding="async" draggable="false">
       </div>
       <div class="deco-icon info" style="--r:-4deg">
-        <svg viewBox="0 0 36 36" fill="none">
-          <path d="M18 3C12 3 7 6.5 7 12C7 17 11 20 14 20.5V25L21 20.5C27 19.5 29 16 29 12C29 6.5 24 3 18 3Z" fill="white" stroke="#111" stroke-width="2" stroke-linejoin="round"/>
-          <text x="18" y="18" text-anchor="middle" dominant-baseline="middle" font-family="Inter,sans-serif" font-weight="900" font-size="14" fill="#111">i</text>
-        </svg>
+        <img src="/images/icons/info_clean.png" alt="" width="44" height="44" loading="eager" decoding="async" draggable="false">
       </div>
       <div class="deco-icon cursor" style="--r:-8deg">
-        <svg viewBox="0 0 32 32" fill="none">
-          <path d="M6 4L6 26L11 19L15 28L19 26L15 17L24 17L6 4Z" fill="white" stroke="#111" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>
-        </svg>
+        <img src="/images/icons/cursor_clean.png" alt="" width="52" height="52" loading="eager" decoding="async" draggable="false">
       </div>
       <div class="deco-icon x" style="--r:6deg">
-        <svg viewBox="0 0 28 28" fill="none">
-          <rect x="2" y="2" width="24" height="24" rx="4" fill="white" stroke="#111" stroke-width="2"/>
-          <path d="M9 9L19 19M19 9L9 19" stroke="#111" stroke-width="2.2" stroke-linecap="round"/>
-        </svg>
+        <img src="/images/icons/x_clean.png" alt="" width="40" height="40" loading="eager" decoding="async" draggable="false">
       </div>
       <div class="deco-icon bulb" style="--r:2deg">
-        <svg viewBox="0 0 32 32" fill="none">
-          <circle cx="16" cy="13" r="9" fill="#FFDE59" stroke="#111" stroke-width="1.8"/>
-          <path d="M12 21H20L19 25H13L12 21Z" fill="#999" stroke="#111" stroke-width="1.5"/>
-          <path d="M14 9C14 9 16 8 18 10" stroke="#FFF7A0" stroke-width="1.5" stroke-linecap="round"/>
-        </svg>
+        <img src="/images/icons/bulb_clean.png" alt="" width="46" height="46" loading="eager" decoding="async" draggable="false">
       </div>
       <div class="deco-icon warn" style="--r:10deg">
-        <svg viewBox="0 0 36 32" fill="none">
-          <path d="M18 2L34 30H2L18 2Z" fill="#FFCC00" stroke="#111" stroke-width="2" stroke-linejoin="round"/>
-          <rect x="16.5" y="10" width="3" height="10" rx="1" fill="#111"/>
-          <circle cx="18" cy="24" r="2" fill="#111"/>
-        </svg>
+        <img src="/images/icons/warn_clean.png" alt="" width="50" height="50" loading="eager" decoding="async" draggable="false">
       </div>
     `;
     document.body.appendChild(layer);
@@ -74,22 +79,17 @@
     if(document.querySelector('.aero-cursor')) return;
     const cur = document.createElement('div');
     cur.className = 'aero-cursor';
-    cur.innerHTML = `
-      <svg viewBox="0 0 32 32" fill="none">
-        <path d="M6 4L6 26L11 19L15 28L19 26L15 17L24 17L6 4Z" fill="white" stroke="#111" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>
-      </svg>
-    `;
+    cur.innerHTML = `<img src="/images/icons/cursor_clean.png" alt="" width="34" height="34" draggable="false">`;
     document.body.appendChild(cur);
     let mx = window.innerWidth/2, my = window.innerHeight/2;
     let cx = mx, cy = my;
-    let raf = null;
     let visible = false;
 
     function loop(){
       cx += (mx - cx) * 0.18;
       cy += (my - cy) * 0.18;
       cur.style.transform = `translate3d(${cx}px,${cy}px,0)`;
-      raf = requestAnimationFrame(loop);
+      requestAnimationFrame(loop);
     }
     loop();
 
@@ -121,18 +121,15 @@
 
   function makeDraggable(){
     const isTouch = window.matchMedia('(hover:none)').matches;
-    if(isTouch) return; // disable drag on touch to avoid scroll jank
+    if(isTouch) return;
     const links = document.querySelectorAll('.link');
     links.forEach(link=>{
       const chin = link.querySelector('.chin');
       if(!chin) return;
       let startX=0, startY=0, origX=0, origY=0, dragging=false;
-      let offsetX=0, offsetY=0;
 
       chin.style.cursor = 'grab';
       chin.addEventListener('mousedown', onStart);
-      // touch fallback
-      chin.addEventListener('touchstart', onTouchStart, {passive:false});
 
       function onStart(e){
         if(e.button!==0) return;
@@ -141,18 +138,7 @@
         window.addEventListener('mousemove', onMove);
         window.addEventListener('mouseup', onEnd);
       }
-      function onTouchStart(e){
-        if(e.touches.length!==1) return;
-        // only start drag after long press? For simplicity allow quick drag
-        // prevent scroll if horizontal move
-        startDrag(e.touches[0].clientX, e.touches[0].clientY);
-        window.addEventListener('touchmove', onTouchMove, {passive:false});
-        window.addEventListener('touchend', onTouchEnd);
-      }
       function startDrag(cx,cy){
-        const rect = link.getBoundingClientRect();
-        const parentRect = link.parentElement.getBoundingClientRect();
-        // compute current translate
         const style = window.getComputedStyle(link);
         const matrix = new DOMMatrix(style.transform === 'none' ? '' : style.transform);
         origX = matrix.m41 || 0;
@@ -161,7 +147,6 @@
         dragging = false;
         link.classList.add('dragging');
         chin.style.cursor='grabbing';
-        // bring to front
         link.style.zIndex = '100';
       }
       function onMove(e){
@@ -172,25 +157,12 @@
           link.style.transform = `translate3d(${origX+dx}px, ${origY+dy}px, 0) rotate(var(--rot))`;
         }
       }
-      function onTouchMove(e){
-        if(e.touches.length!==1) return;
-        const dx = e.touches[0].clientX - startX;
-        const dy = e.touches[0].clientY - startY;
-        if(!dragging && Math.hypot(dx,dy) > 8){
-          dragging=true;
-        }
-        if(dragging){
-          e.preventDefault();
-          link.style.transform = `translate3d(${origX+dx}px, ${origY+dy}px, 0) rotate(var(--rot))`;
-        }
-      }
       function onEnd(e){
         window.removeEventListener('mousemove', onMove);
         window.removeEventListener('mouseup', onEnd);
         link.classList.remove('dragging');
         chin.style.cursor='grab';
         if(dragging){
-          // snap back with spring after 1.2s if not clicked link
           setTimeout(()=>{
             link.style.transition='transform .6s cubic-bezier(.175,.885,.32,1.275)';
             link.style.transform='';
@@ -203,25 +175,8 @@
         }
         dragging=false;
       }
-      function onTouchEnd(){
-        window.removeEventListener('touchmove', onTouchMove);
-        window.removeEventListener('touchend', onTouchEnd);
-        link.classList.remove('dragging');
-        if(dragging){
-          setTimeout(()=>{
-            link.style.transition='transform .5s var(--ease-pop)';
-            link.style.transform='';
-            setTimeout(()=>{ link.style.transition=''; link.style.zIndex=''; }, 500);
-          }, 600);
-        }
-        dragging=false;
-      }
-
-      // click should still navigate unless dragging
       chin.addEventListener('click', (e)=>{
-        if(dragging){
-          e.preventDefault(); e.stopPropagation();
-        }
+        if(dragging){ e.preventDefault(); e.stopPropagation(); }
       }, true);
     });
   }
@@ -240,7 +195,9 @@
       const deco = document.querySelectorAll('.deco-icon');
       deco.forEach((d,i)=>{
         const depth = (i%3+1)*0.4;
-        d.style.transform = `translate3d(${mx*6*depth}px, ${my*4*depth}px, 0) rotate(${d.style.getPropertyValue('--r')||'0deg'})`;
+        // keep original rotation --r, add parallax translate
+        const r = d.style.getPropertyValue('--r') || '0deg';
+        d.style.transform = `translate3d(${mx*6*depth}px, ${my*4*depth}px, 0) rotate(${r})`;
       });
     }, {passive:true});
   }
@@ -253,35 +210,29 @@
     parallax();
     injectTrailingCursor();
 
-    // add subtle pop on load
     const els = document.querySelectorAll('.link, .logo-wrap, .name-text, .bio, .verified');
     els.forEach((el,i)=>{
       el.style.opacity='0';
       el.style.transform+=' scale(0.9)';
       setTimeout(()=>{
-        el.style.transition='opacity .5s var(--ease-smooth), transform .6s var(--ease-pop)';
+        el.style.transition='opacity .5s var(--ease-smooth, cubic-bezier(.16,1,.3,1)), transform .6s var(--ease-pop, cubic-bezier(.175,.885,.32,1.275))';
         el.style.opacity='1';
         el.style.transform = el.style.transform.replace(' scale(0.9)','');
         setTimeout(()=>{ el.style.transition=''; }, 600);
-      }, i*60 + 120);
+      }, i*60 + 80);
     });
   }
 
-  // run after app.js renders #app
   function waitForApp(){
     const app = document.getElementById('app');
     if(!app) return;
-    const observer = new MutationObserver((mutations)=>{
+    const observer = new MutationObserver(()=>{
       if(app.innerHTML.trim().length>0){
-        // debounce
         clearTimeout(waitForApp._t);
-        waitForApp._t = setTimeout(()=>{
-          enhance();
-        }, 80);
+        waitForApp._t = setTimeout(()=>{ enhance(); }, 80);
       }
     });
     observer.observe(app, {childList:true, subtree:true});
-    // also try immediate
     if(app.innerHTML.trim().length>0) enhance();
   }
 
@@ -291,6 +242,5 @@
     waitForApp();
   }
 
-  // expose
   window.SYNTHESIS_ENHANCE = enhance;
 })();

@@ -1,0 +1,311 @@
+/* DOCS — THE SYNTHESIS Frutiger Aero override
+   Embedded via build-docs-playground.py after desktop+engage
+   Keeps workspace functional but skins it as sticker collage
+*/
+@media (min-width: 0px){
+  :root{
+    --page-bg: transparent !important;
+    --syn-green: #00a651;
+    --syn-ink: #111;
+  }
+  html{
+    background: #1e8cff;
+  }
+  body{
+    background: transparent !important;
+    position:relative;
+    isolation:isolate;
+  }
+  body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    z-index:-3;
+    background:
+      radial-gradient(120% 70% at 50% 0%, rgba(255,255,255,0.18) 0%, transparent 60%),
+      url('/images/synthesis-bg.jpg') center / cover no-repeat fixed;
+    filter: saturate(1.15) contrast(1.05) brightness(1.02);
+  }
+  body::after{
+    content:"";
+    position:fixed;
+    inset:0;
+    z-index:9998;
+    pointer-events:none;
+    background:
+      repeating-linear-gradient(0deg, rgba(0,0,0,0) 0 2px, rgba(0,0,0,0.03) 2px 3px);
+    opacity:0.22;
+    mix-blend-mode:multiply;
+    animation: none !important;
+    transform: none !important;
+  }
+  .aero-vignette-docs{
+    position:fixed;
+    inset:0;
+    z-index:-2;
+    pointer-events:none;
+    background:
+      radial-gradient(120% 90% at 50% 10%, transparent 40%, rgba(0,0,0,0.18) 100%),
+      radial-gradient(60% 40% at 90% 10%, rgba(255,255,255,0.32) 0%, transparent 60%);
+  }
+}
+
+/* top navbar as sticker - stabil no getar */
+.top-navbar{
+  background: rgba(255,255,255,0.92) !important;
+  border-bottom: 3px solid var(--syn-ink, #111) !important;
+  box-shadow: 0 4px 0 var(--syn-ink, #111);
+  backdrop-filter: blur(12px) saturate(140%);
+  transform: none !important;
+  animation: none !important;
+}
+.top-navbar .brand-logo-link{
+  background: white;
+  border: 2.5px solid #111;
+  padding: 6px 12px;
+  border-radius: 8px;
+  box-shadow: 3px 3px 0 #111;
+  transform: none !important;
+}
+.top-navbar .brand-badge{
+  background: #00a651 !important;
+  color: white !important;
+  border: 2px solid #111 !important;
+  transform: none !important;
+}
+.top-navbar .status-pill{
+  background: #ffde59 !important;
+  border: 2px solid #111 !important;
+  box-shadow: 2px 2px 0 #111;
+  transform: none !important;
+}
+.top-navbar .btn-nav{
+  background: white !important;
+  border: 2.5px solid #111 !important;
+  box-shadow: 3px 3px 0 #111 !important;
+  border-radius: 10px !important;
+  font-weight: 800 !important;
+  text-transform: uppercase;
+  transform: none !important;
+}
+.top-navbar .btn-nav:hover{
+  transform: translateY(-1px) !important;
+  box-shadow: 4px 5px 0 #111 !important;
+}
+
+/* hero banner - stabil */
+.hero-banner{
+  background: white !important;
+  border: 3px solid #111 !important;
+  box-shadow: 6px 8px 0 #111 !important;
+  border-radius: 12px !important;
+  transform: none !important;
+  position:relative;
+  animation: none !important;
+}
+.hero-banner::before{
+  content:"";
+  position:absolute;
+  top:-14px; left:-10px;
+  width:28px; height:28px;
+  background: radial-gradient(circle at 30% 30%, #eee 0 18%, #aaa 19% 32%, #444 33% 100%);
+  border-radius:50%;
+  border:1.5px solid #222;
+  box-shadow: 1px 2px 0 rgba(0,0,0,0.3);
+  transform: rotate(-18deg);
+}
+.hero-title{
+  font-family: 'Syne', 'Inter', sans-serif !important;
+  font-weight: 800 !important;
+  text-transform: uppercase;
+  letter-spacing: -0.04em !important;
+  color: #00a651 !important;
+}
+.hero-desc{
+  font-weight: 600 !important;
+}
+
+/* section cards as stickers - FIX GETARAN: no float animation di desktop, stabil */
+.section-card{
+  background: white !important;
+  border: 3px solid #111 !important;
+  box-shadow: 6px 8px 0 #111 !important;
+  border-radius: 10px !important;
+  transform: none !important;
+  position:relative;
+  overflow:visible !important;
+  animation: none !important;
+  will-change: auto !important;
+  backface-visibility: hidden;
+}
+.section-card:nth-child(2),
+.section-card:nth-child(3),
+.section-card:nth-child(4),
+.section-card:nth-child(5){
+  --syn-rot: 0deg;
+  animation: none !important;
+  transform: none !important;
+}
+
+/* hapus keyframes getaran */
+@keyframes docsFloat{
+  0%{ transform: none; }
+  100%{ transform: none; }
+}
+
+/* handles for docs cards */
+.section-card::before,
+.section-card::after{
+  content:"";
+  position:absolute;
+  width:9px; height:9px;
+  background:white;
+  border:1.5px solid #111;
+  z-index:2;
+  box-shadow:0 0 0 1px white;
+}
+.section-card::before{ top:-5px; left:-5px; }
+.section-card::after{ top:-5px; right:-5px; }
+
+/* method tags - stabil */
+.method-tag{
+  background: #111 !important;
+  color: white !important;
+  border: 2px solid #111 !important;
+  box-shadow: 2px 2px 0 #111 !important;
+  font-weight: 900 !important;
+  text-transform: uppercase;
+  transform: none !important;
+}
+.method-tag.method-get{ background: #00a651 !important; }
+.method-tag.method-post{ background: #ff8a00 !important; }
+.method-tag.method-ref{ background: #2fa8ff !important; }
+
+/* code cards */
+.code-card{
+  border: 3px solid #111 !important;
+  box-shadow: 5px 6px 0 #111 !important;
+  border-radius: 10px !important;
+  overflow:hidden;
+}
+.code-tabs-head{
+  background: #111 !important;
+}
+.code-tab-btn{
+  background: white !important;
+  border: 2px solid #111 !important;
+  border-radius: 8px !important;
+  font-weight: 800 !important;
+  transform: none !important;
+  box-shadow: 2px 2px 0 #111 !important;
+}
+.code-tab-btn[aria-selected="true"]{
+  background: #ffde59 !important;
+}
+
+/* playground workspace - stabil no getar */
+#playground{
+  background: rgba(255,255,255,0.92) !important;
+  border: 3px solid #111 !important;
+  box-shadow: 8px 10px 0 #111 !important;
+  border-radius: 14px !important;
+  transform: none !important;
+  animation: none !important;
+}
+#playground .pg-panel{
+  border: 2.5px solid #111 !important;
+  box-shadow: 4px 5px 0 #111 !important;
+  border-radius: 10px !important;
+  background: white !important;
+}
+#playground .panel-head{
+  background: #f8fff0 !important;
+  border-bottom: 2.5px solid #111 !important;
+}
+.docs-result-tabs{
+  background: white !important;
+  border-bottom: 2.5px solid #111 !important;
+}
+.docs-result-tabs button[aria-selected="true"]{
+  background: #00a651;
+  color: white;
+  border-radius: 6px;
+  padding: 6px 10px !important;
+  border: 2px solid #111 !important;
+  box-shadow: 2px 2px 0 #111;
+  transform: none !important;
+}
+
+/* buttons - stabil */
+.btn-send-req{
+  background: #00a651 !important;
+  color: white !important;
+  border: 2.5px solid #111 !important;
+  box-shadow: 3px 4px 0 #111 !important;
+  font-weight: 900 !important;
+  text-transform: uppercase;
+  transform: none !important;
+  border-radius: 10px !important;
+}
+.btn-send-req:hover{
+  transform: translateY(-1px) scale(1.02) !important;
+  box-shadow: 5px 6px 0 #111 !important;
+}
+
+/* inputs */
+.search-input, .endpoint-input, .method-select, .iqc-field input, .iqc-field select, .iqc-field textarea, .docs-endpoint-picker select{
+  border: 2.5px solid #111 !important;
+  box-shadow: 3px 3px 0 #111 !important;
+  border-radius: 10px !important;
+  font-weight: 600 !important;
+  background: white !important;
+}
+.search-input:focus, .endpoint-input:focus{
+  box-shadow: 4px 5px 0 #111, 0 0 0 3px #a8e05f !important;
+  transform: translateY(-1px);
+}
+
+/* toc - stabil */
+.toc-card{
+  background: white !important;
+  border: 3px solid #111 !important;
+  box-shadow: 5px 6px 0 #111 !important;
+  border-radius: 12px !important;
+  transform: none !important;
+  animation: none !important;
+}
+.toc-link.active{
+  background: #00a651 !important;
+  color: white !important;
+  border: 2px solid #111 !important;
+  box-shadow: 2px 2px 0 #111 !important;
+  transform: none !important;
+}
+
+/* footer - stabil */
+.site-footer{
+  background: white !important;
+  border: 3px solid #111 !important;
+  box-shadow: 6px 8px 0 #111 !important;
+  border-radius: 12px !important;
+  transform: none !important;
+  animation: none !important;
+}
+
+/* scrollbars */
+.scroller::-webkit-scrollbar-thumb{
+  background: #111 !important;
+  border-radius: 4px !important;
+}
+
+/* deco for docs - hide di desktop biar tidak getar, hanya di mobile subtle */
+.aero-deco-layer,
+.aero-clouds,
+.aero-vignette,
+.aero-cursor{
+  display:none !important;
+}
+@media (min-width: 1024px){
+  body::before{ filter: saturate(1.1) brightness(1.02); }
+  .aero-deco-layer{ display:none !important; }
+}

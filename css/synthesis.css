@@ -1,9 +1,10 @@
-/* THE SYNTHESIS — Frutiger Aero Y2K Sticker Collage Theme
-   Inspired by: Bliss XP wallpaper + white/green selection stickers + pin/cursor/info/bulb/warning
-   Animations: float, drift, wobble, scanline, handle blink
+/* THE SYNTHESIS — Frutiger Aero Y2K + Liquid Glass macOS + Entrance
+   Icons: direct crop from poster, clean transparent 100% rapi
+   Buttons: liquid glass macOS style - translucent, blur, inner highlight
+   Entrance: staggered sticker fly-in
 */
 
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600;700;800;900&display=swap');
 
 :root{
   --syn-sky: #2fa8ff;
@@ -18,6 +19,14 @@
   --syn-warning: #ffcc00;
   --ease-pop: cubic-bezier(.175,.885,.32,1.275);
   --ease-smooth: cubic-bezier(.16,1,.3,1);
+  --ease-glass: cubic-bezier(.25,.8,.25,1);
+  --glass-white: rgba(255,255,255,0.72);
+  --glass-white-strong: rgba(255,255,255,0.88);
+  --glass-green: rgba(0,166,81,0.78);
+  --glass-green-strong: rgba(0,166,81,0.92);
+  --glass-border: rgba(255,255,255,0.65);
+  --glass-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08);
+  --glass-inner: inset 0 1px 0 rgba(255,255,255,0.9), inset 0 -1px 0 rgba(0,0,0,0.04);
 }
 
 *{margin:0;padding:0;box-sizing:border-box}
@@ -40,6 +49,107 @@ body{
   isolation:isolate;
 }
 
+/* ====== ENTRANCE OVERLAY ====== */
+.entrance-overlay{
+  position:fixed;
+  inset:0;
+  z-index:10000;
+  background:
+    radial-gradient(120% 70% at 50% 0%, rgba(255,255,255,0.25) 0%, transparent 60%),
+    url('/images/synthesis-bg.jpg') center / cover no-repeat;
+  display:grid;
+  place-items:center;
+  pointer-events:none;
+  opacity:1;
+  transition: opacity 0.9s var(--ease-smooth), visibility 0.9s;
+}
+.entrance-overlay.hide{
+  opacity:0;
+  visibility:hidden;
+}
+.entrance-logo{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:18px;
+  transform: scale(0.9);
+  animation: entrancePop 0.8s var(--ease-pop) forwards;
+}
+.entrance-logo .entrance-sticker{
+  background: white;
+  border: 3px solid #111;
+  box-shadow: 6px 8px 0 #111;
+  padding: 14px 24px;
+  font-family:'Syne',sans-serif;
+  font-weight:800;
+  font-size: clamp(22px, 6vw, 32px);
+  text-transform:uppercase;
+  letter-spacing:-0.04em;
+  color: var(--syn-green);
+  transform: rotate(-2deg);
+  border-radius:6px;
+  position:relative;
+}
+.entrance-logo .entrance-sticker.green{
+  background: var(--syn-green);
+  color: white;
+  transform: rotate(1.5deg);
+  margin-top:-8px;
+}
+.entrance-logo .entrance-bar{
+  width:120px; height:4px;
+  background: #111;
+  border-radius:99px;
+  overflow:hidden;
+  position:relative;
+}
+.entrance-logo .entrance-bar::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background: var(--syn-green);
+  transform: translateX(-100%);
+  animation: entranceProgress 1.2s var(--ease-smooth) 0.2s forwards;
+}
+@keyframes entrancePop{
+  0%{ transform: scale(0.8) translateY(20px) rotate(-4deg); opacity:0; }
+  60%{ transform: scale(1.05) translateY(-6px) rotate(1deg); opacity:1; }
+  100%{ transform: scale(1) translateY(0) rotate(-1deg); opacity:1; }
+}
+@keyframes entranceProgress{
+  0%{ transform: translateX(-100%); }
+  100%{ transform: translateX(0); }
+}
+
+/* entrance for main content */
+body.is-entering .frame{
+  opacity:0;
+  transform: translateY(30px) scale(0.97);
+  filter: blur(8px);
+}
+body.is-entered .frame{
+  opacity:1;
+  transform: translateY(0) scale(1);
+  filter: blur(0);
+  transition: opacity 0.9s var(--ease-smooth) 0.1s, transform 0.9s var(--ease-glass) 0.1s, filter 0.8s ease 0.1s;
+}
+body.is-entering .link{
+  opacity:0;
+  transform: rotate(var(--rot)) translateY(40px) scale(0.9) !important;
+}
+body.is-entered .link{
+  opacity:1;
+  transition: opacity 0.6s var(--ease-smooth), transform 0.7s var(--ease-pop);
+}
+body.is-entered .link:nth-child(1){ transition-delay: 0.25s; }
+body.is-entered .link:nth-child(2){ transition-delay: 0.32s; }
+body.is-entered .link:nth-child(3){ transition-delay: 0.39s; }
+body.is-entered .link:nth-child(4){ transition-delay: 0.46s; }
+body.is-entered .link:nth-child(5){ transition-delay: 0.53s; }
+body.is-entered .link:nth-child(6){ transition-delay: 0.60s; }
+body.is-entered .link:nth-child(7){ transition-delay: 0.67s; }
+body.is-entered .link:nth-child(8){ transition-delay: 0.74s; }
+
 /* ====== FRUTIGER BG ====== */
 body::before{
   content:"";
@@ -51,7 +161,6 @@ body::before{
     url('/images/synthesis-bg.jpg') center / cover no-repeat;
   filter: saturate(1.15) contrast(1.05) brightness(1.02);
 }
-
 body::after{
   content:"";
   position:fixed;
@@ -59,16 +168,9 @@ body::after{
   z-index:9998;
   pointer-events:none;
   background:
-    repeating-linear-gradient(0deg, rgba(0,0,0,0) 0 2px, rgba(0,0,0,0.045) 2px 3px),
-    repeating-linear-gradient(90deg, rgba(255,0,0,0.015) 0 1px, rgba(0,255,0,0.008) 1px 2px, rgba(0,0,255,0.015) 2px 3px);
-  opacity:0.55;
+    repeating-linear-gradient(0deg, rgba(0,0,0,0) 0 2px, rgba(0,0,0,0.02) 2px 3px);
+  opacity:0.12;
   mix-blend-mode:multiply;
-  animation: scanFlicker 0.18s steps(2) infinite;
-}
-
-@keyframes scanFlicker{
-  0%{opacity:0.48; transform:translateY(0)}
-  100%{opacity:0.55; transform:translateY(0.6px)}
 }
 
 /* vignette + light leak */
@@ -78,12 +180,12 @@ body::after{
   z-index:-2;
   pointer-events:none;
   background:
-    radial-gradient(120% 90% at 50% 10%, transparent 40%, rgba(0,0,0,0.18) 100%),
-    radial-gradient(60% 40% at 90% 10%, rgba(255,255,255,0.35) 0%, transparent 60%),
-    radial-gradient(40% 30% at 10% 90%, rgba(120,255,80,0.18) 0%, transparent 70%);
+    radial-gradient(120% 90% at 50% 10%, transparent 40%, rgba(0,0,0,0.14) 100%),
+    radial-gradient(60% 40% at 90% 10%, rgba(255,255,255,0.32) 0%, transparent 60%),
+    radial-gradient(40% 30% at 10% 90%, rgba(120,255,80,0.14) 0%, transparent 70%);
 }
 
-/* floating clouds extra (CSS only) */
+/* floating clouds */
 .aero-clouds{
   position:fixed;
   inset:0;
@@ -96,7 +198,7 @@ body::after{
   background: white;
   border-radius: 50%;
   filter: blur(0.5px);
-  opacity:0.9;
+  opacity:0.85;
   box-shadow:
     20px 10px 0 -2px white,
     45px 5px 0 2px white,
@@ -105,12 +207,12 @@ body::after{
 }
 .aero-cloud.c1{ width:90px; height:36px; top:12%; left:8%; animation: cloudDrift 28s linear infinite alternate; }
 .aero-cloud.c2{ width:120px; height:44px; top:18%; left:62%; animation: cloudDrift 34s linear infinite alternate-reverse; }
-.aero-cloud.c3{ width:70px; height:28px; top:42%; left:18%; opacity:0.75; animation: cloudDrift 40s linear infinite; }
-.aero-cloud.c4{ width:100px; height:38px; top:36%; left:72%; opacity:0.8; animation: cloudDrift 26s linear infinite alternate; }
+.aero-cloud.c3{ width:70px; height:28px; top:42%; left:18%; opacity:0.7; animation: cloudDrift 40s linear infinite; }
+.aero-cloud.c4{ width:100px; height:38px; top:36%; left:72%; opacity:0.75; animation: cloudDrift 26s linear infinite alternate; }
 
 @keyframes cloudDrift{
-  0%{ transform: translateX(0) translateY(0) }
-  100%{ transform: translateX(40px) translateY(-6px) }
+  0%{ transform: translateX(0) translateY(0) translateZ(0) }
+  100%{ transform: translateX(30px) translateY(-4px) translateZ(0) }
 }
 
 /* ====== FRAME ====== */
@@ -139,12 +241,9 @@ body::after{
   padding-bottom:40px;
 }
 
-/* hide original hero, use bg instead */
-.hero-wrap{
-  display:none !important;
-}
+.hero-wrap{ display:none !important; }
 
-/* topbar share as sticker */
+/* topbar share as liquid glass */
 .topbar{
   position:absolute;
   top:8px;
@@ -154,18 +253,25 @@ body::after{
 .icon-btn{
   width:52px; height:52px;
   display:grid; place-items:center;
-  background: var(--syn-paper);
-  border: 2.5px solid var(--syn-ink);
-  border-radius:14px;
-  box-shadow: 3px 4px 0 var(--syn-ink);
+  background: var(--glass-white);
+  backdrop-filter: blur(18px) saturate(180%);
+  -webkit-backdrop-filter: blur(18px) saturate(180%);
+  border: 1.5px solid var(--glass-border);
+  border-top: 1.5px solid rgba(255,255,255,0.9);
+  border-radius:16px;
+  box-shadow: var(--glass-shadow), var(--glass-inner);
   transform: rotate(3deg);
   cursor:pointer;
-  transition: all .2s var(--ease-pop);
+  transition: all .3s var(--ease-glass);
 }
-.icon-btn:hover{ transform: rotate(0deg) scale(1.08); box-shadow:5px 6px 0 var(--syn-ink); }
+.icon-btn:hover{
+  background: var(--glass-white-strong);
+  transform: rotate(0deg) scale(1.08) translateY(-2px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.15), 0 4px 12px rgba(0,0,0,0.1), var(--glass-inner);
+}
 .icon-btn:active{ transform: scale(.92) rotate(1deg); }
 
-/* ====== LOGO / TITLE — BIG STICKER ====== */
+/* ====== LOGO / TITLE — BIG STICKER liquid glass ====== */
 .content{
   width:100%;
   display:flex;
@@ -178,24 +284,26 @@ body::after{
 
 .logo-wrap, .name-text{
   position:relative;
-  background: var(--syn-paper);
-  border: 3px solid var(--syn-ink);
-  box-shadow: 6px 8px 0 var(--syn-ink);
+  background: linear-gradient(180deg, rgba(255,255,255,0.88) 0%, rgba(255,255,255,0.68) 100%);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1.5px solid var(--glass-border);
+  border-top: 1.5px solid rgba(255,255,255,0.95);
+  box-shadow: var(--glass-shadow), var(--glass-inner), 6px 8px 0 rgba(17,17,17,0.85);
   padding: 14px 22px;
   transform: rotate(-2.8deg);
   z-index:3;
-  animation: floatSticker 4.2s ease-in-out infinite alternate;
+  animation: floatSticker 6s ease-in-out infinite alternate;
 }
 
 .logo-wrap{
   width:min(380px, 86vw);
   display:flex; justify-content:center; align-items:center;
-  border-radius: 6px;
+  border-radius: 16px;
 }
 .logo{
   max-height:64px; width:auto; max-width:100%;
   object-fit:contain;
-  filter: drop-shadow(0 2px 0 rgba(0,0,0,0.1));
 }
 
 .name-text{
@@ -206,41 +314,32 @@ body::after{
   text-transform:uppercase;
   letter-spacing:-0.04em;
   color: var(--syn-green);
-  border-radius:4px;
+  border-radius:14px;
   padding: 12px 18px 10px;
 }
 
-/* pin deco on logo */
+/* pin deco on logo - now using direct icon img */
 .logo-wrap::before, .name-text::before{
   content:"";
   position:absolute;
   top:-18px; left:-14px;
-  width:32px; height:32px;
-  background:
-    radial-gradient(circle at 30% 30%, #eee 0 18%, #aaa 19% 32%, #444 33% 100%);
-  border-radius:50% 50% 50% 50% / 60% 60% 40% 40%;
-  border:1.5px solid #222;
-  box-shadow: 1px 3px 0 rgba(0,0,0,0.3), inset 0 1px 2px white;
+  width:36px; height:36px;
+  background: url('/images/icons/pin_clean.png') center / contain no-repeat;
+  filter: drop-shadow(1px 3px 0 rgba(0,0,0,0.25));
   transform: rotate(-22deg);
   z-index:5;
 }
-.logo-wrap::after, .name-text::after{
-  content:"";
-  position:absolute;
-  top:-8px; left:-6px;
-  width:4px; height:18px;
-  background: #999;
-  transform: rotate(-22deg);
-  z-index:4;
-}
 
-/* bio — GREEN STICKER like LOOKING */
+/* bio — GREEN liquid glass */
 .bio{
   margin-top:-6px;
-  background: var(--syn-green);
+  background: linear-gradient(180deg, rgba(0,166,81,0.88) 0%, rgba(0,166,81,0.72) 100%);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
   color: white;
-  border: 3px solid var(--syn-ink);
-  box-shadow: 6px 7px 0 var(--syn-ink);
+  border: 1.5px solid rgba(255,255,255,0.5);
+  border-top: 1.5px solid rgba(255,255,255,0.75);
+  box-shadow: var(--glass-shadow), inset 0 1px 0 rgba(255,255,255,0.4), 6px 7px 0 rgba(17,17,17,0.85);
   padding: 12px 18px;
   font-weight:800;
   font-size: clamp(13px, 3.6vw, 16px);
@@ -250,32 +349,34 @@ body::after{
   max-width: 92%;
   text-align:center;
   transform: rotate(1.6deg);
-  border-radius:4px;
+  border-radius:14px;
   position:relative;
   z-index:2;
-  animation: floatSticker 4.8s ease-in-out infinite alternate-reverse;
+  animation: floatSticker 6.5s ease-in-out infinite alternate-reverse;
   animation-delay: .4s;
 }
 .bio:empty{display:none}
 
-/* verified as small info bubble */
+/* verified as liquid glass pill */
 .verified{
   margin-top:14px;
-  background: var(--syn-paper);
-  border: 2.5px solid var(--syn-ink);
+  background: var(--glass-white);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1.5px solid var(--glass-border);
   border-radius: 24px;
   padding: 6px 14px 6px 10px;
   font-size:12px; font-weight:800;
   text-transform:uppercase;
   display:inline-flex; align-items:center; gap:6px;
-  box-shadow: 3px 3px 0 var(--syn-ink);
+  box-shadow: var(--glass-shadow), var(--glass-inner);
   transform: rotate(-1.2deg);
   position:relative;
 }
 .verified::before{
   content:"i";
   width:20px; height:20px;
-  background: var(--syn-ink);
+  background: #111;
   color:white;
   border-radius:50%;
   display:grid; place-items:center;
@@ -284,7 +385,7 @@ body::after{
 }
 .verified .vbadge{ display:none; }
 
-/* ====== LINKS — STICKER COLLAGE ====== */
+/* ====== LINKS — LIQUID GLASS STICKER ====== */
 .panel{
   width:100%;
   margin-top:28px;
@@ -306,26 +407,28 @@ body::after{
   align-items:center;
   gap:8px;
   padding: 0 6px;
-  transform: rotate(-1deg);
+  transform: none;
 }
 .link-group-title{
-  background: var(--syn-ink);
+  background: rgba(17,17,17,0.9);
+  backdrop-filter: blur(12px);
   color: white;
   font-size:10px; font-weight:900;
   letter-spacing:0.8px;
   text-transform:uppercase;
-  padding:5px 10px;
-  border-radius:4px;
-  border:2px solid var(--syn-ink);
-  box-shadow:2px 2px 0 var(--syn-ink);
+  padding:6px 12px;
+  border-radius:99px;
+  border:1.5px solid rgba(255,255,255,0.15);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 .link-group-count{
-  background: var(--syn-yellow);
-  border:2px solid var(--syn-ink);
+  background: linear-gradient(180deg, rgba(255,222,89,0.9) 0%, rgba(255,222,89,0.75) 100%);
+  backdrop-filter: blur(12px);
+  border:1.5px solid rgba(255,255,255,0.6);
   border-radius:99px;
   font:900 11px 'Inter',monospace;
-  padding:3px 8px;
-  box-shadow:2px 2px 0 var(--syn-ink);
+  padding:4px 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1), var(--glass-inner);
 }
 
 .links{
@@ -340,37 +443,32 @@ body::after{
   position:relative;
   width:100%;
   --rot: -1.5deg;
-  animation: floatSticker var(--float-dur, 4.5s) ease-in-out infinite alternate;
+  animation: floatSticker var(--float-dur, 6s) ease-in-out infinite alternate;
   animation-delay: var(--float-delay, 0s);
   will-change: transform;
   transition: z-index 0s;
+  backface-visibility:hidden;
+  transform: translateZ(0);
 }
-.link:nth-child(1){ --rot:-3.2deg; --float-dur:4.2s; --float-delay:0s; }
-.link:nth-child(2){ --rot:2.1deg; --float-dur:5s; --float-delay:0.2s; }
-.link:nth-child(3){ --rot:-1.8deg; --float-dur:4.6s; --float-delay:0.4s; }
-.link:nth-child(4){ --rot:1.4deg; --float-dur:5.2s; --float-delay:0.1s; }
-.link:nth-child(5){ --rot:-2.6deg; --float-dur:4s; --float-delay:0.6s; }
-.link:nth-child(6){ --rot:2.8deg; --float-dur:4.8s; --float-delay:0.3s; }
-.link:nth-child(7){ --rot:-1.2deg; --float-dur:5.5s; --float-delay:0.5s; }
-.link:nth-child(8){ --rot:1.9deg; --float-dur:4.3s; --float-delay:0.7s; }
+.link:nth-child(1){ --rot:-2.5deg; --float-dur:5.5s; --float-delay:0s; }
+.link:nth-child(2){ --rot:1.8deg; --float-dur:6.2s; --float-delay:0.2s; }
+.link:nth-child(3){ --rot:-1.2deg; --float-dur:5.8s; --float-delay:0.4s; }
+.link:nth-child(4){ --rot:1.2deg; --float-dur:6.5s; --float-delay:0.1s; }
+.link:nth-child(5){ --rot:-1.8deg; --float-dur:5.2s; --float-delay:0.6s; }
+.link:nth-child(6){ --rot:2.0deg; --float-dur:6s; --float-delay:0.3s; }
+.link:nth-child(7){ --rot:-0.8deg; --float-dur:6.8s; --float-delay:0.5s; }
+.link:nth-child(8){ --rot:1.4deg; --float-dur:5.6s; --float-delay:0.7s; }
 
-.link:hover{
-  z-index:20 !important;
-  animation-play-state:paused;
-}
+.link:hover{ z-index:20 !important; animation-play-state:paused; }
 
 @keyframes floatSticker{
-  0%{ transform: rotate(var(--rot)) translateY(0) }
-  100%{ transform: rotate(calc(var(--rot) + 0.9deg)) translateY(-7px) }
+  0%{ transform: rotate(var(--rot)) translateY(0) translateZ(0) }
+  100%{ transform: rotate(var(--rot)) translateY(-5px) translateZ(0) }
 }
 
-.link-hit{
-  display:block;
-  width:100%;
-  text-decoration:none;
-  outline:none;
-}
+.link-hit{ display:block; width:100%; text-decoration:none; outline:none; }
 
+/* LIQUID GLASS CHIN */
 .chin{
   position:relative;
   display:flex;
@@ -378,49 +476,58 @@ body::after{
   gap:12px;
   min-height:62px;
   padding:14px 18px 14px 16px;
-  background: var(--syn-paper);
-  border: 3px solid var(--syn-ink);
-  border-radius:6px;
-  box-shadow: 5px 6px 0 var(--syn-ink);
+  background: linear-gradient(180deg, var(--glass-white-strong) 0%, var(--glass-white) 100%);
+  backdrop-filter: blur(22px) saturate(180%);
+  -webkit-backdrop-filter: blur(22px) saturate(180%);
+  border: 1.5px solid var(--glass-border);
+  border-top: 1.5px solid rgba(255,255,255,0.95);
+  border-radius:16px;
+  box-shadow: var(--glass-shadow), var(--glass-inner), 5px 6px 0 rgba(17,17,17,0.85);
   color: var(--syn-green);
   font-weight:900;
   text-transform:uppercase;
   letter-spacing:-0.02em;
   line-height:1.1;
   transform: rotate(var(--rot));
-  transition: transform .28s var(--ease-pop), box-shadow .2s ease, background .2s ease, color .2s ease;
+  transition: transform .35s var(--ease-glass), box-shadow .3s var(--ease-glass), background .3s ease;
   overflow:visible;
 }
 
-/* alternating green/white like poster */
 .link:nth-child(even) .chin{
-  background: var(--syn-green);
+  background: linear-gradient(180deg, var(--glass-green-strong) 0%, var(--glass-green) 100%);
   color: white;
+  border: 1.5px solid rgba(255,255,255,0.45);
+  border-top: 1.5px solid rgba(255,255,255,0.7);
 }
-.link:nth-child(even) .chin .link-desc{ color: #dcffdc; }
+.link:nth-child(even) .chin .link-desc{ color: rgba(255,255,255,0.92); }
 .link:nth-child(3n) .chin{
-  background: #eafff2;
+  background: linear-gradient(180deg, rgba(234,255,242,0.9) 0%, rgba(234,255,242,0.72) 100%);
 }
 
 .chin:hover{
-  transform: rotate(0deg) scale(1.03);
-  box-shadow: 8px 10px 0 var(--syn-ink);
+  transform: rotate(0deg) scale(1.02) translateY(-2px);
+  background: linear-gradient(180deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.78) 100%);
+  box-shadow: 0 14px 40px rgba(0,0,0,0.16), 0 6px 16px rgba(0,0,0,0.1), var(--glass-inner), 8px 10px 0 rgba(17,17,17,0.85);
+}
+.link:nth-child(even) .chin:hover{
+  background: linear-gradient(180deg, rgba(0,179,89,0.92) 0%, rgba(0,166,81,0.82) 100%);
 }
 .chin:active{
   transform: rotate(0deg) scale(0.98);
-  box-shadow: 3px 3px 0 var(--syn-ink);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12), var(--glass-inner), 3px 3px 0 rgba(17,17,17,0.85);
 }
 
 .thumb{
   position:relative;
   left:auto; top:auto; transform:none;
   width:42px; height:42px;
-  border-radius:6px;
-  border:2px solid var(--syn-ink);
+  border-radius:12px;
+  border:1.5px solid rgba(255,255,255,0.7);
   overflow:hidden;
   flex-shrink:0;
-  background:white;
-  box-shadow:2px 2px 0 var(--syn-ink);
+  background: rgba(255,255,255,0.8);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1), var(--glass-inner);
 }
 .thumb img{ width:100%; height:100%; object-fit:cover; }
 
@@ -440,8 +547,6 @@ body::after{
   line-height:1.05;
   letter-spacing:-0.03em;
   text-wrap:balance;
-  overflow:visible;
-  text-overflow:clip;
 }
 
 .link-desc{
@@ -451,35 +556,36 @@ body::after{
   line-height:1.35;
   text-transform:none;
   letter-spacing:0;
-  color:#2d5a2d;
+  color: rgba(45,90,45,0.85);
   max-width:36ch;
-  opacity:0.95;
 }
 
 .link-badge{
   font:900 9px 'Inter',monospace;
-  background: var(--syn-yellow);
-  border:1.5px solid var(--syn-ink);
-  color: var(--syn-ink);
-  padding:2px 6px;
-  border-radius:4px;
+  background: linear-gradient(180deg, rgba(255,222,89,0.95) 0%, rgba(255,222,89,0.8) 100%);
+  backdrop-filter: blur(8px);
+  border:1.5px solid rgba(255,255,255,0.6);
+  color: #111;
+  padding:3px 8px;
+  border-radius:99px;
   margin-left:8px;
   vertical-align:middle;
-  box-shadow:1.5px 1.5px 0 var(--syn-ink);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1), var(--glass-inner);
   text-transform:uppercase;
 }
 
-/* ====== HANDLES — like selection box in poster ====== */
+/* handles */
 .chin .handle{
   position:absolute;
   width:9px; height:9px;
-  background:white;
-  border:1.5px solid var(--syn-ink);
-  border-radius:1px;
-  box-shadow:0 0 0 1px white;
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(4px);
+  border:1.5px solid #111;
+  border-radius:2px;
+  box-shadow:0 0 0 1px rgba(255,255,255,0.8), 0 2px 4px rgba(0,0,0,0.1);
   z-index:2;
   pointer-events:none;
-  animation: handleBlink 1.6s ease-in-out infinite alternate;
+  animation: handleBlink 2s ease-in-out infinite alternate;
 }
 .chin .handle.tl{ top:-5px; left:-5px; }
 .chin .handle.tr{ top:-5px; right:-5px; }
@@ -491,17 +597,16 @@ body::after{
 .chin .handle.rc{ top:50%; right:-5px; transform:translateY(-50%); }
 
 @keyframes handleBlink{
-  0%{ opacity:1; background:white; }
-  100%{ opacity:0.7; background:#e0ffe0; }
+  0%{ opacity:1; background:rgba(255,255,255,0.95); }
+  100%{ opacity:0.7; background:rgba(220,255,220,0.95); }
 }
 
-/* hide handles until hover/focus on desktop */
 @media (hover:hover){
   .chin .handle{ opacity:0; transition: opacity .2s; }
   .link:hover .chin .handle, .link:focus-within .chin .handle{ opacity:1; }
 }
 
-/* ====== DECO ICONS — pin, cursor, info, X, bulb, warning ====== */
+/* deco icons - using direct PNG 100% rapi */
 .aero-deco-layer{
   position:fixed;
   inset:0;
@@ -514,92 +619,48 @@ body::after{
   position:absolute;
   display:grid;
   place-items:center;
-  filter: drop-shadow(2px 3px 0 rgba(0,0,0,0.25));
-  animation: decoFloat 3.8s ease-in-out infinite alternate;
+  filter: drop-shadow(2px 4px 8px rgba(0,0,0,0.18)) drop-shadow(0 2px 4px rgba(0,0,0,0.12));
+  animation: decoFloat 6s ease-in-out infinite alternate;
   will-change:transform;
   user-select:none;
+  backface-visibility:hidden;
+  transform: translateZ(0);
 }
-
-.deco-icon svg{
+.deco-icon img{
   width:100%; height:100%;
   display:block;
+  object-fit:contain;
+  pointer-events:none;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
 }
 
-.deco-icon.pin{
-  width:42px; height:42px;
-  top: 22%; left: 6%;
-  transform: rotate(-18deg);
-  animation: pinWobble 2.2s ease-in-out infinite alternate;
-}
-.deco-icon.info{
-  width:38px; height:38px;
-  top: 16%; left: 22%;
-  animation-delay:0.3s;
-}
-.deco-icon.cursor{
-  width:46px; height:46px;
-  top: 14%; right: 12%;
-  transform: rotate(-8deg);
-  animation: cursorTwitch 1.8s ease-in-out infinite;
-}
-.deco-icon.x{
-  width:32px; height:32px;
-  top: 44%; left: 4%;
-  transform: rotate(8deg);
-}
-.deco-icon.bulb{
-  width:40px; height:40px;
-  top: 52%; left: 18%;
-  animation: bulbFlicker 2.5s ease-in-out infinite;
-}
-.deco-icon.warn{
-  width:44px; height:44px;
-  top: 48%; right: 6%;
-  transform: rotate(12deg);
-  animation: warnShake 3s ease-in-out infinite;
-}
+.deco-icon.pin{ width:52px; height:52px; top: 22%; left: 6%; --r:-18deg; transform: rotate(-18deg); animation: decoFloat 5.5s ease-in-out infinite alternate; }
+.deco-icon.info{ width:48px; height:48px; top: 16%; left: 22%; --r:-4deg; animation-delay:0.3s; }
+.deco-icon.cursor{ width:56px; height:56px; top: 14%; right: 12%; --r:-8deg; transform: rotate(-8deg); animation: decoFloat 6.5s ease-in-out infinite alternate; }
+.deco-icon.x{ width:44px; height:44px; top: 44%; left: 4%; --r:8deg; transform: rotate(8deg); }
+.deco-icon.bulb{ width:52px; height:52px; top: 52%; left: 18%; --r:2deg; animation: decoFloat 5s ease-in-out infinite alternate; }
+.deco-icon.warn{ width:54px; height:54px; top: 48%; right: 6%; --r:10deg; transform: rotate(10deg); animation: decoFloat 6s ease-in-out infinite alternate; }
 
 @keyframes decoFloat{
-  0%{ transform: translateY(0) rotate(var(--r,0deg)) }
-  100%{ transform: translateY(-10px) rotate(calc(var(--r,0deg) + 3deg)) }
-}
-@keyframes pinWobble{
-  0%{ transform: rotate(-20deg) translateY(0) }
-  100%{ transform: rotate(-14deg) translateY(-6px) }
-}
-@keyframes cursorTwitch{
-  0%, 85%, 100%{ transform: translate(0,0) rotate(-8deg) }
-  90%{ transform: translate(4px,3px) rotate(-8deg) scale(0.95) }
-  92%{ transform: translate(0,0) rotate(-8deg) }
-}
-@keyframes bulbFlicker{
-  0%, 100%{ filter: drop-shadow(2px 3px 0 rgba(0,0,0,0.25)) brightness(1) }
-  50%{ filter: drop-shadow(0 0 8px #ffeb3b) brightness(1.15) drop-shadow(2px 3px 0 rgba(0,0,0,0.25)) }
-  52%{ filter: brightness(0.9) }
-  54%{ filter: brightness(1.2) }
-}
-@keyframes warnShake{
-  0%, 90%, 100%{ transform: rotate(12deg) }
-  92%{ transform: rotate(14deg) translateX(2px) }
-  94%{ transform: rotate(10deg) translateX(-2px) }
-  96%{ transform: rotate(13deg) }
+  0%{ transform: translateY(0) rotate(var(--r,0deg)) translateZ(0) }
+  100%{ transform: translateY(-8px) rotate(var(--r,0deg)) translateZ(0) }
 }
 
-/* custom trailing cursor */
+/* trailing cursor */
 .aero-cursor{
   position:fixed;
   top:0; left:0;
-  width:34px; height:34px;
+  width:36px; height:36px;
   pointer-events:none;
   z-index:9999;
-  mix-blend-mode:normal;
-  filter: drop-shadow(2px 3px 0 rgba(0,0,0,0.35));
+  filter: drop-shadow(2px 4px 8px rgba(0,0,0,0.22));
   transition: transform 0.08s linear;
   will-change:transform;
 }
-.aero-cursor svg{ width:100%; height:100%; }
+.aero-cursor img{ width:100%; height:100%; display:block; }
 
-/* socials as small stickers */
+/* socials liquid glass */
 .socials{
   display:flex;
   flex-wrap:wrap;
@@ -609,14 +670,17 @@ body::after{
   padding: 0 10px 20px;
 }
 .social{
-  width:48px; height:48px;
-  background:white;
-  border:2.5px solid var(--syn-ink);
-  border-radius:12px;
-  box-shadow:3px 4px 0 var(--syn-ink);
+  width:50px; height:50px;
+  background: var(--glass-white);
+  backdrop-filter: blur(18px) saturate(180%);
+  -webkit-backdrop-filter: blur(18px) saturate(180%);
+  border:1.5px solid var(--glass-border);
+  border-top:1.5px solid rgba(255,255,255,0.9);
+  border-radius:16px;
+  box-shadow: var(--glass-shadow), var(--glass-inner);
   display:grid; place-items:center;
   transform: rotate(var(--sr, -2deg));
-  transition: all .22s var(--ease-pop);
+  transition: all .3s var(--ease-glass);
 }
 .social:nth-child(1){ --sr:-3deg; }
 .social:nth-child(2){ --sr:2deg; }
@@ -625,20 +689,23 @@ body::after{
 .social:nth-child(5){ --sr:-2.2deg; }
 .social:hover{
   transform: rotate(0deg) scale(1.12) translateY(-3px);
-  box-shadow:5px 6px 0 var(--syn-ink);
-  background: var(--syn-yellow);
+  background: var(--glass-white-strong);
+  box-shadow: 0 14px 36px rgba(0,0,0,0.16), 0 6px 16px rgba(0,0,0,0.1), var(--glass-inner);
 }
-.social svg{ width:22px; height:22px; fill: var(--syn-ink); }
+.social svg{ width:22px; height:22px; fill: #111; }
 
-/* explore CTA */
+/* explore CTA liquid glass */
 .explore-cta{
   margin-top:18px;
-  background:white;
-  border:3px solid var(--syn-ink);
-  border-radius:10px;
-  box-shadow:6px 7px 0 var(--syn-ink);
-  padding:16px;
-  transform: rotate(0.8deg);
+  background: linear-gradient(180deg, rgba(255,255,255,0.88) 0%, rgba(255,255,255,0.72) 100%);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border:1.5px solid var(--glass-border);
+  border-top:1.5px solid rgba(255,255,255,0.9);
+  border-radius:18px;
+  box-shadow: var(--glass-shadow), var(--glass-inner), 6px 7px 0 rgba(17,17,17,0.85);
+  padding:18px;
+  transform: none;
   display:flex;
   flex-direction:column;
   gap:10px;
@@ -649,55 +716,59 @@ body::after{
 }
 .explore-desc{
   font-family:Inter,sans-serif;
-  font-size:12px; font-weight:600; line-height:1.5; color:#2a3a1a;
+  font-size:12px; font-weight:600; line-height:1.5; color: rgba(42,58,26,0.85);
 }
 .explore-btn{
   display:inline-flex; justify-content:center; align-items:center;
   padding:12px 16px;
-  background: var(--syn-green);
+  background: linear-gradient(180deg, var(--glass-green-strong) 0%, var(--glass-green) 100%);
+  backdrop-filter: blur(16px) saturate(160%);
   color:white;
-  border:2.5px solid var(--syn-ink);
-  border-radius:8px;
+  border:1.5px solid rgba(255,255,255,0.45);
+  border-top:1.5px solid rgba(255,255,255,0.7);
+  border-radius:14px;
   font-size:13px; font-weight:900;
   text-transform:uppercase;
-  box-shadow:3px 4px 0 var(--syn-ink);
-  transition: all .2s var(--ease-pop);
+  box-shadow: 0 8px 24px rgba(0,166,81,0.25), 0 2px 8px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.4);
+  transition: all .3s var(--ease-glass);
 }
 .explore-btn:hover{
   transform: translateY(-2px) scale(1.02);
-  box-shadow:5px 6px 0 var(--syn-ink);
-  background: #00b359;
+  background: linear-gradient(180deg, rgba(0,179,89,0.92) 0%, rgba(0,166,81,0.85) 100%);
+  box-shadow: 0 12px 36px rgba(0,166,81,0.32), 0 6px 16px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.5);
 }
 
-/* toast */
+/* toast liquid glass */
 .toast{
   position:fixed;
   left:50%; bottom: calc(20px + env(safe-area-inset-bottom,0px));
   transform: translate(-50%, 16px);
-  background: var(--syn-ink);
+  background: rgba(17,17,17,0.85);
+  backdrop-filter: blur(20px) saturate(180%);
   color:white;
-  padding:12px 18px;
+  padding:12px 20px;
   border-radius:99px;
   font:700 13px Inter,sans-serif;
-  border:2px solid white;
-  box-shadow:4px 5px 0 var(--syn-ink);
+  border:1.5px solid rgba(255,255,255,0.15);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.15);
   opacity:0;
   pointer-events:none;
-  transition: all .3s var(--ease-smooth);
+  transition: all .4s var(--ease-glass);
   z-index:10000;
 }
 .toast.show{ opacity:1; transform: translate(-50%,0); }
 
-/* ====== MOBILE ====== */
+/* MOBILE */
 @media (max-width:640px){
   .frame{ padding:14px 10px 50px; }
   .profile{ max-width:100%; }
-  .logo-wrap, .name-text{ padding:10px 16px; }
-  .chin{ min-height:56px; padding:12px 14px; }
-  .deco-icon{ display:none; } /* hide deco on small to reduce clutter, except pin */
-  .deco-icon.pin, .deco-icon.cursor{ display:grid; width:30px; height:30px; opacity:0.7; }
+  .logo-wrap, .name-text{ padding:10px 16px; border-radius:14px; }
+  .chin{ min-height:56px; padding:12px 14px; border-radius:14px; }
+  .deco-icon{ display:none; }
+  .deco-icon.pin, .deco-icon.cursor{ display:grid; width:32px; height:32px; opacity:0.8; }
   .aero-cursor{ display:none; }
   .socials{ gap:10px; }
+  .entrance-logo .entrance-sticker{ font-size: 20px; }
 }
 
 @media (min-width: 900px){
@@ -707,26 +778,19 @@ body::after{
   .chin{ min-height:66px; }
 }
 
-/* reduced motion */
 @media (prefers-reduced-motion:reduce){
   *, *::before, *::after{ animation:none !important; transition:none !important; }
   body::after{ display:none; }
+  .entrance-overlay{ display:none; }
 }
 
-/* ====== DRAGGABLE STATE ====== */
-.link.dragging{
-  z-index:50 !important;
-  animation:none !important;
-}
+.link.dragging{ z-index:50 !important; animation:none !important; }
 .link.dragging .chin{
-  box-shadow: 12px 14px 0 var(--syn-ink);
-  transform: rotate(0deg) scale(1.05);
+  box-shadow: 0 16px 48px rgba(0,0,0,0.18), 0 8px 24px rgba(0,0,0,0.12), var(--glass-inner), 12px 14px 0 rgba(17,17,17,0.85);
+  transform: rotate(0deg) scale(1.05) translateZ(0);
   cursor:grabbing;
 }
 
-/* ====== CURSOR HIDING ON DESKTOP FOR FUN (optional) ====== */
 @media (hover:hover) and (pointer:fine) and (min-width:900px){
-  body.aero-custom-cursor *{
-    cursor: none !important;
-  }
+  body.aero-custom-cursor *{ cursor: none !important; }
 }

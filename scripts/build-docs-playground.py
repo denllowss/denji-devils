@@ -33,7 +33,12 @@ try:
     analytics_src = (ROOT/'src/ui/analytics.js').read_text()
 except:
     analytics_src = ''
-embed_before((ROOT/'src/ui/docs-desktop.js').read_text()+'\n'+(ROOT/'src/ui/docs-engage.js').read_text()+'\n'+analytics_src,'/* DOCS_DESKTOP_UI_START */','/* DOCS_DESKTOP_UI_END */','</script>')
+entrance_src = ''
+try:
+    entrance_src = (ROOT/'src/ui/docs-entrance.js').read_text()
+except:
+    entrance_src = ''
+embed_before(entrance_src+'\n'+(ROOT/'src/ui/docs-desktop.js').read_text()+'\n'+(ROOT/'src/ui/docs-engage.js').read_text()+'\n'+analytics_src,'/* DOCS_DESKTOP_UI_START */','/* DOCS_DESKTOP_UI_END */','</script>')
 # Static, shareable reference for every IQC model (also readable without JavaScript).
 import json
 from html import escape
