@@ -1,8 +1,14 @@
-/* Editor — THE SYNTHESIS frutiger aero override for IQC/SSGC/Lowquality editors */
+/* Editor — THE SYNTHESIS liquid glass macOS + no vibration */
 :root{
   --syn-green:#00a651;
   --syn-ink:#111;
   --syn-yellow:#ffde59;
+  --glass-white: rgba(255,255,255,0.72);
+  --glass-white-strong: rgba(255,255,255,0.88);
+  --glass-green: rgba(0,166,81,0.78);
+  --glass-border: rgba(255,255,255,0.65);
+  --glass-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08);
+  --glass-inner: inset 0 1px 0 rgba(255,255,255,0.9), inset 0 -1px 0 rgba(0,0,0,0.04);
 }
 html{background:#1e8cff}
 body{
@@ -25,62 +31,69 @@ body::after{
   inset:0;
   z-index:9998;
   pointer-events:none;
-  background:
-    repeating-linear-gradient(0deg, rgba(0,0,0,0) 0 2px, rgba(0,0,0,0.04) 2px 3px);
-  opacity:0.35;
-  mix-blend-mode:multiply;
+  background: repeating-linear-gradient(0deg, rgba(0,0,0,0) 0 2px, rgba(0,0,0,0.02) 2px 3px);
+  opacity:0.12;
 }
 header{
-  background: rgba(255,255,255,0.92) !important;
-  border-bottom: 3px solid #111 !important;
-  box-shadow: 0 4px 0 #111 !important;
-  backdrop-filter: blur(10px);
+  background: rgba(255,255,255,0.78) !important;
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1.5px solid rgba(255,255,255,0.65) !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.9) !important;
 }
 header .brand{
-  background: white;
-  border: 2.5px solid #111;
-  padding: 6px 12px;
-  border-radius: 8px;
-  box-shadow: 3px 3px 0 #111;
-  transform: rotate(-1deg);
+  background: linear-gradient(180deg, rgba(255,255,255,0.88) 0%, rgba(255,255,255,0.72) 100%) !important;
+  backdrop-filter: blur(16px);
+  border: 1.5px solid rgba(255,255,255,0.65) !important;
+  padding: 6px 14px !important;
+  border-radius: 12px !important;
+  box-shadow: var(--glass-shadow), var(--glass-inner) !important;
+  transform: none !important;
   font-weight: 900 !important;
   text-transform: uppercase;
 }
 header .badge{
-  background: #00a651 !important;
+  background: linear-gradient(180deg, rgba(0,166,81,0.92) 0%, rgba(0,166,81,0.78) 100%) !important;
+  backdrop-filter: blur(12px);
   color: white !important;
-  border: 2px solid #111 !important;
-  box-shadow: 2px 2px 0 #111;
+  border: 1.5px solid rgba(255,255,255,0.45) !important;
+  box-shadow: 0 4px 12px rgba(0,166,81,0.25), var(--glass-inner) !important;
+  border-radius: 99px !important;
 }
 .nav a{
-  background: white !important;
-  border: 2.5px solid #111 !important;
-  box-shadow: 3px 3px 0 #111 !important;
-  border-radius: 10px !important;
+  background: var(--glass-white) !important;
+  backdrop-filter: blur(16px) saturate(180%);
+  border: 1.5px solid var(--glass-border) !important;
+  box-shadow: var(--glass-shadow), var(--glass-inner) !important;
+  border-radius: 12px !important;
   font-weight: 800 !important;
   text-transform: uppercase;
   font-size: 11px !important;
-  padding: 7px 10px !important;
-  transform: rotate(-0.8deg);
+  padding: 8px 12px !important;
+  transform: none !important;
+  transition: all .3s cubic-bezier(.25,.8,.25,1) !important;
 }
 .nav a:hover{
-  transform: rotate(0deg) translateY(-2px) !important;
-  box-shadow: 4px 5px 0 #111 !important;
+  background: var(--glass-white-strong) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.14), var(--glass-inner) !important;
 }
 
-.layout{
-  gap: 20px !important;
-}
+.layout{ gap: 20px !important; }
 .tools, .preview-head, .api-panel, .preview-shell{
-  background: white !important;
-  border: 3px solid #111 !important;
-  box-shadow: 6px 8px 0 #111 !important;
-  border-radius: 12px !important;
-  transform: rotate(var(--rot, -0.3deg));
+  background: linear-gradient(180deg, rgba(255,255,255,0.88) 0%, rgba(255,255,255,0.74) 100%) !important;
+  backdrop-filter: blur(22px) saturate(180%);
+  -webkit-backdrop-filter: blur(22px) saturate(180%);
+  border: 1.5px solid var(--glass-border) !important;
+  border-top: 1.5px solid rgba(255,255,255,0.9) !important;
+  box-shadow: var(--glass-shadow), var(--glass-inner), 6px 8px 0 rgba(17,17,17,0.85) !important;
+  border-radius: 18px !important;
+  transform: none !important;
+  animation: none !important;
 }
-.tools{ --rot:-0.5deg; }
-.preview-head{ --rot:0.4deg; padding: 12px 16px !important; }
-.api-panel{ --rot:0.2deg; }
+.tools{ padding: 20px !important; }
+.preview-head{ padding: 14px 18px !important; }
+.api-panel{ padding: 16px !important; }
 
 .tools h1{
   font-family: 'Syne', Inter, sans-serif !important;
@@ -90,9 +103,7 @@ header .badge{
   color: #00a651 !important;
   line-height: 0.95 !important;
 }
-.intro{
-  font-weight: 600 !important;
-}
+.intro{ font-weight: 600 !important; }
 
 .field label{
   font-weight: 800 !important;
@@ -101,61 +112,85 @@ header .badge{
   letter-spacing: 0.5px;
 }
 .field input, .field select, .field textarea{
-  border: 2.5px solid #111 !important;
-  box-shadow: 3px 3px 0 #111 !important;
-  border-radius: 10px !important;
+  background: rgba(255,255,255,0.78) !important;
+  backdrop-filter: blur(12px);
+  border: 1.5px solid rgba(255,255,255,0.65) !important;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.06), var(--glass-inner) !important;
+  border-radius: 12px !important;
   font-weight: 600 !important;
+  transition: all .25s ease !important;
 }
 .field input:focus, .field select:focus, .field textarea:focus{
-  box-shadow: 4px 5px 0 #111, 0 0 0 3px #a8e05f !important;
+  background: rgba(255,255,255,0.92) !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.1), 0 0 0 3px rgba(168,224,95,0.4), var(--glass-inner) !important;
   transform: translateY(-1px);
+  outline:none !important;
+  border-color: rgba(0,166,81,0.4) !important;
 }
 
 .button{
-  background: #00a651 !important;
+  background: linear-gradient(180deg, rgba(0,166,81,0.92) 0%, rgba(0,166,81,0.78) 100%) !important;
+  backdrop-filter: blur(16px);
   color: white !important;
-  border: 2.5px solid #111 !important;
-  box-shadow: 3px 4px 0 #111 !important;
+  border: 1.5px solid rgba(255,255,255,0.45) !important;
+  border-top: 1.5px solid rgba(255,255,255,0.7) !important;
+  box-shadow: 0 8px 24px rgba(0,166,81,0.28), 0 2px 8px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.4) !important;
   font-weight: 900 !important;
   text-transform: uppercase;
-  border-radius: 10px !important;
-  transform: rotate(-0.8deg);
+  border-radius: 14px !important;
+  transform: none !important;
+  transition: all .3s cubic-bezier(.25,.8,.25,1) !important;
 }
 .button:hover{
-  transform: rotate(0deg) scale(1.02) !important;
-  box-shadow: 5px 6px 0 #111 !important;
+  transform: translateY(-2px) scale(1.02) !important;
+  background: linear-gradient(180deg, rgba(0,179,89,0.95) 0%, rgba(0,166,81,0.85) 100%) !important;
+  box-shadow: 0 12px 36px rgba(0,166,81,0.35), 0 6px 16px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.5) !important;
 }
 .button.secondary{
-  background: white !important;
+  background: var(--glass-white) !important;
+  backdrop-filter: blur(16px);
   color: #111 !important;
+  border: 1.5px solid var(--glass-border) !important;
+  box-shadow: var(--glass-shadow), var(--glass-inner) !important;
+}
+.button.secondary:hover{
+  background: var(--glass-white-strong) !important;
 }
 
 .preset-list button, .profile-modes button, .iqc-variants button{
-  background: white !important;
-  border: 2.5px solid #111 !important;
-  box-shadow: 2px 3px 0 #111 !important;
-  border-radius: 8px !important;
+  background: var(--glass-white) !important;
+  backdrop-filter: blur(12px);
+  border: 1.5px solid var(--glass-border) !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06), var(--glass-inner) !important;
+  border-radius: 12px !important;
   font-weight: 800 !important;
   text-transform: uppercase;
   font-size: 11px !important;
-  transform: rotate(var(--r, -0.5deg));
+  transform: none !important;
+  transition: all .25s ease !important;
 }
-.preset-list button:nth-child(2){ --r:0.8deg }
-.preset-list button:nth-child(3){ --r:-1deg }
+.preset-list button:hover, .profile-modes button:hover{
+  transform: translateY(-1px) !important;
+  background: var(--glass-white-strong) !important;
+}
 .preset-list button[aria-pressed="true"], .profile-modes button[aria-pressed="true"]{
-  background: #00a651 !important;
+  background: linear-gradient(180deg, rgba(0,166,81,0.92) 0%, rgba(0,166,81,0.78) 100%) !important;
   color: white !important;
-  transform: rotate(0deg) scale(1.05);
+  border-color: rgba(255,255,255,0.45) !important;
+  transform: scale(1.03) !important;
+  box-shadow: 0 6px 20px rgba(0,166,81,0.3), var(--glass-inner) !important;
 }
 
 .preview-tag{
-  background: #ffde59 !important;
-  border: 2px solid #111 !important;
-  box-shadow: 2px 2px 0 #111 !important;
+  background: linear-gradient(180deg, rgba(255,222,89,0.92) 0%, rgba(255,222,89,0.78) 100%) !important;
+  backdrop-filter: blur(12px);
+  border: 1.5px solid rgba(255,255,255,0.6) !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08), var(--glass-inner) !important;
   font-weight: 900 !important;
-  transform: rotate(1deg);
+  border-radius: 99px !important;
+  transform: none !important;
 }
 
 @media (max-width: 740px){
-  .tools, .preview-head, .api-panel{ transform: rotate(0deg) !important; }
+  .tools, .preview-head, .api-panel{ transform: none !important; }
 }
