@@ -26,8 +26,8 @@ def embed_before(source,begin,end,target):
     else:
         a=html.rindex(target)
         html=html[:a]+begin+'\n'+source.rstrip()+'\n'+end+'\n'+html[a:]
-embed_before((ROOT/'src/ui/docs-desktop.css').read_text(),'/* DOCS_DESKTOP_STYLE_START */','/* DOCS_DESKTOP_STYLE_END */','</style>')
-embed_before((ROOT/'src/ui/docs-desktop.js').read_text(),'/* DOCS_DESKTOP_UI_START */','/* DOCS_DESKTOP_UI_END */','</script>')
+embed_before((ROOT/'src/ui/docs-desktop.css').read_text()+'\n'+(ROOT/'src/ui/docs-engage.css').read_text(),'/* DOCS_DESKTOP_STYLE_START */','/* DOCS_DESKTOP_STYLE_END */','</style>')
+embed_before((ROOT/'src/ui/docs-desktop.js').read_text()+'\n'+(ROOT/'src/ui/docs-engage.js').read_text(),'/* DOCS_DESKTOP_UI_START */','/* DOCS_DESKTOP_UI_END */','</script>')
 # Static, shareable reference for every IQC model (also readable without JavaScript).
 import json
 from html import escape
