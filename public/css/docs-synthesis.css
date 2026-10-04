@@ -1,9 +1,17 @@
+<<<<<<< HEAD
 /* DOCS — THE SYNTHESIS liquid glass macOS + no vibration + entrance */
+=======
+/* DOCS — THE SYNTHESIS Frutiger Aero override
+   Embedded via build-docs-playground.py after desktop+engage
+   Keeps workspace functional but skins it as sticker collage
+*/
+>>>>>>> origin/main
 @media (min-width: 0px){
   :root{
     --page-bg: transparent !important;
     --syn-green: #00a651;
     --syn-ink: #111;
+<<<<<<< HEAD
     --glass-white: rgba(255,255,255,0.78);
     --glass-white-strong: rgba(255,255,255,0.92);
     --glass-green: rgba(0,166,81,0.82);
@@ -12,6 +20,12 @@
     --glass-inner: inset 0 1px 0 rgba(255,255,255,0.9), inset 0 -1px 0 rgba(0,0,0,0.04);
   }
   html{ background: #1e8cff; }
+=======
+  }
+  html{
+    background: #1e8cff;
+  }
+>>>>>>> origin/main
   body{
     background: transparent !important;
     position:relative;
@@ -25,7 +39,11 @@
     background:
       radial-gradient(120% 70% at 50% 0%, rgba(255,255,255,0.18) 0%, transparent 60%),
       url('/images/synthesis-bg.jpg') center / cover no-repeat fixed;
+<<<<<<< HEAD
     filter: saturate(1.12) brightness(1.02);
+=======
+    filter: saturate(1.15) contrast(1.05) brightness(1.02);
+>>>>>>> origin/main
   }
   body::after{
     content:"";
@@ -33,6 +51,7 @@
     inset:0;
     z-index:9998;
     pointer-events:none;
+<<<<<<< HEAD
     background: repeating-linear-gradient(0deg, rgba(0,0,0,0) 0 2px, rgba(0,0,0,0.02) 2px 3px);
     opacity:0.12;
     animation: none !important;
@@ -72,10 +91,37 @@ body.docs-entered .section-card:nth-child(4){ transition-delay: 0.32s; }
   -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
   border-bottom: 1.5px solid rgba(255,255,255,0.65) !important;
   box-shadow: 0 8px 32px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.9) !important;
+=======
+    background:
+      repeating-linear-gradient(0deg, rgba(0,0,0,0) 0 2px, rgba(0,0,0,0.03) 2px 3px);
+    opacity:0.22;
+    mix-blend-mode:multiply;
+    animation: none !important;
+    transform: none !important;
+  }
+  .aero-vignette-docs{
+    position:fixed;
+    inset:0;
+    z-index:-2;
+    pointer-events:none;
+    background:
+      radial-gradient(120% 90% at 50% 10%, transparent 40%, rgba(0,0,0,0.18) 100%),
+      radial-gradient(60% 40% at 90% 10%, rgba(255,255,255,0.32) 0%, transparent 60%);
+  }
+}
+
+/* top navbar as sticker - stabil no getar */
+.top-navbar{
+  background: rgba(255,255,255,0.92) !important;
+  border-bottom: 3px solid var(--syn-ink, #111) !important;
+  box-shadow: 0 4px 0 var(--syn-ink, #111);
+  backdrop-filter: blur(12px) saturate(140%);
+>>>>>>> origin/main
   transform: none !important;
   animation: none !important;
 }
 .top-navbar .brand-logo-link{
+<<<<<<< HEAD
   background: linear-gradient(180deg, rgba(255,255,255,0.88) 0%, rgba(255,255,255,0.72) 100%) !important;
   backdrop-filter: blur(16px);
   border: 1.5px solid rgba(255,255,255,0.65) !important;
@@ -126,15 +172,66 @@ body.docs-entered .section-card:nth-child(4){ transition-delay: 0.32s; }
   box-shadow: var(--glass-shadow), var(--glass-inner), 6px 8px 0 rgba(17,17,17,0.85) !important;
   border-radius: 18px !important;
   transform: none !important;
+=======
+  background: white;
+  border: 2.5px solid #111;
+  padding: 6px 12px;
+  border-radius: 8px;
+  box-shadow: 3px 3px 0 #111;
+  transform: none !important;
+}
+.top-navbar .brand-badge{
+  background: #00a651 !important;
+  color: white !important;
+  border: 2px solid #111 !important;
+  transform: none !important;
+}
+.top-navbar .status-pill{
+  background: #ffde59 !important;
+  border: 2px solid #111 !important;
+  box-shadow: 2px 2px 0 #111;
+  transform: none !important;
+}
+.top-navbar .btn-nav{
+  background: white !important;
+  border: 2.5px solid #111 !important;
+  box-shadow: 3px 3px 0 #111 !important;
+  border-radius: 10px !important;
+  font-weight: 800 !important;
+  text-transform: uppercase;
+  transform: none !important;
+}
+.top-navbar .btn-nav:hover{
+  transform: translateY(-1px) !important;
+  box-shadow: 4px 5px 0 #111 !important;
+}
+
+/* hero banner - stabil */
+.hero-banner{
+  background: white !important;
+  border: 3px solid #111 !important;
+  box-shadow: 6px 8px 0 #111 !important;
+  border-radius: 12px !important;
+  transform: none !important;
+  position:relative;
+>>>>>>> origin/main
   animation: none !important;
 }
 .hero-banner::before{
   content:"";
   position:absolute;
   top:-14px; left:-10px;
+<<<<<<< HEAD
   width:32px; height:32px;
   background: url('/images/icons/pin_clean.png') center / contain no-repeat;
   filter: drop-shadow(1px 2px 0 rgba(0,0,0,0.2));
+=======
+  width:28px; height:28px;
+  background: radial-gradient(circle at 30% 30%, #eee 0 18%, #aaa 19% 32%, #444 33% 100%);
+  border-radius:50%;
+  border:1.5px solid #222;
+  box-shadow: 1px 2px 0 rgba(0,0,0,0.3);
+>>>>>>> origin/main
   transform: rotate(-18deg);
 }
 .hero-title{
@@ -144,6 +241,7 @@ body.docs-entered .section-card:nth-child(4){ transition-delay: 0.32s; }
   letter-spacing: -0.04em !important;
   color: #00a651 !important;
 }
+<<<<<<< HEAD
 .hero-desc{ font-weight: 600 !important; }
 
 /* section cards liquid glass - FIX GETARAN */
@@ -156,6 +254,21 @@ body.docs-entered .section-card:nth-child(4){ transition-delay: 0.32s; }
   box-shadow: var(--glass-shadow), var(--glass-inner), 6px 8px 0 rgba(17,17,17,0.85) !important;
   border-radius: 18px !important;
   transform: none !important;
+=======
+.hero-desc{
+  font-weight: 600 !important;
+}
+
+/* section cards as stickers - FIX GETARAN: no float animation di desktop, stabil */
+.section-card{
+  background: white !important;
+  border: 3px solid #111 !important;
+  box-shadow: 6px 8px 0 #111 !important;
+  border-radius: 10px !important;
+  transform: none !important;
+  position:relative;
+  overflow:visible !important;
+>>>>>>> origin/main
   animation: none !important;
   will-change: auto !important;
   backface-visibility: hidden;
@@ -164,26 +277,49 @@ body.docs-entered .section-card:nth-child(4){ transition-delay: 0.32s; }
 .section-card:nth-child(3),
 .section-card:nth-child(4),
 .section-card:nth-child(5){
+<<<<<<< HEAD
   transform: none !important;
   animation: none !important;
 }
 @keyframes docsFloat{ 0%{ transform: none; } 100%{ transform: none; } }
 
+=======
+  --syn-rot: 0deg;
+  animation: none !important;
+  transform: none !important;
+}
+
+/* hapus keyframes getaran */
+@keyframes docsFloat{
+  0%{ transform: none; }
+  100%{ transform: none; }
+}
+
+/* handles for docs cards */
+>>>>>>> origin/main
 .section-card::before,
 .section-card::after{
   content:"";
   position:absolute;
   width:9px; height:9px;
+<<<<<<< HEAD
   background: rgba(255,255,255,0.95);
   backdrop-filter: blur(4px);
   border:1.5px solid #111;
   z-index:2;
   box-shadow:0 0 0 1px rgba(255,255,255,0.8), 0 2px 4px rgba(0,0,0,0.1);
   border-radius:2px;
+=======
+  background:white;
+  border:1.5px solid #111;
+  z-index:2;
+  box-shadow:0 0 0 1px white;
+>>>>>>> origin/main
 }
 .section-card::before{ top:-5px; left:-5px; }
 .section-card::after{ top:-5px; right:-5px; }
 
+<<<<<<< HEAD
 .method-tag{
   background: rgba(17,17,17,0.9) !important;
   backdrop-filter: blur(8px);
@@ -227,10 +363,55 @@ body.docs-entered .section-card:nth-child(4){ transition-delay: 0.32s; }
   border: 1.5px solid var(--glass-border) !important;
   box-shadow: var(--glass-shadow), var(--glass-inner), 8px 10px 0 rgba(17,17,17,0.85) !important;
   border-radius: 20px !important;
+=======
+/* method tags - stabil */
+.method-tag{
+  background: #111 !important;
+  color: white !important;
+  border: 2px solid #111 !important;
+  box-shadow: 2px 2px 0 #111 !important;
+  font-weight: 900 !important;
+  text-transform: uppercase;
+  transform: none !important;
+}
+.method-tag.method-get{ background: #00a651 !important; }
+.method-tag.method-post{ background: #ff8a00 !important; }
+.method-tag.method-ref{ background: #2fa8ff !important; }
+
+/* code cards */
+.code-card{
+  border: 3px solid #111 !important;
+  box-shadow: 5px 6px 0 #111 !important;
+  border-radius: 10px !important;
+  overflow:hidden;
+}
+.code-tabs-head{
+  background: #111 !important;
+}
+.code-tab-btn{
+  background: white !important;
+  border: 2px solid #111 !important;
+  border-radius: 8px !important;
+  font-weight: 800 !important;
+  transform: none !important;
+  box-shadow: 2px 2px 0 #111 !important;
+}
+.code-tab-btn[aria-selected="true"]{
+  background: #ffde59 !important;
+}
+
+/* playground workspace - stabil no getar */
+#playground{
+  background: rgba(255,255,255,0.92) !important;
+  border: 3px solid #111 !important;
+  box-shadow: 8px 10px 0 #111 !important;
+  border-radius: 14px !important;
+>>>>>>> origin/main
   transform: none !important;
   animation: none !important;
 }
 #playground .pg-panel{
+<<<<<<< HEAD
   background: linear-gradient(180deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.78) 100%) !important;
   backdrop-filter: blur(18px);
   border: 1.5px solid var(--glass-border) !important;
@@ -296,10 +477,71 @@ body.docs-entered .section-card:nth-child(4){ transition-delay: 0.32s; }
   border: 1.5px solid var(--glass-border) !important;
   box-shadow: var(--glass-shadow), var(--glass-inner), 5px 6px 0 rgba(17,17,17,0.85) !important;
   border-radius: 16px !important;
+=======
+  border: 2.5px solid #111 !important;
+  box-shadow: 4px 5px 0 #111 !important;
+  border-radius: 10px !important;
+  background: white !important;
+}
+#playground .panel-head{
+  background: #f8fff0 !important;
+  border-bottom: 2.5px solid #111 !important;
+}
+.docs-result-tabs{
+  background: white !important;
+  border-bottom: 2.5px solid #111 !important;
+}
+.docs-result-tabs button[aria-selected="true"]{
+  background: #00a651;
+  color: white;
+  border-radius: 6px;
+  padding: 6px 10px !important;
+  border: 2px solid #111 !important;
+  box-shadow: 2px 2px 0 #111;
+  transform: none !important;
+}
+
+/* buttons - stabil */
+.btn-send-req{
+  background: #00a651 !important;
+  color: white !important;
+  border: 2.5px solid #111 !important;
+  box-shadow: 3px 4px 0 #111 !important;
+  font-weight: 900 !important;
+  text-transform: uppercase;
+  transform: none !important;
+  border-radius: 10px !important;
+}
+.btn-send-req:hover{
+  transform: translateY(-1px) scale(1.02) !important;
+  box-shadow: 5px 6px 0 #111 !important;
+}
+
+/* inputs */
+.search-input, .endpoint-input, .method-select, .iqc-field input, .iqc-field select, .iqc-field textarea, .docs-endpoint-picker select{
+  border: 2.5px solid #111 !important;
+  box-shadow: 3px 3px 0 #111 !important;
+  border-radius: 10px !important;
+  font-weight: 600 !important;
+  background: white !important;
+}
+.search-input:focus, .endpoint-input:focus{
+  box-shadow: 4px 5px 0 #111, 0 0 0 3px #a8e05f !important;
+  transform: translateY(-1px);
+}
+
+/* toc - stabil */
+.toc-card{
+  background: white !important;
+  border: 3px solid #111 !important;
+  box-shadow: 5px 6px 0 #111 !important;
+  border-radius: 12px !important;
+>>>>>>> origin/main
   transform: none !important;
   animation: none !important;
 }
 .toc-link.active{
+<<<<<<< HEAD
   background: linear-gradient(180deg, rgba(0,166,81,0.92) 0%, rgba(0,166,81,0.78) 100%) !important;
   color: white !important;
   border: 1.5px solid rgba(255,255,255,0.45) !important;
@@ -314,16 +556,41 @@ body.docs-entered .section-card:nth-child(4){ transition-delay: 0.32s; }
   border: 1.5px solid var(--glass-border) !important;
   box-shadow: var(--glass-shadow), var(--glass-inner), 6px 8px 0 rgba(17,17,17,0.85) !important;
   border-radius: 18px !important;
+=======
+  background: #00a651 !important;
+  color: white !important;
+  border: 2px solid #111 !important;
+  box-shadow: 2px 2px 0 #111 !important;
+  transform: none !important;
+}
+
+/* footer - stabil */
+.site-footer{
+  background: white !important;
+  border: 3px solid #111 !important;
+  box-shadow: 6px 8px 0 #111 !important;
+  border-radius: 12px !important;
+>>>>>>> origin/main
   transform: none !important;
   animation: none !important;
 }
 
+<<<<<<< HEAD
 .scroller::-webkit-scrollbar-thumb{
   background: rgba(17,17,17,0.8) !important;
   border-radius: 99px !important;
   backdrop-filter: blur(4px);
 }
 
+=======
+/* scrollbars */
+.scroller::-webkit-scrollbar-thumb{
+  background: #111 !important;
+  border-radius: 4px !important;
+}
+
+/* deco for docs - hide di desktop biar tidak getar, hanya di mobile subtle */
+>>>>>>> origin/main
 .aero-deco-layer,
 .aero-clouds,
 .aero-vignette,
@@ -332,4 +599,8 @@ body.docs-entered .section-card:nth-child(4){ transition-delay: 0.32s; }
 }
 @media (min-width: 1024px){
   body::before{ filter: saturate(1.1) brightness(1.02); }
+<<<<<<< HEAD
+=======
+  .aero-deco-layer{ display:none !important; }
+>>>>>>> origin/main
 }
